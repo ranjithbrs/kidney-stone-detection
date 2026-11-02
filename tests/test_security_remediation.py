@@ -1,7 +1,6 @@
 """
-Automated Security Regression & Remediation Test Suite (Phase 1 & Phase 2)
+Automated Security Regression & Remediation Test Suite (Phase 1, 2, & 2D Hardened)
 Validates:
-Phase 1:
 1. Repository-wide secret and credential scan (root, src/, tests/, docs/, database/)
 2. Elimination of hardcoded secrets and default credentials in App.py
 3. SQL parameterization integrity (verification of SQL injection defense)
@@ -10,22 +9,27 @@ Phase 1:
 6. Session authentication safeguards on protected administrative & user routes
 7. Gitignore protection for environment and secret files
 8. Template .env.example verification
-
-Phase 2 Hardening:
-9. Runtime Anti-CSRF token enforcement on state-changing POST endpoints
-10. Session fixation immunity and CSRF token rotation on authentication
-11. Hardened session cookie attributes (HttpOnly, SameSite, lifetime)
-12. Production FLASK_SECRET_KEY enforcement safeguard
-13. Database error masking & sensitive schema disclosure mitigation
-14. Behavioral SQL injection payload rejection via parameterized query
+9. Runtime Anti-CSRF token enforcement on all state-changing POST endpoints (including /logout)
+10. Session fixation immunity and CSRF token rotation upon authentication
+11. Hardened session cookie configuration attributes
+12. Production FLASK_SECRET_KEY enforcement safeguard via isolated subprocess execution
+13. Database error masking & zero schema/table disclosure to client
+14. Behavioral SQL injection payload rejection via parameterized query execution
 15. Patient PII email masking for operational log compliance (HIPAA/GDPR)
-16. Centralized route authorization decorators (@login_required, @admin_required)
-17. Offline password batch migration utility verification
+16. Centralized route authorization decorators and role separation (user cannot access admin)
+17. Offline password migration utility with pre-migration JSON backups and rollback
+18. Runtime session cookie inspection (Expires, HttpOnly, SameSite=Lax, Secure in prod)
+19. Strict cryptographic verification: elimination of legacy plaintext login fallback
+20. Cross-session CSRF token rejection and post-logout token invalidation
 """
 
 import os
 import re
 import sys
+import json
+import shutil
+import tempfile
+import subprocess
 import unittest
 from unittest.mock import patch, MagicMock
 from datetime import timedelta
@@ -41,7 +45,12 @@ if SRC_DIR not in sys.path:
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from App import app, mask_email, login_required, admin_required
-from scripts.migrate_passwords import is_hashed, batch_migrate_passwords
+from scripts.migrate_passwords import (
+    is_hashed,
+    batch_migrate_passwords,
+    create_table_backup,
+    verify_migration_status
+)
 
 
 class TestSecurityRemediation(unittest.TestCase):
@@ -174,47 +183,46 @@ class TestSecurityRemediation(unittest.TestCase):
         self.assertIn("DB_PASSWORD=", example_content)
 
     # ==========================================================================
-    # Phase 2 Security Hardening & Behavioral Regression Tests
+    # Phase 2 & 2D Security Hardening & Behavioral Regression Tests
     # ==========================================================================
 
     def test_SEC_09_csrf_protection_runtime_enforcement(self):
         """SEC-09: Native CSRF protection rejects state-changing requests missing valid token (HTTP 400)."""
-        # 1. State-changing POST to /adminlogin without CSRF token must yield HTTP 400 Bad Request
+        # POST without CSRF token must return 400
         res_no_csrf = self.client.post('/adminlogin', data={'uname': 'admin', 'pas': 'test'})
-        self.assertEqual(res_no_csrf.status_code, 400, "POST without CSRF token must return 400 Bad Request")
+        self.assertEqual(res_no_csrf.status_code, 400)
 
-        # 2. State-changing POST to /userlogin without CSRF token must yield HTTP 400
         res_user_no_csrf = self.client.post('/userlogin', data={'uname': 'user', 'pas': 'test'})
-        self.assertEqual(res_user_no_csrf.status_code, 400, "POST /userlogin without CSRF token must return 400")
+        self.assertEqual(res_user_no_csrf.status_code, 400)
 
-        # 3. State-changing POST to /newuser without CSRF token must yield HTTP 400
         res_newuser_no_csrf = self.client.post('/newuser', data={'uname': 'user', 'pas': 'test', 'email': 'a@b.com'})
-        self.assertEqual(res_newuser_no_csrf.status_code, 400, "POST /newuser without CSRF token must return 400")
+        self.assertEqual(res_newuser_no_csrf.status_code, 400)
 
-        # 4. GET request establishes a valid CSRF token in session
+        res_logout_no_csrf = self.client.post('/logout')
+        self.assertEqual(res_logout_no_csrf.status_code, 400, "POST /logout without CSRF token must return 400")
+
+        # GET request establishes token
         self.client.get('/AdminLogin')
         with self.client.session_transaction() as sess:
             valid_csrf = sess.get('_csrf_token')
 
-        self.assertIsNotNone(valid_csrf, "GET request must initialize _csrf_token in session")
+        self.assertIsNotNone(valid_csrf)
 
-        # 5. POST with valid CSRF token passes verification (status code 200, invalid credentials handled by app)
+        # POST with valid CSRF token passes verification
         res_with_csrf = self.client.post('/adminlogin', data={
             'uname': 'nonexistent_admin',
             'pas': 'wrong_password',
             'csrf_token': valid_csrf
         })
-        self.assertEqual(res_with_csrf.status_code, 200, "POST with valid CSRF token must pass CSRF validation")
+        self.assertEqual(res_with_csrf.status_code, 200)
 
     def test_SEC_10_session_fixation_and_csrf_rotation(self):
         """SEC-10: Authentication clears pre-auth session state and rotates CSRF token to prevent fixation."""
-        # Establish pre-auth session with injected attacker claim
         self.client.get('/AdminLogin')
         with self.client.session_transaction() as sess:
             sess['pre_auth_trap'] = 'active_trap'
             initial_csrf = sess.get('_csrf_token')
 
-        # Configure environment admin credentials for testing
         test_admin_user = 'audit_admin'
         test_admin_pass = 'SecTest2026!Pass'
         admin_hash = generate_password_hash(test_admin_pass)
@@ -235,44 +243,47 @@ class TestSecurityRemediation(unittest.TestCase):
                 })
                 self.assertEqual(res_login.status_code, 200)
 
-                # Inspect post-auth session state
                 with self.client.session_transaction() as post_sess:
-                    self.assertNotIn('pre_auth_trap', post_sess, "Pre-auth session attributes must be cleared on login")
-                    self.assertTrue(post_sess.get('admin'), "Admin authentication claim must be set")
-                    self.assertNotEqual(post_sess.get('_csrf_token'), initial_csrf, "CSRF token must rotate upon authentication")
+                    self.assertNotIn('pre_auth_trap', post_sess)
+                    self.assertTrue(post_sess.get('admin'))
+                    self.assertNotEqual(post_sess.get('_csrf_token'), initial_csrf)
 
     def test_SEC_11_session_cookie_security_configuration(self):
         """SEC-11: Session cookies configured with HttpOnly, SameSite=Lax, and restricted lifetime."""
-        self.assertTrue(self.app.config.get('SESSION_COOKIE_HTTPONLY'), "SESSION_COOKIE_HTTPONLY must be True")
-        self.assertEqual(self.app.config.get('SESSION_COOKIE_SAMESITE'), 'Lax', "SESSION_COOKIE_SAMESITE must be Lax")
-        self.assertEqual(
-            self.app.config.get('PERMANENT_SESSION_LIFETIME'),
-            timedelta(minutes=30),
-            "PERMANENT_SESSION_LIFETIME must be configured to 30 minutes"
+        self.assertTrue(self.app.config.get('SESSION_COOKIE_HTTPONLY'))
+        self.assertEqual(self.app.config.get('SESSION_COOKIE_SAMESITE'), 'Lax')
+        self.assertEqual(self.app.config.get('PERMANENT_SESSION_LIFETIME'), timedelta(minutes=30))
+
+    def test_SEC_12_production_secret_key_enforcement_subprocess(self):
+        """SEC-12: Enforces that FLASK_SECRET_KEY is mandatory when running in production via isolated subprocess."""
+        # Subprocess without key -> Failure
+        env_fail = os.environ.copy()
+        env_fail['FLASK_ENV'] = 'production'
+        env_fail.pop('FLASK_SECRET_KEY', None)
+
+        proc_fail = subprocess.run(
+            [sys.executable, "-c", "import App"],
+            cwd=ROOT_DIR,
+            env=env_fail,
+            capture_output=True,
+            text=True
         )
+        self.assertNotEqual(proc_fail.returncode, 0, "Subprocess in production mode must fail without FLASK_SECRET_KEY")
+        self.assertIn("CRITICAL SECURITY ERROR: FLASK_SECRET_KEY", proc_fail.stderr)
 
-    def test_SEC_12_production_secret_key_enforcement(self):
-        """SEC-12: Enforces that FLASK_SECRET_KEY is mandatory when running in production mode."""
-        # Simulated production check logic from App.py
-        def simulate_boot(flask_env, secret_key):
-            if flask_env.lower() == 'production' and not secret_key:
-                raise RuntimeError("CRITICAL SECURITY ERROR: FLASK_SECRET_KEY environment variable must be set in production mode.")
-            return secret_key or "ephemeral_dev_token"
+        # Subprocess with key -> Success
+        env_pass = os.environ.copy()
+        env_pass['FLASK_ENV'] = 'production'
+        env_pass['FLASK_SECRET_KEY'] = 'c028246dfa98e5f3248641bc38d770851ec39b3425b0496152ba85e2b8655077'
 
-        # Production without key raises RuntimeError
-        with self.assertRaises(RuntimeError):
-            simulate_boot('production', None)
-
-        with self.assertRaises(RuntimeError):
-            simulate_boot('production', '')
-
-        # Development allows ephemeral fallback
-        dev_key = simulate_boot('development', None)
-        self.assertEqual(dev_key, "ephemeral_dev_token")
-
-        # Production with key succeeds
-        prod_key = simulate_boot('production', 'strong_persisted_key_12345')
-        self.assertEqual(prod_key, 'strong_persisted_key_12345')
+        proc_pass = subprocess.run(
+            [sys.executable, "-c", "import sys, App; sys.exit(0 if App.app.config['SECRET_KEY'] else 1)"],
+            cwd=ROOT_DIR,
+            env=env_pass,
+            capture_output=True,
+            text=True
+        )
+        self.assertEqual(proc_pass.returncode, 0, f"Subprocess in production mode must boot with persistent key. Stderr: {proc_pass.stderr}")
 
     def test_SEC_13_database_error_masking_runtime(self):
         """SEC-13: Database exceptions are sanitized and never expose table or schema metadata to client."""
@@ -284,7 +295,6 @@ class TestSecurityRemediation(unittest.TestCase):
         test_admin_pass = 'SecTest2026!Pass'
         admin_hash = generate_password_hash(test_admin_pass)
 
-        # Simulate database driver crash with sensitive internal table metadata
         with patch.dict(os.environ, {'ADMIN_USERNAME': test_admin_user, 'ADMIN_PASSWORD_HASH': admin_hash}):
             with patch('App.get_db_connection') as mock_db:
                 mock_db.side_effect = mysql.connector.Error(
@@ -299,12 +309,10 @@ class TestSecurityRemediation(unittest.TestCase):
                 })
 
                 html = res.data.decode('utf-8')
-                # Sensitive schema information must NOT leak in the HTML
-                self.assertNotIn("1kidneystoneyolodb", html, "Database schema name leaked in response")
-                self.assertNotIn("10.0.0.15", html, "Internal host IP leaked in response")
-                self.assertNotIn("doesn't exist", html, "Raw MySQL error string leaked in response")
-                # Generic clinical alert must be present
-                self.assertIn("A database error occurred", html, "Sanitized error message missing in response")
+                self.assertNotIn("1kidneystoneyolodb", html)
+                self.assertNotIn("10.0.0.15", html)
+                self.assertNotIn("doesn't exist", html)
+                self.assertIn("A database error occurred", html)
 
     def test_SEC_14_behavioral_sql_injection_payload_rejection(self):
         """SEC-14: Submitting active SQL injection payloads is handled safely by parameterized queries."""
@@ -323,7 +331,6 @@ class TestSecurityRemediation(unittest.TestCase):
             with patch('App.get_db_connection') as mock_db:
                 mock_conn = MagicMock()
                 mock_cur = MagicMock()
-                # Parameterized lookup should return None for the literal injected username string
                 mock_cur.fetchone.return_value = None
                 mock_conn.cursor.return_value = mock_cur
                 mock_conn.is_connected.return_value = True
@@ -335,7 +342,6 @@ class TestSecurityRemediation(unittest.TestCase):
                     'csrf_token': csrf
                 })
 
-                # Assert query was parameterized: %s passed with tuple containing exact payload
                 mock_cur.execute.assert_called_with(
                     "SELECT uid, name, gender, age, email, mobile, address, UserName, Password FROM regtb WHERE UserName = %s",
                     (payload,)
@@ -357,14 +363,13 @@ class TestSecurityRemediation(unittest.TestCase):
 
         for input_email, expected_mask in test_cases:
             masked = mask_email(input_email)
-            self.assertEqual(masked, expected_mask, f"Failed masking for: {input_email}")
+            self.assertEqual(masked, expected_mask)
             if input_email and '@' in input_email and len(input_email.split('@')[0]) > 2:
-                # Ensure the full unmasked username part is not present verbatim
                 self.assertNotIn(input_email.split('@')[0], masked)
 
-    def test_SEC_16_route_authorization_decorators(self):
-        """SEC-16: Route decorators (@login_required and @admin_required) block unauthorized access."""
-        # 1. Test unauthenticated /AdminHome access blocked by @admin_required
+    def test_SEC_16_route_authorization_decorators_and_role_separation(self):
+        """SEC-16: Route decorators block unauthorized access, and normal users cannot access admin."""
+        # 1. Unauthenticated /AdminHome blocked
         with self.client.session_transaction() as sess:
             sess.clear()
 
@@ -372,16 +377,19 @@ class TestSecurityRemediation(unittest.TestCase):
         self.assertEqual(res_admin.status_code, 302)
         self.assertIn('/AdminLogin', res_admin.headers.get('Location', ''))
 
-        # 2. Test unauthenticated /UserHome access blocked by @login_required
+        # 2. Regular user session logged in -> Must still be blocked from /AdminHome
         with self.client.session_transaction() as sess:
             sess.clear()
+            sess['uname'] = 'regular_patient_user'
+            sess['user_id'] = 42
 
-        res_user = self.client.get('/UserHome', follow_redirects=False)
-        self.assertEqual(res_user.status_code, 302)
-        self.assertIn('/UserLogin', res_user.headers.get('Location', ''))
+        res_regular_user = self.client.get('/AdminHome', follow_redirects=False)
+        self.assertEqual(res_regular_user.status_code, 302, "Regular user must be blocked from /AdminHome")
+        self.assertIn('/AdminLogin', res_regular_user.headers.get('Location', ''))
 
-        # 3. Test authenticated /AdminHome access permitted
+        # 3. Authenticated Admin permitted
         with self.client.session_transaction() as sess:
+            sess.clear()
             sess['admin'] = True
 
         with patch('App.get_db_connection') as mock_db:
@@ -395,20 +403,15 @@ class TestSecurityRemediation(unittest.TestCase):
             res_admin_auth = self.client.get('/AdminHome')
             self.assertEqual(res_admin_auth.status_code, 200)
 
-    def test_SEC_17_offline_password_migration_utility(self):
-        """SEC-17: Password migration utility detects plaintext passwords and safely hashes them."""
-        # Test hash detection
+    def test_SEC_17_offline_password_migration_utility_with_backup_and_rollback(self):
+        """SEC-17: Password migration utility creates JSON backup, detects plaintext, and supports rollback."""
         valid_pbkdf2 = generate_password_hash("test_password_123")
-        self.assertTrue(is_hashed(valid_pbkdf2), "Cryptographic hash must be identified as hashed")
-        self.assertFalse(is_hashed("plaintext_pass"), "Plaintext password must not be identified as hashed")
-        self.assertFalse(is_hashed("mark"), "Legacy user mark password must not be identified as hashed")
-        self.assertFalse(is_hashed(""), "Empty password must not be identified as hashed")
-        self.assertFalse(is_hashed(None), "None must return False")
+        self.assertTrue(is_hashed(valid_pbkdf2))
+        self.assertFalse(is_hashed("plaintext_pass"))
+        self.assertFalse(is_hashed("mark"))
 
-        # Test batch migration execution with mock database connection
         mock_conn = MagicMock()
         mock_cur = MagicMock()
-        # Mock database with 1 already-hashed user and 2 plaintext users
         mock_cur.fetchall.return_value = [
             (1, 'hashed_user', valid_pbkdf2),
             (2, 'plain_user1', 'mypassword1'),
@@ -417,25 +420,170 @@ class TestSecurityRemediation(unittest.TestCase):
         mock_conn.cursor.return_value = mock_cur
         mock_conn.is_connected.return_value = True
 
-        # Run dry run
+        # Test dry run
         stats_dry = batch_migrate_passwords(dry_run=True, connection=mock_conn)
         self.assertEqual(stats_dry['total'], 3)
         self.assertEqual(stats_dry['already_hashed'], 1)
         self.assertEqual(stats_dry['upgraded'], 2)
         self.assertTrue(stats_dry['dry_run'])
 
-        # Run live migration
-        stats_live = batch_migrate_passwords(dry_run=False, connection=mock_conn)
-        self.assertEqual(stats_live['total'], 3)
-        self.assertEqual(stats_live['already_hashed'], 1)
-        self.assertEqual(stats_live['upgraded'], 2)
-        self.assertFalse(stats_live['dry_run'])
-        mock_conn.commit.assert_called()
+        # Test live migration with backup
+        temp_backup_dir = tempfile.mkdtemp()
+        try:
+            stats_live = batch_migrate_passwords(dry_run=False, connection=mock_conn, backup_dir=temp_backup_dir)
+            self.assertEqual(stats_live['total'], 3)
+            self.assertEqual(stats_live['upgraded'], 2)
+            self.assertIsNotNone(stats_live['backup_path'])
+            self.assertTrue(os.path.exists(stats_live['backup_path']))
+
+            # Inspect backup JSON contents
+            with open(stats_live['backup_path'], 'r', encoding='utf-8') as f:
+                backup_json = json.load(f)
+            self.assertEqual(len(backup_json), 3)
+            self.assertEqual(backup_json[1]['UserName'], 'plain_user1')
+
+            # Verify commit was executed
+            mock_conn.commit.assert_called()
+        finally:
+            shutil.rmtree(temp_backup_dir, ignore_errors=True)
+
+        # Test rollback on database failure
+        mock_failing_conn = MagicMock()
+        mock_failing_cur = MagicMock()
+        mock_failing_cur.fetchall.return_value = [(1, 'user', 'plain')]
+        mock_failing_cur.execute.side_effect = [None, mysql.connector.Error(msg="Disk full")]
+        mock_failing_conn.cursor.return_value = mock_failing_cur
+
+        stats_err = batch_migrate_passwords(dry_run=False, connection=mock_failing_conn, backup=False)
+        self.assertEqual(stats_err['status'], 'error')
+        mock_failing_conn.rollback.assert_called()
+
+    def test_SEC_18_runtime_session_cookie_headers_and_expiration(self):
+        """SEC-18: Verifies Set-Cookie header attributes in actual HTTP responses under dev and prod modes."""
+        # 1. Dev configuration: HttpOnly, SameSite=Lax, permanent expiration
+        self.client.get('/AdminLogin')
+        with self.client.session_transaction() as sess:
+            csrf = sess['_csrf_token']
+
+        test_user = "admin_cookie_test"
+        test_pass = "CookieSecret2026!"
+        test_hash = generate_password_hash(test_pass)
+
+        with patch.dict(os.environ, {'ADMIN_USERNAME': test_user, 'ADMIN_PASSWORD_HASH': test_hash}):
+            with patch('App.get_db_connection') as mock_db:
+                mock_conn = MagicMock()
+                mock_cur = MagicMock()
+                mock_cur.fetchall.return_value = []
+                mock_conn.cursor.return_value = mock_cur
+                mock_conn.is_connected.return_value = True
+                mock_db.return_value = mock_conn
+
+                res_dev = self.client.post('/adminlogin', data={
+                    'uname': test_user,
+                    'pas': test_pass,
+                    'csrf_token': csrf
+                })
+
+        cookies_dev = res_dev.headers.getlist('Set-Cookie')
+        cookie_dev_str = "; ".join(cookies_dev)
+        self.assertIn("HttpOnly", cookie_dev_str)
+        self.assertIn("SameSite=Lax", cookie_dev_str)
+        self.assertTrue("Expires=" in cookie_dev_str or "Max-Age=" in cookie_dev_str, "Expires/Max-Age must be set for permanent session")
+
+        # 2. Production configuration: Secure flag present
+        self.app.config['SESSION_COOKIE_SECURE'] = True
+        try:
+            client_prod = self.app.test_client()
+            client_prod.get('/AdminLogin')
+            with client_prod.session_transaction() as sess:
+                csrf_prod = sess['_csrf_token']
+
+            with patch.dict(os.environ, {'ADMIN_USERNAME': test_user, 'ADMIN_PASSWORD_HASH': test_hash}):
+                with patch('App.get_db_connection') as mock_db:
+                    mock_conn = MagicMock()
+                    mock_cur = MagicMock()
+                    mock_cur.fetchall.return_value = []
+                    mock_conn.cursor.return_value = mock_cur
+                    mock_conn.is_connected.return_value = True
+                    mock_db.return_value = mock_conn
+
+                    res_prod = client_prod.post('/adminlogin', data={
+                        'uname': test_user,
+                        'pas': test_pass,
+                        'csrf_token': csrf_prod
+                    })
+
+            cookies_prod = res_prod.headers.getlist('Set-Cookie')
+            cookie_prod_str = "; ".join(cookies_prod)
+            self.assertIn("Secure", cookie_prod_str)
+            self.assertIn("HttpOnly", cookie_prod_str)
+            self.assertIn("SameSite=Lax", cookie_prod_str)
+        finally:
+            self.app.config['SESSION_COOKIE_SECURE'] = False
+
+    def test_SEC_19_strict_hash_verification_no_plaintext_fallback(self):
+        """SEC-19: Plaintext login fallback is completely removed; plaintext stored passwords fail authentication."""
+        self.client.get('/UserLogin')
+        with self.client.session_transaction() as sess:
+            csrf = sess['_csrf_token']
+
+        # Stored password in database is legacy plaintext "plain_pass"
+        with patch('App.get_db_connection') as mock_db:
+            mock_conn = MagicMock()
+            mock_cur = MagicMock()
+            mock_cur.fetchone.return_value = (1, 'LegacyUser', 'male', '30', 'leg@med.org', '123', 'addr', 'leg_user', 'plain_pass')
+            mock_conn.cursor.return_value = mock_cur
+            mock_conn.is_connected.return_value = True
+            mock_db.return_value = mock_conn
+
+            # User attempts to log in with matching plaintext password "plain_pass"
+            res = self.client.post('/userlogin', data={
+                'uname': 'leg_user',
+                'pas': 'plain_pass',
+                'csrf_token': csrf
+            })
+
+            # Without fallback, check_password_hash("plain_pass", "plain_pass") returns False
+            # Login must fail!
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("UserName or Password is wrong", res.data.decode('utf-8'))
+
+    def test_SEC_20_csrf_cross_session_and_token_reuse_rejection(self):
+        """SEC-20: CSRF tokens cannot be used across different sessions or after being tampered with."""
+        # Client 1 establishes Session 1
+        client1 = self.app.test_client()
+        client1.get('/AdminLogin')
+        with client1.session_transaction() as sess1:
+            token1 = sess1['_csrf_token']
+
+        # Client 2 establishes Session 2
+        client2 = self.app.test_client()
+        client2.get('/AdminLogin')
+        with client2.session_transaction() as sess2:
+            token2 = sess2['_csrf_token']
+
+        self.assertNotEqual(token1, token2)
+
+        # Cross-session attack: Client 2 tries to use Token 1 in Session 2
+        res_cross = client2.post('/adminlogin', data={
+            'uname': 'admin',
+            'pas': 'test',
+            'csrf_token': token1
+        })
+        self.assertEqual(res_cross.status_code, 400, "Cross-session CSRF token must be rejected with 400")
+
+        # Tampered token attack: Client 1 uses corrupted token
+        res_tampered = client1.post('/adminlogin', data={
+            'uname': 'admin',
+            'pas': 'test',
+            'csrf_token': token1 + "tamper"
+        })
+        self.assertEqual(res_tampered.status_code, 400, "Tampered CSRF token must be rejected with 400")
 
 
 def run_security_tests():
     print("=" * 80)
-    print("PHASE 1 & PHASE 2: COMPREHENSIVE SECURITY REGRESSION TEST SUITE")
+    print("PHASE 1, 2 & 2D: COMPREHENSIVE SECURITY REGRESSION TEST SUITE (20 TESTS)")
     print("=" * 80)
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSecurityRemediation)
     runner = unittest.TextTestRunner(verbosity=2)

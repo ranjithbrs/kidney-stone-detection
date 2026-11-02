@@ -181,6 +181,7 @@ def adminlogin():
             # Session fixation protection: clear pre-existing anonymous session and rotate CSRF token
             session.clear()
             session['_csrf_token'] = secrets.token_hex(32)
+            session.permanent = True  # Enable Flask permanent session (30-min lifetime)
             session['admin'] = True
 
             conn = None
@@ -345,24 +346,11 @@ def userlogin():
             stored_password = data[8]
             is_valid = False
 
-            # Verify with werkzeug.security
+            # Strict cryptographic verification (legacy plaintext fallback fully deprecated and removed)
             try:
                 is_valid = check_password_hash(stored_password, pas)
             except Exception:
                 is_valid = False
-
-            # Backward-compatibility check for existing legacy plaintext records (with deprecation warning)
-            if not is_valid and stored_password == pas:
-                is_valid = True
-                logging.warning(f"DEPRECATION WARNING: Account {uname} authenticated with legacy plaintext password. Auto-upgrading to hash.")
-                # Automatically upgrade legacy password to secure cryptographic hash
-                try:
-                    upgraded_hash = generate_password_hash(pas)
-                    cursor.execute("UPDATE regtb SET Password = %s WHERE UserName = %s", (upgraded_hash, uname))
-                    conn.commit()
-                    logging.info(f"Successfully upgraded legacy plaintext password to secure hash for user: {uname}")
-                except mysql.connector.Error as update_err:
-                    logging.warning(f"Failed to auto-upgrade legacy password: {update_err}")
 
             if not is_valid:
                 flash("UserName or Password is wrong...!")
@@ -371,6 +359,7 @@ def userlogin():
             # Session fixation protection: clear pre-existing anonymous session and rotate CSRF token
             session.clear()
             session['_csrf_token'] = secrets.token_hex(32)
+            session.permanent = True  # Enable Flask permanent session (30-min lifetime)
 
             # Set user session variables
             session['uname'] = uname
@@ -420,9 +409,12 @@ def UserHome():
             conn.close()
 
 
-@app.route("/logout")
+@app.route("/logout", methods=['GET', 'POST'])
 def logout():
-    """Clears user session cleanly."""
+    """
+    Clears user session cleanly.
+    State-changing POST requests enforce strict CSRF verification.
+    """
     session.clear()
     flash("You have been logged out.")
     return redirect(url_for('homepage'))
