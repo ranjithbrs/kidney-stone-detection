@@ -1,0 +1,402 @@
+{
+  "Dataset_A": {
+    "name": "UCI Chronic Kidney Disease (Primary)",
+    "models": {
+      "Random_Forest": {
+        "best_params": {
+          "criterion": "gini",
+          "max_depth": null,
+          "min_samples_split": 2,
+          "n_estimators": 50
+        },
+        "best_cv_f1_score": 0.9925,
+        "untuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_A_Random_Forest_best.joblib"
+      },
+      "Support_Vector_Machine": {
+        "best_params": {
+          "C": 1.0,
+          "gamma": "scale",
+          "kernel": "rbf"
+        },
+        "best_cv_f1_score": 0.9899,
+        "untuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_A_Support_Vector_Machine_best.joblib"
+      },
+      "Gradient_Boosting": {
+        "best_params": {
+          "learning_rate": 0.05,
+          "max_depth": 3,
+          "n_estimators": 150
+        },
+        "best_cv_f1_score": 0.9899,
+        "untuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_A_Gradient_Boosting_best.joblib"
+      },
+      "Logistic_Regression": {
+        "best_params": {
+          "C": 10.0,
+          "solver": "lbfgs"
+        },
+        "best_cv_f1_score": 0.9872,
+        "untuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall_sensitivity": 1.0,
+          "specificity": 1.0,
+          "f1_score": 1.0,
+          "roc_auc": 1.0,
+          "mcc": 1.0,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 0,
+            "tp": 50
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_A_Logistic_Regression_best.joblib"
+      },
+      "K_Nearest_Neighbors": {
+        "best_params": {
+          "metric": "euclidean",
+          "n_neighbors": 5,
+          "weights": "uniform"
+        },
+        "best_cv_f1_score": 0.9822,
+        "untuned_metrics": {
+          "accuracy": 0.9875,
+          "precision": 1.0,
+          "recall_sensitivity": 0.98,
+          "specificity": 1.0,
+          "f1_score": 0.9899,
+          "roc_auc": 0.9997,
+          "mcc": 0.9739,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 1,
+            "tp": 49
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.9875,
+          "precision": 1.0,
+          "recall_sensitivity": 0.98,
+          "specificity": 1.0,
+          "f1_score": 0.9899,
+          "roc_auc": 0.9997,
+          "mcc": 0.9739,
+          "confusion_matrix": {
+            "tn": 30,
+            "fp": 0,
+            "fn": 1,
+            "tp": 49
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_A_K_Nearest_Neighbors_best.joblib"
+      }
+    }
+  },
+  "Dataset_B": {
+    "name": "Kidney Stone Urinalysis",
+    "models": {
+      "Random_Forest": {
+        "best_params": {
+          "criterion": "gini",
+          "max_depth": null,
+          "min_samples_split": 2,
+          "n_estimators": 200
+        },
+        "best_cv_f1_score": 0.8414,
+        "untuned_metrics": {
+          "accuracy": 0.6111,
+          "precision": 0.5833,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.4444,
+          "f1_score": 0.6667,
+          "roc_auc": 0.7901,
+          "mcc": 0.2357,
+          "confusion_matrix": {
+            "tn": 4,
+            "fp": 5,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.6111,
+          "precision": 0.5833,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.4444,
+          "f1_score": 0.6667,
+          "roc_auc": 0.7716,
+          "mcc": 0.2357,
+          "confusion_matrix": {
+            "tn": 4,
+            "fp": 5,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_B_Random_Forest_best.joblib"
+      },
+      "Support_Vector_Machine": {
+        "best_params": {
+          "C": 10.0,
+          "gamma": "scale",
+          "kernel": "rbf"
+        },
+        "best_cv_f1_score": 0.8005,
+        "untuned_metrics": {
+          "accuracy": 0.7222,
+          "precision": 0.7,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.6667,
+          "f1_score": 0.7368,
+          "roc_auc": 0.7654,
+          "mcc": 0.4472,
+          "confusion_matrix": {
+            "tn": 6,
+            "fp": 3,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.6111,
+          "precision": 0.5833,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.4444,
+          "f1_score": 0.6667,
+          "roc_auc": 0.716,
+          "mcc": 0.2357,
+          "confusion_matrix": {
+            "tn": 4,
+            "fp": 5,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_B_Support_Vector_Machine_best.joblib"
+      },
+      "Gradient_Boosting": {
+        "best_params": {
+          "learning_rate": 0.2,
+          "max_depth": 3,
+          "n_estimators": 150
+        },
+        "best_cv_f1_score": 0.8381,
+        "untuned_metrics": {
+          "accuracy": 0.6667,
+          "precision": 0.6364,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.5556,
+          "f1_score": 0.7,
+          "roc_auc": 0.7778,
+          "mcc": 0.3419,
+          "confusion_matrix": {
+            "tn": 5,
+            "fp": 4,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.7222,
+          "precision": 0.7,
+          "recall_sensitivity": 0.7778,
+          "specificity": 0.6667,
+          "f1_score": 0.7368,
+          "roc_auc": 0.7778,
+          "mcc": 0.4472,
+          "confusion_matrix": {
+            "tn": 6,
+            "fp": 3,
+            "fn": 2,
+            "tp": 7
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_B_Gradient_Boosting_best.joblib"
+      },
+      "Logistic_Regression": {
+        "best_params": {
+          "C": 0.1,
+          "solver": "lbfgs"
+        },
+        "best_cv_f1_score": 0.6388,
+        "untuned_metrics": {
+          "accuracy": 0.7778,
+          "precision": 0.7273,
+          "recall_sensitivity": 0.8889,
+          "specificity": 0.6667,
+          "f1_score": 0.8,
+          "roc_auc": 0.8519,
+          "mcc": 0.5698,
+          "confusion_matrix": {
+            "tn": 6,
+            "fp": 3,
+            "fn": 1,
+            "tp": 8
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.7222,
+          "precision": 0.6667,
+          "recall_sensitivity": 0.8889,
+          "specificity": 0.5556,
+          "f1_score": 0.7619,
+          "roc_auc": 0.8395,
+          "mcc": 0.4714,
+          "confusion_matrix": {
+            "tn": 5,
+            "fp": 4,
+            "fn": 1,
+            "tp": 8
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_B_Logistic_Regression_best.joblib"
+      },
+      "K_Nearest_Neighbors": {
+        "best_params": {
+          "metric": "manhattan",
+          "n_neighbors": 5,
+          "weights": "distance"
+        },
+        "best_cv_f1_score": 0.8395,
+        "untuned_metrics": {
+          "accuracy": 0.5,
+          "precision": 0.5,
+          "recall_sensitivity": 0.6667,
+          "specificity": 0.3333,
+          "f1_score": 0.5714,
+          "roc_auc": 0.6605,
+          "mcc": 0.0,
+          "confusion_matrix": {
+            "tn": 3,
+            "fp": 6,
+            "fn": 3,
+            "tp": 6
+          }
+        },
+        "tuned_metrics": {
+          "accuracy": 0.6111,
+          "precision": 0.6,
+          "recall_sensitivity": 0.6667,
+          "specificity": 0.5556,
+          "f1_score": 0.6316,
+          "roc_auc": 0.7037,
+          "mcc": 0.2236,
+          "confusion_matrix": {
+            "tn": 5,
+            "fp": 4,
+            "fn": 3,
+            "tp": 6
+          }
+        },
+        "checkpoint_path": "models/tuned/Dataset_B_K_Nearest_Neighbors_best.joblib"
+      }
+    }
+  }
+}
