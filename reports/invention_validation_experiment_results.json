@@ -1,0 +1,2535 @@
+{
+  "experiment_name": "Phase 18 Candidate Invention Validation",
+  "candidate_invention": "Cross-Dataset Clinical Input Reliability and Prediction Validation Mechanism (CD-CIRPVM)",
+  "benchmark_samples": 150,
+  "cohort_summaries": {
+    "Cohort 1: Clean In-Distribution (50)": {
+      "total": 50,
+      "baseline_decisions": 50,
+      "baseline_abstentions": 0,
+      "baseline_correct": 50,
+      "baseline_false_positives": 0,
+      "baseline_false_negatives": 0,
+      "baseline_silent_failures": 0,
+      "invention_decisions": 42,
+      "invention_abstentions": 8,
+      "invention_correct": 42,
+      "invention_false_positives": 0,
+      "invention_false_negatives": 0,
+      "invention_silent_failures": 0,
+      "invention_unit_reconciled": 1,
+      "invention_bounds_clamped": 18,
+      "invention_data_rejected": 8,
+      "invention_uncertainty_rejected": 0
+    },
+    "Cohort 2: International Unit Shift (30)": {
+      "total": 30,
+      "baseline_decisions": 30,
+      "baseline_abstentions": 0,
+      "baseline_correct": 15,
+      "baseline_false_positives": 15,
+      "baseline_false_negatives": 0,
+      "baseline_silent_failures": 0,
+      "invention_decisions": 28,
+      "invention_abstentions": 2,
+      "invention_correct": 28,
+      "invention_false_positives": 0,
+      "invention_false_negatives": 0,
+      "invention_silent_failures": 0,
+      "invention_unit_reconciled": 30,
+      "invention_bounds_clamped": 9,
+      "invention_data_rejected": 2,
+      "invention_uncertainty_rejected": 0
+    },
+    "Cohort 3: Corrupted Sensor Outliers (25)": {
+      "total": 25,
+      "baseline_decisions": 25,
+      "baseline_abstentions": 0,
+      "baseline_correct": 20,
+      "baseline_false_positives": 5,
+      "baseline_false_negatives": 0,
+      "baseline_silent_failures": 0,
+      "invention_decisions": 17,
+      "invention_abstentions": 8,
+      "invention_correct": 17,
+      "invention_false_positives": 0,
+      "invention_false_negatives": 0,
+      "invention_silent_failures": 0,
+      "invention_unit_reconciled": 3,
+      "invention_bounds_clamped": 23,
+      "invention_data_rejected": 3,
+      "invention_uncertainty_rejected": 5
+    },
+    "Cohort 4: Missingness & Incompleteness (25)": {
+      "total": 25,
+      "baseline_decisions": 25,
+      "baseline_abstentions": 0,
+      "baseline_correct": 0,
+      "baseline_false_positives": 0,
+      "baseline_false_negatives": 0,
+      "baseline_silent_failures": 25,
+      "invention_decisions": 0,
+      "invention_abstentions": 25,
+      "invention_correct": 0,
+      "invention_false_positives": 0,
+      "invention_false_negatives": 0,
+      "invention_silent_failures": 0,
+      "invention_unit_reconciled": 0,
+      "invention_bounds_clamped": 25,
+      "invention_data_rejected": 25,
+      "invention_uncertainty_rejected": 0
+    },
+    "Cohort 5: Borderline Epistemic Uncertainty (20)": {
+      "total": 20,
+      "baseline_decisions": 20,
+      "baseline_abstentions": 0,
+      "baseline_correct": 0,
+      "baseline_false_positives": 0,
+      "baseline_false_negatives": 0,
+      "baseline_silent_failures": 0,
+      "invention_decisions": 12,
+      "invention_abstentions": 8,
+      "invention_correct": 0,
+      "invention_false_positives": 0,
+      "invention_false_negatives": 0,
+      "invention_silent_failures": 0,
+      "invention_unit_reconciled": 0,
+      "invention_bounds_clamped": 0,
+      "invention_data_rejected": 0,
+      "invention_uncertainty_rejected": 8
+    }
+  },
+  "detailed_results": [
+    {
+      "sample_id": "C1_Healthy_01",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.06,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.06,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_02",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_03",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_04",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_05",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_06",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_07",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_08",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_09",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_10",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_11",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_12",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_13",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_14",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_15",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_16",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_17",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.06,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.06,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_18",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_19",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.0,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_20",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.02,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.02,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_21",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.02,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.02,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_22",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_23",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_24",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.14,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.14,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_Healthy_25",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_01",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.8,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.8,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_02",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.98,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.98,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_03",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_04",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_05",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_06",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_07",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_08",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.98,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.98,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_09",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_10",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_11",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 1.0,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_12",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_13",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_14",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 1.0,
+      "invention_cri": 0.28,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_15",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_16",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_17",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_18",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 1.0,
+      "invention_cri": 0.28,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_19",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_20",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_21",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_22",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.92,
+      "invention_cri": 0.32,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_23",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.96,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.96,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_24",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.82,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C1_CKD_25",
+      "cohort": "Cohort 1: Clean In-Distribution (50)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 1.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.88,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_01",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.06,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_02",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_03",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_04",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_05",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_06",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_07",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.56,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_08",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_09",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_10",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_11",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_12",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_13",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_14",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_Healthy_15",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_01",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.72,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.8,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_02",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.72,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_03",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_04",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_05",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_06",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_07",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_08",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.96,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.98,
+      "invention_cri": 0.64,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_09",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_10",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.7,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_11",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 1.0,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_12",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_13",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_14",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.54,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 1.0,
+      "invention_cri": 0.28,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C2_SI_CKD_15",
+      "cohort": "Cohort 2: International Unit Shift (30)",
+      "ground_truth": 1,
+      "baseline_pred": 1,
+      "baseline_prob": 0.84,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 1.0,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_01",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.06,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.06,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_02",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_03",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.18,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.18,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_04",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.44,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_05",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.73,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_06",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.02,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.02,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_07",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.54,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.54,
+      "invention_cri": 0.84,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_08",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_09",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_10",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.22,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.22,
+      "invention_cri": 0.76,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_11",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_12",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_13",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.24,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.24,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_14",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.44,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_15",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.73,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_16",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.02,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.02,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_17",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.56,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.56,
+      "invention_cri": 0.84,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_18",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_19",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.0,
+      "invention_cri": 0.36,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_20",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.3,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.3,
+      "invention_cri": 0.76,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_21",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.02,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.02,
+      "invention_cri": 0.84,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_22",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.0,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_23",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.18,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.18,
+      "invention_cri": 0.92,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_24",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 1,
+      "baseline_prob": 0.68,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.6,
+      "invention_cri": 0.52,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C3_Corrupt_25",
+      "cohort": "Cohort 3: Corrupted Sensor Outliers (25)",
+      "ground_truth": 0,
+      "baseline_pred": 0,
+      "baseline_prob": 0.0,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.0,
+      "invention_cri": 0.49,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C4_Empty_01",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Empty_02",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Empty_03",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Empty_04",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Empty_05",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_01",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_02",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_03",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.6,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_04",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_05",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_06",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.44,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.44,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_07",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.22,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.22,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_08",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_09",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.3,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.3,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Sparse_10",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_01",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_02",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_03",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.82,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_04",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.82,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_05",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.82,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_06",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.8,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.8,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_07",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.82,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.82,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_08",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.8,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.8,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_09",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 1,
+      "baseline_prob": 0.8,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.8,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C4_Truncated_10",
+      "cohort": "Cohort 4: Missingness & Incompleteness (25)",
+      "ground_truth": null,
+      "baseline_pred": 0,
+      "baseline_prob": 0.32,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.32,
+      "invention_cri": 0.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_UNRELIABLE_DATA",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_01",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_02",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.22,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.22,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_03",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.74,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.74,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_04",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.14,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.14,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_05",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.94,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.94,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_06",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_07",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.14,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.14,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_08",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_09",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.08,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.08,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_10",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.94,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.94,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_11",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_12",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.14,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.14,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_13",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_14",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.08,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.08,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_15",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.94,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 1,
+      "invention_prob": 0.94,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_16",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.5,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.5,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_17",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.12,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.12,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_18",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.58,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.58,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_19",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 0,
+      "baseline_prob": 0.06,
+      "baseline_decision": "PROCEED",
+      "invention_pred": 0,
+      "invention_prob": 0.06,
+      "invention_cri": 1.0,
+      "invention_decision": "PROCEED",
+      "invention_gate_status": "DECISIVE_CONFORMAL_PASS",
+      "invention_conformal_set": [
+        0
+      ]
+    },
+    {
+      "sample_id": "C5_Boundary_20",
+      "cohort": "Cohort 5: Borderline Epistemic Uncertainty (20)",
+      "ground_truth": "AMBIGUOUS",
+      "baseline_pred": 1,
+      "baseline_prob": 0.6,
+      "baseline_decision": "PROCEED",
+      "invention_pred": null,
+      "invention_prob": 0.6,
+      "invention_cri": 1.0,
+      "invention_decision": "ABSTAIN",
+      "invention_gate_status": "REJECTED_EPISTEMIC_UNCERTAINTY",
+      "invention_conformal_set": [
+        0,
+        1
+      ]
+    }
+  ]
+}

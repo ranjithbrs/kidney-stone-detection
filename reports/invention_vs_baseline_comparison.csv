@@ -1,0 +1,151 @@
+sample_id,cohort,ground_truth,baseline_pred,baseline_prob,baseline_decision,invention_pred,invention_prob,invention_cri,invention_decision,invention_gate_status,invention_conformal_set
+C1_Healthy_01,Cohort 1: Clean In-Distribution (50),0,0,0.06,PROCEED,0.0,0.06,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_02,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_03,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_04,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_05,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_06,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_07,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_08,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_09,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_10,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_11,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_12,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_13,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_14,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_15,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_16,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_17,Cohort 1: Clean In-Distribution (50),0,0,0.06,PROCEED,0.0,0.06,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_18,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_19,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,,0.0,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,[0]
+C1_Healthy_20,Cohort 1: Clean In-Distribution (50),0,0,0.02,PROCEED,0.0,0.02,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_21,Cohort 1: Clean In-Distribution (50),0,0,0.02,PROCEED,0.0,0.02,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_22,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_23,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_Healthy_24,Cohort 1: Clean In-Distribution (50),0,0,0.14,PROCEED,,0.14,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,[0]
+C1_Healthy_25,Cohort 1: Clean In-Distribution (50),0,0,0.0,PROCEED,0.0,0.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C1_CKD_01,Cohort 1: Clean In-Distribution (50),1,1,0.8,PROCEED,1.0,0.8,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_02,Cohort 1: Clean In-Distribution (50),1,1,0.98,PROCEED,,0.98,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_03,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_04,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_05,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_06,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_07,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_08,Cohort 1: Clean In-Distribution (50),1,1,0.98,PROCEED,1.0,0.98,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_09,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_10,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_11,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,,1.0,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_12,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_13,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_14,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,,1.0,0.28,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_15,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_16,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_17,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_18,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,,1.0,0.28,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_19,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_20,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_21,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_22,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,,0.92,0.32,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_23,Cohort 1: Clean In-Distribution (50),1,1,0.96,PROCEED,1.0,0.96,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C1_CKD_24,Cohort 1: Clean In-Distribution (50),1,1,0.82,PROCEED,,0.82,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C1_CKD_25,Cohort 1: Clean In-Distribution (50),1,1,1.0,PROCEED,1.0,1.0,0.88,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_Healthy_01,Cohort 2: International Unit Shift (30),0,1,0.58,PROCEED,0.0,0.06,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_02,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_03,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_04,Cohort 2: International Unit Shift (30),0,1,0.58,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_05,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_06,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_07,Cohort 2: International Unit Shift (30),0,1,0.56,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_08,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_09,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_10,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_11,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_12,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_13,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_14,Cohort 2: International Unit Shift (30),0,1,0.6,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_Healthy_15,Cohort 2: International Unit Shift (30),0,1,0.58,PROCEED,0.0,0.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C2_SI_CKD_01,Cohort 2: International Unit Shift (30),1,1,0.72,PROCEED,1.0,0.8,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_02,Cohort 2: International Unit Shift (30),1,1,0.72,PROCEED,1.0,1.0,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_03,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_04,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_05,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_06,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_07,Cohort 2: International Unit Shift (30),1,1,0.82,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_08,Cohort 2: International Unit Shift (30),1,1,0.96,PROCEED,1.0,0.98,0.64,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_09,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_10,Cohort 2: International Unit Shift (30),1,1,0.7,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_11,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,,1.0,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C2_SI_CKD_12,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_13,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C2_SI_CKD_14,Cohort 2: International Unit Shift (30),1,1,0.54,PROCEED,,1.0,0.28,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C2_SI_CKD_15,Cohort 2: International Unit Shift (30),1,1,0.84,PROCEED,1.0,1.0,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C3_Corrupt_01,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.06,PROCEED,0.0,0.06,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_02,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_03,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.18,PROCEED,0.0,0.18,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_04,Cohort 3: Corrupted Sensor Outliers (25),0,1,0.58,PROCEED,,0.44,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C3_Corrupt_05,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.73,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_06,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.02,PROCEED,0.0,0.02,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_07,Cohort 3: Corrupted Sensor Outliers (25),0,1,0.54,PROCEED,,0.54,0.84,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C3_Corrupt_08,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_09,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_10,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.22,PROCEED,0.0,0.22,0.76,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_11,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_12,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_13,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.24,PROCEED,0.0,0.24,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_14,Cohort 3: Corrupted Sensor Outliers (25),0,1,0.6,PROCEED,,0.44,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C3_Corrupt_15,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.73,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_16,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.02,PROCEED,0.0,0.02,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_17,Cohort 3: Corrupted Sensor Outliers (25),0,1,0.56,PROCEED,,0.56,0.84,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C3_Corrupt_18,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_19,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,,0.0,0.36,ABSTAIN,REJECTED_UNRELIABLE_DATA,[0]
+C3_Corrupt_20,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.3,PROCEED,,0.3,0.76,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C3_Corrupt_21,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.02,PROCEED,0.0,0.02,0.84,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_22,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,0.0,0.0,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_23,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.18,PROCEED,0.0,0.18,0.92,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C3_Corrupt_24,Cohort 3: Corrupted Sensor Outliers (25),0,1,0.68,PROCEED,,0.6,0.52,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C3_Corrupt_25,Cohort 3: Corrupted Sensor Outliers (25),0,0,0.0,PROCEED,,0.0,0.49,ABSTAIN,REJECTED_UNRELIABLE_DATA,[0]
+C4_Empty_01,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Empty_02,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Empty_03,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Empty_04,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Empty_05,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_01,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_02,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_03,Cohort 4: Missingness & Incompleteness (25),,1,0.6,PROCEED,,0.6,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_04,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_05,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_06,Cohort 4: Missingness & Incompleteness (25),,0,0.44,PROCEED,,0.44,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_07,Cohort 4: Missingness & Incompleteness (25),,0,0.22,PROCEED,,0.22,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[0]
+C4_Sparse_08,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_09,Cohort 4: Missingness & Incompleteness (25),,0,0.3,PROCEED,,0.3,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Sparse_10,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Truncated_01,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Truncated_02,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C4_Truncated_03,Cohort 4: Missingness & Incompleteness (25),,1,0.82,PROCEED,,0.82,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_04,Cohort 4: Missingness & Incompleteness (25),,1,0.82,PROCEED,,0.82,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_05,Cohort 4: Missingness & Incompleteness (25),,1,0.82,PROCEED,,0.82,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_06,Cohort 4: Missingness & Incompleteness (25),,1,0.8,PROCEED,,0.8,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_07,Cohort 4: Missingness & Incompleteness (25),,1,0.82,PROCEED,,0.82,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_08,Cohort 4: Missingness & Incompleteness (25),,1,0.8,PROCEED,,0.8,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_09,Cohort 4: Missingness & Incompleteness (25),,1,0.8,PROCEED,,0.8,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,[1]
+C4_Truncated_10,Cohort 4: Missingness & Incompleteness (25),,0,0.32,PROCEED,,0.32,0.0,ABSTAIN,REJECTED_UNRELIABLE_DATA,"[0, 1]"
+C5_Boundary_01,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_02,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.22,PROCEED,0.0,0.22,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_03,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.74,PROCEED,1.0,0.74,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C5_Boundary_04,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.14,PROCEED,0.0,0.14,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_05,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.94,PROCEED,1.0,0.94,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C5_Boundary_06,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_07,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.14,PROCEED,0.0,0.14,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_08,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_09,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.08,PROCEED,0.0,0.08,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_10,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.94,PROCEED,1.0,0.94,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C5_Boundary_11,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_12,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.14,PROCEED,0.0,0.14,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_13,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_14,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.08,PROCEED,0.0,0.08,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_15,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.94,PROCEED,1.0,0.94,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[1]
+C5_Boundary_16,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.5,PROCEED,,0.5,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_17,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.12,PROCEED,0.0,0.12,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_18,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.58,PROCEED,,0.58,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
+C5_Boundary_19,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,0,0.06,PROCEED,0.0,0.06,1.0,PROCEED,DECISIVE_CONFORMAL_PASS,[0]
+C5_Boundary_20,Cohort 5: Borderline Epistemic Uncertainty (20),AMBIGUOUS,1,0.6,PROCEED,,0.6,1.0,ABSTAIN,REJECTED_EPISTEMIC_UNCERTAINTY,"[0, 1]"
