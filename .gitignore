@@ -52,7 +52,18 @@ Thumbs.db
 *.swp
 *.swo
 
-# Sensitive data / logs
+# Sensitive data / logs / secrets
 *.log
 instance/
 .webassets-cache
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+secrets.json
+secrets.yaml
+*.sqlite3
+*.db
