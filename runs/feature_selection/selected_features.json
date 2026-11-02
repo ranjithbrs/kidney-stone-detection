@@ -1,0 +1,675 @@
+{
+  "Dataset_A": {
+    "redundant_pairs": [
+      {
+        "feature_1": "hemo",
+        "feature_2": "pcv",
+        "correlation": 0.8407
+      }
+    ],
+    "full_rankings": [
+      {
+        "feature": "hemo",
+        "mi_score": 0.5058,
+        "anova_f_score": 579.26,
+        "rf_importance": 0.2355,
+        "rfe_rank": 7,
+        "consensus_rank_score": 2.5,
+        "final_rank": 1
+      },
+      {
+        "feature": "sg",
+        "mi_score": 0.3302,
+        "anova_f_score": 341.84,
+        "rf_importance": 0.1087,
+        "rfe_rank": 2,
+        "consensus_rank_score": 3.5,
+        "final_rank": 2
+      },
+      {
+        "feature": "pcv",
+        "mi_score": 0.476,
+        "anova_f_score": 385.43,
+        "rf_importance": 0.1621,
+        "rfe_rank": 8,
+        "consensus_rank_score": 3.5,
+        "final_rank": 3
+      },
+      {
+        "feature": "rc",
+        "mi_score": 0.4171,
+        "anova_f_score": 260.76,
+        "rf_importance": 0.1057,
+        "rfe_rank": 6,
+        "consensus_rank_score": 4.75,
+        "final_rank": 4
+      },
+      {
+        "feature": "al",
+        "mi_score": 0.2989,
+        "anova_f_score": 202.39,
+        "rf_importance": 0.0404,
+        "rfe_rank": 1,
+        "consensus_rank_score": 5.75,
+        "final_rank": 5
+      },
+      {
+        "feature": "htn",
+        "mi_score": 0.2451,
+        "anova_f_score": 280.52,
+        "rf_importance": 0.0589,
+        "rfe_rank": 9,
+        "consensus_rank_score": 7.0,
+        "final_rank": 6
+      },
+      {
+        "feature": "sc",
+        "mi_score": 0.4003,
+        "anova_f_score": 46.81,
+        "rf_importance": 0.1321,
+        "rfe_rank": 5,
+        "consensus_rank_score": 7.25,
+        "final_rank": 7
+      },
+      {
+        "feature": "bu",
+        "mi_score": 0.1809,
+        "anova_f_score": 90.35,
+        "rf_importance": 0.0213,
+        "rfe_rank": 3,
+        "consensus_rank_score": 8.25,
+        "final_rank": 8
+      },
+      {
+        "feature": "dm",
+        "mi_score": 0.2114,
+        "anova_f_score": 207.12,
+        "rf_importance": 0.0408,
+        "rfe_rank": 10,
+        "consensus_rank_score": 8.25,
+        "final_rank": 9
+      },
+      {
+        "feature": "bgr",
+        "mi_score": 0.1835,
+        "anova_f_score": 79.17,
+        "rf_importance": 0.0201,
+        "rfe_rank": 4,
+        "consensus_rank_score": 9.25,
+        "final_rank": 10
+      },
+      {
+        "feature": "sod",
+        "mi_score": 0.3073,
+        "anova_f_score": 58.66,
+        "rf_importance": 0.016,
+        "rfe_rank": 11,
+        "consensus_rank_score": 10.5,
+        "final_rank": 11
+      },
+      {
+        "feature": "appet",
+        "mi_score": 0.15,
+        "anova_f_score": 89.41,
+        "rf_importance": 0.0087,
+        "rfe_rank": 20,
+        "consensus_rank_score": 14.25,
+        "final_rank": 12
+      },
+      {
+        "feature": "pc",
+        "mi_score": 0.1408,
+        "anova_f_score": 91.51,
+        "rf_importance": 0.0067,
+        "rfe_rank": 18,
+        "consensus_rank_score": 14.5,
+        "final_rank": 13
+      },
+      {
+        "feature": "bp",
+        "mi_score": 0.1749,
+        "anova_f_score": 49.15,
+        "rf_importance": 0.0055,
+        "rfe_rank": 13,
+        "consensus_rank_score": 15.0,
+        "final_rank": 14
+      },
+      {
+        "feature": "pot",
+        "mi_score": 0.2458,
+        "anova_f_score": 0.06,
+        "rf_importance": 0.0067,
+        "rfe_rank": 14,
+        "consensus_rank_score": 15.75,
+        "final_rank": 15
+      },
+      {
+        "feature": "age",
+        "mi_score": 0.1122,
+        "anova_f_score": 17.54,
+        "rf_importance": 0.0076,
+        "rfe_rank": 12,
+        "consensus_rank_score": 16.5,
+        "final_rank": 16
+      },
+      {
+        "feature": "pe",
+        "mi_score": 0.1183,
+        "anova_f_score": 81.28,
+        "rf_importance": 0.004,
+        "rfe_rank": 19,
+        "consensus_rank_score": 16.5,
+        "final_rank": 17
+      },
+      {
+        "feature": "su",
+        "mi_score": 0.0966,
+        "anova_f_score": 41.5,
+        "rf_importance": 0.0073,
+        "rfe_rank": 15,
+        "consensus_rank_score": 17.0,
+        "final_rank": 18
+      },
+      {
+        "feature": "wc",
+        "mi_score": 0.1775,
+        "anova_f_score": 13.97,
+        "rf_importance": 0.0068,
+        "rfe_rank": 17,
+        "consensus_rank_score": 17.0,
+        "final_rank": 19
+      },
+      {
+        "feature": "ane",
+        "mi_score": 0.1141,
+        "anova_f_score": 64.58,
+        "rf_importance": 0.0023,
+        "rfe_rank": 21,
+        "consensus_rank_score": 18.0,
+        "final_rank": 20
+      },
+      {
+        "feature": "rbc",
+        "mi_score": 0.0448,
+        "anova_f_score": 43.68,
+        "rf_importance": 0.0017,
+        "rfe_rank": 16,
+        "consensus_rank_score": 19.75,
+        "final_rank": 21
+      },
+      {
+        "feature": "ba",
+        "mi_score": 0.07,
+        "anova_f_score": 22.11,
+        "rf_importance": 0.0003,
+        "rfe_rank": 22,
+        "consensus_rank_score": 21.75,
+        "final_rank": 22
+      },
+      {
+        "feature": "pcc",
+        "mi_score": 0.055,
+        "anova_f_score": 48.2,
+        "rf_importance": 0.0001,
+        "rfe_rank": 24,
+        "consensus_rank_score": 21.75,
+        "final_rank": 23
+      },
+      {
+        "feature": "cad",
+        "mi_score": 0.0696,
+        "anova_f_score": 28.43,
+        "rf_importance": 0.0006,
+        "rfe_rank": 23,
+        "consensus_rank_score": 21.75,
+        "final_rank": 24
+      }
+    ],
+    "selected_features": {
+      "hybrid_top10": [
+        "hemo",
+        "sg",
+        "pcv",
+        "rc",
+        "al",
+        "htn",
+        "sc",
+        "bu",
+        "dm",
+        "bgr"
+      ],
+      "mi_top10": [
+        "hemo",
+        "pcv",
+        "rc",
+        "sc",
+        "sg",
+        "sod",
+        "al",
+        "pot",
+        "htn",
+        "dm"
+      ],
+      "rfe_top10": [
+        "al",
+        "sg",
+        "bu",
+        "bgr",
+        "sc",
+        "rc",
+        "hemo",
+        "pcv",
+        "htn",
+        "dm"
+      ]
+    },
+    "performance_comparison": {
+      "Full_Features (24)": {
+        "num_features": 24,
+        "features": [
+          "age",
+          "bp",
+          "sg",
+          "al",
+          "su",
+          "bgr",
+          "bu",
+          "sc",
+          "sod",
+          "pot",
+          "hemo",
+          "pcv",
+          "wc",
+          "rc",
+          "rbc",
+          "pc",
+          "pcc",
+          "ba",
+          "htn",
+          "dm",
+          "cad",
+          "appet",
+          "pe",
+          "ane"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Logistic_Regression": {
+            "accuracy": 0.975,
+            "precision": 1.0,
+            "recall": 0.96,
+            "f1_score": 0.9796,
+            "roc_auc": 1.0
+          },
+          "Decision_Tree": {
+            "accuracy": 0.975,
+            "precision": 0.98,
+            "recall": 0.98,
+            "f1_score": 0.98,
+            "roc_auc": 0.9733
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 0.9875,
+            "precision": 1.0,
+            "recall": 0.98,
+            "f1_score": 0.9899,
+            "roc_auc": 1.0
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.9625,
+            "precision": 1.0,
+            "recall": 0.94,
+            "f1_score": 0.9691,
+            "roc_auc": 1.0
+          }
+        }
+      },
+      "Mutual_Info_Filter (10)": {
+        "num_features": 10,
+        "features": [
+          "hemo",
+          "pcv",
+          "rc",
+          "sc",
+          "sg",
+          "sod",
+          "al",
+          "pot",
+          "htn",
+          "dm"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Logistic_Regression": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Decision_Tree": {
+            "accuracy": 0.975,
+            "precision": 1.0,
+            "recall": 0.96,
+            "f1_score": 0.9796,
+            "roc_auc": 0.98
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.975,
+            "precision": 1.0,
+            "recall": 0.96,
+            "f1_score": 0.9796,
+            "roc_auc": 1.0
+          }
+        }
+      },
+      "RFE_Wrapper (10)": {
+        "num_features": 10,
+        "features": [
+          "al",
+          "sg",
+          "bu",
+          "bgr",
+          "sc",
+          "rc",
+          "hemo",
+          "pcv",
+          "htn",
+          "dm"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 0.9875,
+            "precision": 0.9804,
+            "recall": 1.0,
+            "f1_score": 0.9901,
+            "roc_auc": 1.0
+          },
+          "Logistic_Regression": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Decision_Tree": {
+            "accuracy": 0.975,
+            "precision": 0.98,
+            "recall": 0.98,
+            "f1_score": 0.98,
+            "roc_auc": 0.9733
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.9875,
+            "precision": 1.0,
+            "recall": 0.98,
+            "f1_score": 0.9899,
+            "roc_auc": 0.9997
+          }
+        }
+      },
+      "Hybrid_Consensus (10)": {
+        "num_features": 10,
+        "features": [
+          "hemo",
+          "sg",
+          "pcv",
+          "rc",
+          "al",
+          "htn",
+          "sc",
+          "bu",
+          "dm",
+          "bgr"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Logistic_Regression": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "Decision_Tree": {
+            "accuracy": 0.9875,
+            "precision": 1.0,
+            "recall": 0.98,
+            "f1_score": 0.9899,
+            "roc_auc": 0.99
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.9875,
+            "precision": 1.0,
+            "recall": 0.98,
+            "f1_score": 0.9899,
+            "roc_auc": 0.9997
+          }
+        }
+      }
+    }
+  },
+  "Dataset_B": {
+    "redundant_pairs": [
+      {
+        "feature_1": "gravity",
+        "feature_2": "osmo",
+        "correlation": 0.8374
+      },
+      {
+        "feature_1": "osmo",
+        "feature_2": "cond",
+        "correlation": 0.8219
+      },
+      {
+        "feature_1": "gravity",
+        "feature_2": "urea",
+        "correlation": 0.759
+      },
+      {
+        "feature_1": "osmo",
+        "feature_2": "urea",
+        "correlation": 0.9103
+      }
+    ],
+    "full_rankings": [
+      {
+        "feature": "calc",
+        "mi_score": 0.2217,
+        "anova_f_score": 19.13,
+        "rf_importance": 0.3013,
+        "rfe_rank": 3,
+        "consensus_rank_score": 1.5,
+        "final_rank": 1
+      },
+      {
+        "feature": "gravity",
+        "mi_score": 0.2124,
+        "anova_f_score": 9.94,
+        "rf_importance": 0.2222,
+        "rfe_rank": 1,
+        "consensus_rank_score": 1.75,
+        "final_rank": 2
+      },
+      {
+        "feature": "osmo",
+        "mi_score": 0.0,
+        "anova_f_score": 1.75,
+        "rf_importance": 0.1498,
+        "rfe_rank": 2,
+        "consensus_rank_score": 3.5,
+        "final_rank": 3
+      },
+      {
+        "feature": "urea",
+        "mi_score": 0.0182,
+        "anova_f_score": 0.94,
+        "rf_importance": 0.1456,
+        "rfe_rank": 4,
+        "consensus_rank_score": 4.25,
+        "final_rank": 4
+      },
+      {
+        "feature": "cond",
+        "mi_score": 0.0911,
+        "anova_f_score": 0.1,
+        "rf_importance": 0.1072,
+        "rfe_rank": 5,
+        "consensus_rank_score": 4.75,
+        "final_rank": 5
+      },
+      {
+        "feature": "ph",
+        "mi_score": 0.0186,
+        "anova_f_score": 0.4,
+        "rf_importance": 0.0738,
+        "rfe_rank": 6,
+        "consensus_rank_score": 5.25,
+        "final_rank": 6
+      }
+    ],
+    "selected_features": {
+      "hybrid_top4": [
+        "calc",
+        "gravity",
+        "osmo",
+        "urea"
+      ]
+    },
+    "performance_comparison": {
+      "Full_Features (6)": {
+        "num_features": 6,
+        "features": [
+          "gravity",
+          "ph",
+          "osmo",
+          "cond",
+          "urea",
+          "calc"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 0.7222,
+            "precision": 0.6667,
+            "recall": 0.8889,
+            "f1_score": 0.7619,
+            "roc_auc": 0.8025
+          },
+          "Logistic_Regression": {
+            "accuracy": 0.7778,
+            "precision": 0.7273,
+            "recall": 0.8889,
+            "f1_score": 0.8,
+            "roc_auc": 0.8519
+          },
+          "Decision_Tree": {
+            "accuracy": 0.6111,
+            "precision": 0.5833,
+            "recall": 0.7778,
+            "f1_score": 0.6667,
+            "roc_auc": 0.6111
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 0.7222,
+            "precision": 0.7,
+            "recall": 0.7778,
+            "f1_score": 0.7368,
+            "roc_auc": 0.7407
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.6667,
+            "precision": 0.6364,
+            "recall": 0.7778,
+            "f1_score": 0.7,
+            "roc_auc": 0.6728
+          }
+        }
+      },
+      "Hybrid_Consensus (4)": {
+        "num_features": 4,
+        "features": [
+          "calc",
+          "gravity",
+          "osmo",
+          "urea"
+        ],
+        "models": {
+          "Random_Forest": {
+            "accuracy": 0.6111,
+            "precision": 0.5833,
+            "recall": 0.7778,
+            "f1_score": 0.6667,
+            "roc_auc": 0.7901
+          },
+          "Logistic_Regression": {
+            "accuracy": 0.7778,
+            "precision": 0.7273,
+            "recall": 0.8889,
+            "f1_score": 0.8,
+            "roc_auc": 0.8519
+          },
+          "Decision_Tree": {
+            "accuracy": 0.6111,
+            "precision": 0.5833,
+            "recall": 0.7778,
+            "f1_score": 0.6667,
+            "roc_auc": 0.6111
+          },
+          "Support_Vector_Machine": {
+            "accuracy": 0.7222,
+            "precision": 0.7,
+            "recall": 0.7778,
+            "f1_score": 0.7368,
+            "roc_auc": 0.7654
+          },
+          "K_Nearest_Neighbors": {
+            "accuracy": 0.5,
+            "precision": 0.5,
+            "recall": 0.6667,
+            "f1_score": 0.5714,
+            "roc_auc": 0.6605
+          }
+        }
+      }
+    }
+  }
+}
