@@ -119,6 +119,9 @@ class TestSecurityRemediation(unittest.TestCase):
         self.assertIn("ADMIN_USERNAME", code)
         self.assertNotIn("tdyr kebi", code, "Compromised Gmail app password still in App.py")
         self.assertIn("os.environ.get('SMTP_PASSWORD'", code)
+        self.assertIn("from dotenv import load_dotenv", code, "App.py must import load_dotenv directly from dotenv")
+        self.assertNotIn("except ImportError:", code, "App.py must not silently ignore ImportError for dotenv")
+        self.assertIn("override=False", code, "App.py must specify override=False when loading .env")
 
     def test_SEC_03_sql_injection_defense_parameterization(self):
         """SEC-03: App.py uses parameterized queries, eliminating string interpolation SQL injection."""
@@ -181,7 +184,8 @@ class TestSecurityRemediation(unittest.TestCase):
         self.assertNotIn("7d441f27d441f27567d441f2b6176a", example_content)
         self.assertIn("FLASK_SECRET_KEY=", example_content)
         self.assertIn("DB_PASSWORD=", example_content)
-        self.assertIn("SMTP_USERNAME=ckdteam2027@gmail.com", example_content)
+        self.assertIn("SMTP_USERNAME=example@gmail.com", example_content)
+        self.assertIn("MAIL_SENDER=example@gmail.com", example_content)
         self.assertIn("SMTP_PASSWORD=", example_content)
         for line in example_content.splitlines():
             if line.startswith("SMTP_PASSWORD="):
@@ -623,14 +627,14 @@ class TestSecurityRemediation(unittest.TestCase):
                     self.assertTrue(any("SMTP notification skipped: SMTP_USERNAME or SMTP_PASSWORD not configured" in o for o in cm.output))
 
         # Case B: Password missing
-        with patch.dict(os.environ, {"SMTP_USERNAME": "ckdteam2027@gmail.com", "SMTP_PASSWORD": ""}):
+        with patch.dict(os.environ, {"SMTP_USERNAME": "test_user@example.com", "SMTP_PASSWORD": ""}):
             with self.app.test_request_context():
                 session['email'] = 'patient@example.com'
                 result = sendmail("Critical alert message")
                 self.assertFalse(result, "sendmail must return False when password is empty")
 
         # Case C: Recipient email missing from session
-        with patch.dict(os.environ, {"SMTP_USERNAME": "ckdteam2027@gmail.com", "SMTP_PASSWORD": "dummy_password_for_test"}):
+        with patch.dict(os.environ, {"SMTP_USERNAME": "test_user@example.com", "SMTP_PASSWORD": "dummy_password_for_test"}):
             with self.app.test_request_context():
                 result = sendmail("Critical alert message")
                 self.assertFalse(result, "sendmail must return False when session recipient email is missing")
@@ -641,9 +645,9 @@ class TestSecurityRemediation(unittest.TestCase):
         from App import sendmail, mask_email
 
         # Verify email masking function
-        masked = mask_email("ckdteam2027@gmail.com")
-        self.assertEqual(masked, "ck***7@gmail.com")
-        self.assertNotIn("ckdteam2027", masked)
+        masked = mask_email("test_team_account@example.com")
+        self.assertEqual(masked, "te***t@example.com")
+        self.assertNotIn("test_team_account", masked)
 
         masked_short = mask_email("ab@gmail.com")
         self.assertEqual(masked_short, "a***@gmail.com")
@@ -651,9 +655,9 @@ class TestSecurityRemediation(unittest.TestCase):
         # Verify that even on failure, the SMTP password is never in logs
         dummy_secret = "secret_pw_12345"
         with patch.dict(os.environ, {
-            "SMTP_USERNAME": "ckdteam2027@gmail.com",
+            "SMTP_USERNAME": "test_user@example.com",
             "SMTP_PASSWORD": dummy_secret,
-            "MAIL_SENDER": "ckdteam2027@gmail.com"
+            "MAIL_SENDER": "test_user@example.com"
         }):
             with self.app.test_request_context():
                 session['email'] = 'patient_secret_ident@example.com'

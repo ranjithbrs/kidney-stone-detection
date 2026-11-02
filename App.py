@@ -24,13 +24,11 @@ from flask import Flask, render_template, flash, request, session, redirect, url
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
-# Securely load local .env if present (preserves existing environment variables)
-try:
-    from dotenv import load_dotenv
-    _env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
-    load_dotenv(dotenv_path=_env_path, override=False)
-except ImportError:
-    pass
+from dotenv import load_dotenv
+
+# Securely load project local .env before reading environment variables (preserves existing environment)
+_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+load_dotenv(dotenv_path=_env_path, override=False)
 
 # Initialize Flask Application
 app = Flask(__name__)
