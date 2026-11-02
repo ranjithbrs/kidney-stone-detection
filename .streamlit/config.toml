@@ -3,8 +3,8 @@ gatherUsageStats = false
 
 [server]
 headless = true
-enableCORS = false
-enableXsrfProtection = false
+enableCORS = true
+enableXsrfProtection = true
 
 [theme]
 primaryColor = "#0f4c81"
