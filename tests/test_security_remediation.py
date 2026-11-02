@@ -181,6 +181,11 @@ class TestSecurityRemediation(unittest.TestCase):
         self.assertNotIn("7d441f27d441f27567d441f2b6176a", example_content)
         self.assertIn("FLASK_SECRET_KEY=", example_content)
         self.assertIn("DB_PASSWORD=", example_content)
+        self.assertIn("SMTP_USERNAME=ckdteam2027@gmail.com", example_content)
+        self.assertIn("SMTP_PASSWORD=", example_content)
+        for line in example_content.splitlines():
+            if line.startswith("SMTP_PASSWORD="):
+                self.assertEqual(line.strip(), "SMTP_PASSWORD=", "SMTP_PASSWORD in .env.example must have no assigned value")
 
     # ==========================================================================
     # Phase 2 & 2D Security Hardening & Behavioral Regression Tests
@@ -259,7 +264,7 @@ class TestSecurityRemediation(unittest.TestCase):
         # Subprocess without key -> Failure
         env_fail = os.environ.copy()
         env_fail['FLASK_ENV'] = 'production'
-        env_fail.pop('FLASK_SECRET_KEY', None)
+        env_fail['FLASK_SECRET_KEY'] = ''
 
         proc_fail = subprocess.run(
             [sys.executable, "-c", "import App"],
@@ -580,10 +585,94 @@ class TestSecurityRemediation(unittest.TestCase):
         })
         self.assertEqual(res_tampered.status_code, 400, "Tampered CSRF token must be rejected with 400")
 
+    def test_SEC_21_dotenv_loading_and_environment_variable_precedence(self):
+        """SEC-21: load_dotenv loads .env securely without overriding existing environment variables."""
+        import tempfile
+        from dotenv import load_dotenv
+
+        # Test precedence: existing OS environment variable takes priority over .env
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_env = os.path.join(tmpdir, ".env")
+            with open(temp_env, "w", encoding="utf-8") as f:
+                f.write("SMTP_USERNAME=file_val@gmail.com\n")
+                f.write("NEW_CKD_FEATURE_FLAG=enabled\n")
+
+            with patch.dict(os.environ, {"SMTP_USERNAME": "existing_os_user@gmail.com"}, clear=False):
+                os.environ.pop("NEW_CKD_FEATURE_FLAG", None)
+
+                # Load with override=False (the standard configuration in App.py)
+                load_dotenv(dotenv_path=temp_env, override=False)
+
+                # Existing variable must be preserved (NOT overwritten)
+                self.assertEqual(os.environ.get("SMTP_USERNAME"), "existing_os_user@gmail.com")
+                # Missing variable must be loaded from .env
+                self.assertEqual(os.environ.get("NEW_CKD_FEATURE_FLAG"), "enabled")
+
+    def test_SEC_22_smtp_graceful_disablement_when_unconfigured(self):
+        """SEC-22: sendmail gracefully skips email dispatch and returns False when SMTP is unconfigured."""
+        from flask import session
+        from App import sendmail
+
+        # Case A: Both SMTP_USERNAME and SMTP_PASSWORD missing
+        with patch.dict(os.environ, {"SMTP_USERNAME": "", "SMTP_PASSWORD": ""}):
+            with self.app.test_request_context():
+                session['email'] = 'patient@example.com'
+                with self.assertLogs(level='WARNING') as cm:
+                    result = sendmail("Critical alert message")
+                    self.assertFalse(result, "sendmail must return False when credentials are not configured")
+                    self.assertTrue(any("SMTP notification skipped: SMTP_USERNAME or SMTP_PASSWORD not configured" in o for o in cm.output))
+
+        # Case B: Password missing
+        with patch.dict(os.environ, {"SMTP_USERNAME": "ckdteam2027@gmail.com", "SMTP_PASSWORD": ""}):
+            with self.app.test_request_context():
+                session['email'] = 'patient@example.com'
+                result = sendmail("Critical alert message")
+                self.assertFalse(result, "sendmail must return False when password is empty")
+
+        # Case C: Recipient email missing from session
+        with patch.dict(os.environ, {"SMTP_USERNAME": "ckdteam2027@gmail.com", "SMTP_PASSWORD": "dummy_password_for_test"}):
+            with self.app.test_request_context():
+                result = sendmail("Critical alert message")
+                self.assertFalse(result, "sendmail must return False when session recipient email is missing")
+
+    def test_SEC_23_smtp_password_privacy_and_pii_logging(self):
+        """SEC-23: SMTP password is never logged or exposed; recipient emails are redacted."""
+        from flask import session
+        from App import sendmail, mask_email
+
+        # Verify email masking function
+        masked = mask_email("ckdteam2027@gmail.com")
+        self.assertEqual(masked, "ck***7@gmail.com")
+        self.assertNotIn("ckdteam2027", masked)
+
+        masked_short = mask_email("ab@gmail.com")
+        self.assertEqual(masked_short, "a***@gmail.com")
+
+        # Verify that even on failure, the SMTP password is never in logs
+        dummy_secret = "secret_pw_12345"
+        with patch.dict(os.environ, {
+            "SMTP_USERNAME": "ckdteam2027@gmail.com",
+            "SMTP_PASSWORD": dummy_secret,
+            "MAIL_SENDER": "ckdteam2027@gmail.com"
+        }):
+            with self.app.test_request_context():
+                session['email'] = 'patient_secret_ident@example.com'
+                with patch('smtplib.SMTP') as mock_smtp_class:
+                    mock_server = MagicMock()
+                    mock_server.login.side_effect = Exception("Authentication failed 535")
+                    mock_smtp_class.return_value = mock_server
+
+                    with self.assertLogs(level='INFO') as cm:
+                        result = sendmail("Test Alert")
+                        self.assertFalse(result)
+                        all_logs = " ".join(cm.output)
+                        self.assertNotIn(dummy_secret, all_logs, "SMTP password must never appear in log records")
+                        self.assertNotIn("patient_secret_ident@example.com", all_logs)
+
 
 def run_security_tests():
     print("=" * 80)
-    print("PHASE 1, 2 & 2D: COMPREHENSIVE SECURITY REGRESSION TEST SUITE (20 TESTS)")
+    print("PHASE 1, 2, 2D & SMTP: COMPREHENSIVE SECURITY REGRESSION TEST SUITE (23 TESTS)")
     print("=" * 80)
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSecurityRemediation)
     runner = unittest.TextTestRunner(verbosity=2)
