@@ -1,0 +1,242 @@
+{
+  "Dataset_A": {
+    "name": "UCI Chronic Kidney Disease (Primary)",
+    "metrics": {
+      "Logistic_Regression": {
+        "accuracy": 0.975,
+        "precision": 1.0,
+        "recall_sensitivity": 0.96,
+        "specificity": 1.0,
+        "f1_score": 0.9796,
+        "roc_auc": 1.0,
+        "mcc": 0.9487,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 2,
+          "tp": 48
+        }
+      },
+      "Decision_Tree": {
+        "accuracy": 0.975,
+        "precision": 0.98,
+        "recall_sensitivity": 0.98,
+        "specificity": 0.9667,
+        "f1_score": 0.98,
+        "roc_auc": 0.9733,
+        "mcc": 0.9467,
+        "confusion_matrix": {
+          "tn": 29,
+          "fp": 1,
+          "fn": 1,
+          "tp": 49
+        }
+      },
+      "Random_Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall_sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0,
+        "mcc": 1.0,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 0,
+          "tp": 50
+        }
+      },
+      "Support_Vector_Machine": {
+        "accuracy": 0.9875,
+        "precision": 1.0,
+        "recall_sensitivity": 0.98,
+        "specificity": 1.0,
+        "f1_score": 0.9899,
+        "roc_auc": 1.0,
+        "mcc": 0.9739,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 1,
+          "tp": 49
+        }
+      },
+      "K_Nearest_Neighbors": {
+        "accuracy": 0.9625,
+        "precision": 1.0,
+        "recall_sensitivity": 0.94,
+        "specificity": 1.0,
+        "f1_score": 0.9691,
+        "roc_auc": 1.0,
+        "mcc": 0.9244,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 3,
+          "tp": 47
+        }
+      }
+    }
+  },
+  "Dataset_B": {
+    "name": "Kidney Stone Urinalysis",
+    "metrics": {
+      "Logistic_Regression": {
+        "accuracy": 0.7778,
+        "precision": 0.7273,
+        "recall_sensitivity": 0.8889,
+        "specificity": 0.6667,
+        "f1_score": 0.8,
+        "roc_auc": 0.8519,
+        "mcc": 0.5698,
+        "confusion_matrix": {
+          "tn": 6,
+          "fp": 3,
+          "fn": 1,
+          "tp": 8
+        }
+      },
+      "Decision_Tree": {
+        "accuracy": 0.6111,
+        "precision": 0.5833,
+        "recall_sensitivity": 0.7778,
+        "specificity": 0.4444,
+        "f1_score": 0.6667,
+        "roc_auc": 0.6111,
+        "mcc": 0.2357,
+        "confusion_matrix": {
+          "tn": 4,
+          "fp": 5,
+          "fn": 2,
+          "tp": 7
+        }
+      },
+      "Random_Forest": {
+        "accuracy": 0.7222,
+        "precision": 0.6667,
+        "recall_sensitivity": 0.8889,
+        "specificity": 0.5556,
+        "f1_score": 0.7619,
+        "roc_auc": 0.8025,
+        "mcc": 0.4714,
+        "confusion_matrix": {
+          "tn": 5,
+          "fp": 4,
+          "fn": 1,
+          "tp": 8
+        }
+      },
+      "Support_Vector_Machine": {
+        "accuracy": 0.7222,
+        "precision": 0.7,
+        "recall_sensitivity": 0.7778,
+        "specificity": 0.6667,
+        "f1_score": 0.7368,
+        "roc_auc": 0.7407,
+        "mcc": 0.4472,
+        "confusion_matrix": {
+          "tn": 6,
+          "fp": 3,
+          "fn": 2,
+          "tp": 7
+        }
+      },
+      "K_Nearest_Neighbors": {
+        "accuracy": 0.6667,
+        "precision": 0.6364,
+        "recall_sensitivity": 0.7778,
+        "specificity": 0.5556,
+        "f1_score": 0.7,
+        "roc_auc": 0.6728,
+        "mcc": 0.3419,
+        "confusion_matrix": {
+          "tn": 5,
+          "fp": 4,
+          "fn": 2,
+          "tp": 7
+        }
+      }
+    }
+  },
+  "Dataset_C": {
+    "name": "Kaggle CKD Cohort",
+    "metrics": {
+      "Logistic_Regression": {
+        "accuracy": 0.975,
+        "precision": 1.0,
+        "recall_sensitivity": 0.96,
+        "specificity": 1.0,
+        "f1_score": 0.9796,
+        "roc_auc": 1.0,
+        "mcc": 0.9487,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 2,
+          "tp": 48
+        }
+      },
+      "Decision_Tree": {
+        "accuracy": 0.975,
+        "precision": 0.98,
+        "recall_sensitivity": 0.98,
+        "specificity": 0.9667,
+        "f1_score": 0.98,
+        "roc_auc": 0.9733,
+        "mcc": 0.9467,
+        "confusion_matrix": {
+          "tn": 29,
+          "fp": 1,
+          "fn": 1,
+          "tp": 49
+        }
+      },
+      "Random_Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall_sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0,
+        "mcc": 1.0,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 0,
+          "tp": 50
+        }
+      },
+      "Support_Vector_Machine": {
+        "accuracy": 0.9875,
+        "precision": 1.0,
+        "recall_sensitivity": 0.98,
+        "specificity": 1.0,
+        "f1_score": 0.9899,
+        "roc_auc": 1.0,
+        "mcc": 0.9739,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 1,
+          "tp": 49
+        }
+      },
+      "K_Nearest_Neighbors": {
+        "accuracy": 0.9625,
+        "precision": 1.0,
+        "recall_sensitivity": 0.94,
+        "specificity": 1.0,
+        "f1_score": 0.9691,
+        "roc_auc": 1.0,
+        "mcc": 0.9244,
+        "confusion_matrix": {
+          "tn": 30,
+          "fp": 0,
+          "fn": 3,
+          "tp": 47
+        }
+      }
+    }
+  }
+}

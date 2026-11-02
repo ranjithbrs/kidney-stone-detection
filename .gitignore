@@ -40,7 +40,9 @@ KidneyStoneYPY/
 *.engine
 
 # YOLO training runs
-runs/
+runs/detect/
+runs/**/weights/
+
 
 # IDE & OS files
 .idea/
