@@ -89,6 +89,7 @@
                             <h1 class="display-3 text-capitalize mb-3">Admin</h1>
                         </div>
           <form action="/adminlogin" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <div class="row g-4">
                                 <div class="col-lg-12 col-xl-12">
                                     <div class="form-floating">

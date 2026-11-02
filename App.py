@@ -1,33 +1,116 @@
 """
 Clinical Decision Support / Legacy Portal Server
-Security Remediated Implementation:
+Security Hardened Implementation (Phase 2):
 - Parameterized SQL queries (mitigates SQL injection)
 - Cryptographic password hashing & verification via werkzeug.security
 - Environment-variable configuration for secrets, database, and SMTP
-- Dynamic secure token generation for Flask SECRET_KEY
-- Removal of hardcoded plaintext credentials and email passwords
-- Safe session-based access control and database connection pooling/cleanup
+- Persistent production FLASK_SECRET_KEY enforcement & multi-worker drift mitigation
+- Built-in timing-resistant CSRF protection with automatic token injection
+- Session fixation immunity (session ID regeneration & clearance on auth)
+- Hardened session cookies (HttpOnly, Secure in prod, SameSite=Lax, strict timeout)
+- Information disclosure mitigation (sanitized database error flashes)
+- Centralized route authorization decorators (@login_required, @admin_required)
+- PII-redacted operational logging (masked patient email addresses)
 """
 
 import os
 import sys
 import secrets
+import hmac
 import logging
-from flask import Flask, render_template, flash, request, session, redirect, url_for
+from datetime import timedelta
+from functools import wraps
+from flask import Flask, render_template, flash, request, session, redirect, url_for, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
 # Initialize Flask Application
 app = Flask(__name__)
 
-# Configure Flask SECRET_KEY securely:
-# Priority 1: Read from environment variable FLASK_SECRET_KEY
-# Priority 2: Generate a cryptographically secure 32-byte hex token per process instance
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY') or secrets.token_hex(32)
+# Environment and Secret Key Management:
+# In production mode (FLASK_ENV=production), require persistent FLASK_SECRET_KEY
+# to prevent multi-worker WSGI session invalidation drift.
+FLASK_ENV = os.environ.get('FLASK_ENV', 'development').lower()
+flask_secret = os.environ.get('FLASK_SECRET_KEY')
+if FLASK_ENV == 'production' and not flask_secret:
+    raise RuntimeError("CRITICAL SECURITY ERROR: FLASK_SECRET_KEY environment variable must be set in production mode.")
+
+app.config['SECRET_KEY'] = flask_secret or secrets.token_hex(32)
+
+# Session Cookie Hardening Configuration
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 't') or FLASK_ENV == 'production',
+    SESSION_COOKIE_SAMESITE=os.environ.get('SESSION_COOKIE_SAMESITE', 'Lax'),
+    PERMANENT_SESSION_LIFETIME=timedelta(minutes=int(os.environ.get('SESSION_LIFETIME_MINUTES', '30')))
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
+
+# ==============================================================================
+# Native Anti-CSRF Middleware
+# ==============================================================================
+
+def generate_csrf_token():
+    """Generates and persists a cryptographically secure CSRF token in the session."""
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = secrets.token_hex(32)
+    return session['_csrf_token']
+
+
+@app.context_processor
+def inject_csrf_token():
+    """Injects csrf_token helper callable into all Jinja2 template contexts."""
+    return dict(csrf_token=generate_csrf_token)
+
+
+@app.before_request
+def verify_csrf_token():
+    """
+    Enforces anti-CSRF token verification for all state-changing HTTP requests.
+    Exempts safe HTTP methods (GET, HEAD, OPTIONS) and explicit testing bypasses.
+    """
+    if request.method in ('POST', 'PUT', 'DELETE', 'PATCH'):
+        if app.config.get('WTF_CSRF_ENABLED') is False or app.config.get('DISABLE_CSRF_FOR_TESTING') is True:
+            return
+        token = request.form.get('csrf_token') or request.headers.get('X-CSRF-Token')
+        expected = session.get('_csrf_token')
+        if not token or not expected or not hmac.compare_digest(token, expected):
+            logging.warning(f"CSRF validation failed for IP {request.remote_addr} on path {request.path}")
+            abort(400, description="CSRF token missing or invalid.")
+
+
+# ==============================================================================
+# Centralized Access Control Decorators
+# ==============================================================================
+
+def login_required(f):
+    """Enforces active user session authentication."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'uname' not in session:
+            flash("Session expired or invalid. Please log in.")
+            return redirect(url_for('UserLogin'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def admin_required(f):
+    """Enforces active administrator session authentication."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin'):
+            flash("Please log in as Administrator to access this area.")
+            return redirect(url_for('AdminLogin'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# ==============================================================================
+# Database Helper
+# ==============================================================================
 
 def get_db_connection():
     """
@@ -72,6 +155,8 @@ def adminlogin():
     - Removes hardcoded plaintext 'admin' / 'admin'
     - Validates credentials against environment-configured username and secure hash
     - Uses parameterized queries for database audits
+    - Protects against session fixation by clearing session and rotating CSRF token
+    - Sanitizes error messages to prevent sensitive schema disclosure
     """
     if request.method == 'POST':
         uname = request.form.get('uname', '').strip()
@@ -93,7 +178,11 @@ def adminlogin():
                 return render_template('AdminLogin.html')
 
         if is_authenticated:
+            # Session fixation protection: clear pre-existing anonymous session and rotate CSRF token
+            session.clear()
+            session['_csrf_token'] = secrets.token_hex(32)
             session['admin'] = True
+
             conn = None
             try:
                 conn = get_db_connection()
@@ -104,8 +193,8 @@ def adminlogin():
                 flash("You are Logged In as Administrator.")
                 return render_template('AdminHome.html', data=data)
             except mysql.connector.Error as err:
-                logging.error(f"Database error during admin login: {err}")
-                flash(f"Database connection error: {err.msg}")
+                logging.error(f"Database error during admin login: {err}", exc_info=True)
+                flash("A database error occurred. Please contact the clinical system administrator.")
                 return render_template('AdminLogin.html')
             finally:
                 if conn and conn.is_connected():
@@ -118,14 +207,11 @@ def adminlogin():
 
 
 @app.route("/AdminHome")
+@admin_required
 def AdminHome():
     """
-    Administrator dashboard with mandatory session verification.
+    Administrator dashboard with mandatory session verification via decorator.
     """
-    if not session.get('admin'):
-        flash("Please log in as Administrator to access this area.")
-        return redirect(url_for('AdminLogin'))
-
     conn = None
     try:
         conn = get_db_connection()
@@ -134,8 +220,8 @@ def AdminHome():
         data = cur.fetchall()
         return render_template('AdminHome.html', data=data)
     except mysql.connector.Error as err:
-        logging.error(f"Database error in AdminHome: {err}")
-        flash(f"Database connection error: {err.msg}")
+        logging.error(f"Database error in AdminHome: {err}", exc_info=True)
+        flash("A database error occurred. Please contact the clinical system administrator.")
         return render_template('AdminHome.html', data=[])
     finally:
         if conn and conn.is_connected():
@@ -159,6 +245,7 @@ def newuser():
     - Input sanitization and validation
     - Cryptographic password hashing via werkzeug.security (never stores plaintext)
     - Fully parameterized SQL INSERT query (prevents SQL injection)
+    - Sanitized database error handling
     """
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
@@ -205,8 +292,8 @@ def newuser():
             return render_template('UserLogin.html', data=data)
 
         except mysql.connector.Error as err:
-            logging.error(f"Database error during user registration: {err}")
-            flash(f"Database error during registration: {err.msg}")
+            logging.error(f"Database error during user registration: {err}", exc_info=True)
+            flash("A database error occurred during registration. Please contact the clinical system administrator.")
             return render_template('NewUser.html')
         finally:
             if conn and conn.is_connected():
@@ -227,7 +314,9 @@ def userlogin():
     Secured user authentication:
     - Fully parameterized SELECT query (prevents SQL injection)
     - Cryptographic password hash verification
-    - Transparent backward-compatible migration for legacy plaintext passwords
+    - Transparent backward-compatible migration for legacy plaintext passwords with deprecation logging
+    - Session fixation protection via session clearance & CSRF token regeneration
+    - Sanitized database error handling
     """
     if request.method == 'POST':
         uname = request.form.get('uname', '').strip()
@@ -262,9 +351,10 @@ def userlogin():
             except Exception:
                 is_valid = False
 
-            # Transparent backward-compatibility check for existing legacy plaintext records
+            # Backward-compatibility check for existing legacy plaintext records (with deprecation warning)
             if not is_valid and stored_password == pas:
                 is_valid = True
+                logging.warning(f"DEPRECATION WARNING: Account {uname} authenticated with legacy plaintext password. Auto-upgrading to hash.")
                 # Automatically upgrade legacy password to secure cryptographic hash
                 try:
                     upgraded_hash = generate_password_hash(pas)
@@ -277,6 +367,10 @@ def userlogin():
             if not is_valid:
                 flash("UserName or Password is wrong...!")
                 return render_template('UserLogin.html')
+
+            # Session fixation protection: clear pre-existing anonymous session and rotate CSRF token
+            session.clear()
+            session['_csrf_token'] = secrets.token_hex(32)
 
             # Set user session variables
             session['uname'] = uname
@@ -292,8 +386,8 @@ def userlogin():
             return render_template('UserHome.html', data=user_data)
 
         except mysql.connector.Error as err:
-            logging.error(f"Database error during user login: {err}")
-            flash(f"Database connection error: {err.msg}")
+            logging.error(f"Database error during user login: {err}", exc_info=True)
+            flash("A database error occurred. Please contact the clinical system administrator.")
             return render_template('UserLogin.html')
         finally:
             if conn and conn.is_connected():
@@ -303,14 +397,11 @@ def userlogin():
 
 
 @app.route("/UserHome")
+@login_required
 def UserHome():
     """
-    User home portal with session authentication safeguard.
+    User home portal with session authentication safeguard via decorator.
     """
-    if 'uname' not in session:
-        flash("Session expired or invalid. Please log in.")
-        return redirect(url_for('UserLogin'))
-
     uname = session['uname']
     conn = None
     try:
@@ -321,8 +412,8 @@ def UserHome():
         data = cur.fetchall()
         return render_template('UserHome.html', data=data)
     except mysql.connector.Error as err:
-        logging.error(f"Database error in UserHome: {err}")
-        flash(f"Database error: {err.msg}")
+        logging.error(f"Database error in UserHome: {err}", exc_info=True)
+        flash("A database error occurred. Please contact the clinical system administrator.")
         return render_template('UserHome.html', data=[])
     finally:
         if conn and conn.is_connected():
@@ -341,12 +432,27 @@ def logout():
 # SMTP Alerting (Secured & Environment-Configured)
 # ==============================================================================
 
+def mask_email(email_str):
+    """Masks patient email address for privacy-compliant logging (HIPAA/GDPR)."""
+    if not email_str or '@' not in email_str:
+        return "***"
+    parts = email_str.split('@')
+    user_part = parts[0]
+    domain_part = parts[1]
+    if len(user_part) <= 2:
+        masked_user = user_part[0] + "***"
+    else:
+        masked_user = user_part[:2] + "***" + user_part[-1]
+    return f"{masked_user}@{domain_part}"
+
+
 def sendmail(message, attachment_path="alert.jpg"):
     """
     Secured email dispatch:
     - Never hardcodes SMTP credentials or email passwords
     - Reads credentials from environment variables (SMTP_USERNAME, SMTP_PASSWORD)
     - Gracefully skips email dispatch if credentials are not configured in environment
+    - Redacts patient PII from operational log entries
     """
     smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
     smtp_port = int(os.environ.get('SMTP_PORT', '587'))
@@ -393,7 +499,7 @@ def sendmail(message, attachment_path="alert.jpg"):
         server.starttls()
         server.login(smtp_user, smtp_pass)
         server.sendmail(fromaddr, toaddr, msg.as_string())
-        logging.info(f"Alert email successfully dispatched to {toaddr}")
+        logging.info(f"Alert email successfully dispatched to {mask_email(toaddr)}")
         return True
     except Exception as e:
         logging.error(f"Failed to send email alert: {e}")

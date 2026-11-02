@@ -89,6 +89,7 @@
                             <h1 class="display-3 text-capitalize mb-3">User</h1>
                         </div>
           <form action="/newuser" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="row g-4">
 
         <div class="col-12">
