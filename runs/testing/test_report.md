@@ -1,12 +1,12 @@
 # Phase 11: Clinical Testing & Debugging Quality Assurance Report
 
-**Execution Timestamp**: 2026-11-02 20:10:19  
+**Execution Timestamp**: 2026-11-02 22:09:38  
 **Overall Status**: ALL TESTS PASSED  
 **Total Test Cases**: 24  
 **Tests Passed**: 24  
 **Tests Failed / Errors**: 0  
 **Verification Success Rate**: 100.00%  
-**Total Latency**: 2.234 seconds  
+**Total Latency**: 1.778 seconds  
 
 ---
 
@@ -14,16 +14,16 @@
 
 | Verification Dimension | Tests Run | Passed | Failed | Errors | Duration | Status |
 |---|---|---|---|---|---|---|
-| **1. Normal Inputs** | 2 | 2 | 0 | 0 | 56.0 ms | `PASS` |
-| **2. Missing & Partial Inputs** | 3 | 3 | 0 | 0 | 75.7 ms | `PASS` |
-| **3. Invalid Data Types & Rejection** | 3 | 3 | 0 | 0 | 79.9 ms | `PASS` |
-| **4. Unusual Numerical Values & Outliers** | 3 | 3 | 0 | 0 | 85.6 ms | `PASS` |
-| **5. Model Loading & Deserialization** | 3 | 3 | 0 | 0 | 137.9 ms | `PASS` |
-| **6. Prediction Determinism & Monotonicity** | 3 | 3 | 0 | 0 | 1400.3 ms | `PASS` |
-| **7. Feature Attribution & XAI Generation** | 2 | 2 | 0 | 0 | 131.1 ms | `PASS` |
-| **8. Diagnostic Report Assembly** | 1 | 1 | 0 | 0 | 99.5 ms | `PASS` |
-| **9. Application Health & Visual Assets** | 2 | 2 | 0 | 0 | 9.7 ms | `PASS` |
-| **10. End-to-End Workflow & Cohort Throughput** | 2 | 2 | 0 | 0 | 156.1 ms | `PASS` |
+| **1. Normal Inputs** | 2 | 2 | 0 | 0 | 53.8 ms | `PASS` |
+| **2. Missing & Partial Inputs** | 3 | 3 | 0 | 0 | 74.1 ms | `PASS` |
+| **3. Invalid Data Types & Rejection** | 3 | 3 | 0 | 0 | 74.7 ms | `PASS` |
+| **4. Unusual Numerical Values & Outliers** | 3 | 3 | 0 | 0 | 77.9 ms | `PASS` |
+| **5. Model Loading & Deserialization** | 3 | 3 | 0 | 0 | 113.0 ms | `PASS` |
+| **6. Prediction Determinism & Monotonicity** | 3 | 3 | 0 | 0 | 1228.6 ms | `PASS` |
+| **7. Feature Attribution & XAI Generation** | 2 | 2 | 0 | 0 | 69.1 ms | `PASS` |
+| **8. Diagnostic Report Assembly** | 1 | 1 | 0 | 0 | 29.9 ms | `PASS` |
+| **9. Application Health & Visual Assets** | 2 | 2 | 0 | 0 | 1.7 ms | `PASS` |
+| **10. End-to-End Workflow & Cohort Throughput** | 2 | 2 | 0 | 0 | 51.5 ms | `PASS` |
 
 ---
 
