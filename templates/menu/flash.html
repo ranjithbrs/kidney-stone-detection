@@ -1,0 +1,127 @@
+<style>
+    /* Toast Container */
+#toast-container{
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 9999;
+    max-width: calc(100vw - 40px);
+}
+
+/* Toast Box */
+.custom-toast{
+    min-width: 320px;
+    max-width: 400px;
+    background: #FE5D37;
+    color: #fff;
+    padding: 16px 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    animation: slideIn .5s ease;
+}
+
+/* Close Button */
+.close-toast{
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 15px;
+    line-height: 1;
+    padding: 0;
+}
+
+/* Animation */
+@keyframes slideIn{
+    from{
+        opacity:0;
+        transform:translateX(100%);
+    }
+    to{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+@keyframes slideOut{
+    from{
+        opacity:1;
+        transform:translateX(0);
+    }
+    to{
+        opacity:0;
+        transform:translateX(100%);
+    }
+}
+
+/* Responsive design for mobile screens */
+@media (max-width: 480px) {
+    #toast-container {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        max-width: none;
+    }
+    .custom-toast {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+</style>
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div id="toast-container">
+    {% for message in messages %}
+    <div class="custom-toast">
+        <span>{{ message }}</span>
+        <button class="close-toast" aria-label="Close">&times;</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toasts = document.querySelectorAll(".custom-toast");
+
+    toasts.forEach(function(toast){
+
+        // Function to remove toast with animation
+        function dismissToast() {
+            toast.style.animation = "slideOut 0.5s ease forwards";
+
+            toast.addEventListener("animationend", function () {
+                toast.remove();
+            }, { once: true });
+        }
+
+        // Attach event listener to close button
+        const closeBtn = toast.querySelector(".close-toast");
+        if (closeBtn) {
+            closeBtn.addEventListener("click", function() {
+                dismissToast();
+            });
+        }
+
+        // Automatically hide after 4 seconds
+        setTimeout(function(){
+            // Only auto-dismiss if the toast is still in the DOM
+            if (toast.parentElement) {
+                dismissToast();
+            }
+        }, 4000);
+
+    });
+
+});
+</script>

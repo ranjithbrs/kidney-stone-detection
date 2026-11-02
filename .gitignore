@@ -1,0 +1,56 @@
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer archives & temporary raw bundles
+pyfilenew/
+KidneyStoneYPY/
+*.exe
+*.rar
+*.zip
+
+# Large model weights (keep lightweight configs/scripts)
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# YOLO training runs
+runs/
+
+# IDE & OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Sensitive data / logs
+*.log
+instance/
+.webassets-cache
