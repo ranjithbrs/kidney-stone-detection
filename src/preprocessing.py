@@ -190,7 +190,12 @@ class ClinicalDataPreprocessor:
     def transform_single_record(self, record_dict):
         """Transforms a single incoming patient record (dictionary) for real-time inference."""
         df = pd.DataFrame([record_dict])
-        df_sanitized = self._sanitize_raw_df(df)
+        return self.transform_df(df)
+
+    def transform_df(self, df):
+        """Transforms a multi-record DataFrame in a single vectorized batch operation."""
+        df_copy = df.copy()
+        df_sanitized = self._sanitize_raw_df(df_copy)
         # Ensure all expected columns exist
         for col in self.num_cols + self.cat_cols:
             if col not in df_sanitized.columns:

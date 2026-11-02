@@ -47,17 +47,24 @@ class KidneyDiagnosticPipeline:
     def _validate_and_sanitize_record(self, raw_record):
         """
         Validates, handles missing/invalid types, and clamps bounds for a single patient input.
+        Guarantees fault-tolerant execution under all anomalous edge cases:
+        - Non-dict / None input
+        - Missing features
+        - NaN / Inf values
+        - Out-of-bounds numerical outliers
+        - Non-standard categorical variants
         """
+        if not isinstance(raw_record, dict):
+            raw_record = {}
+
         sanitized = {}
-        # Expected all features needed by preprocessor
         all_expected = self.preprocessor.feature_names
 
         for feat in all_expected:
             raw_val = raw_record.get(feat, None)
 
-            # Handle None, empty string, nan
-            if raw_val is None or str(raw_val).strip() in ["", "?", "nan", "None", "null"]:
-                # Default to median/safe value if missing
+            # Handle None, empty string, nan, null
+            if raw_val is None or str(raw_val).strip() in ["", "?", "nan", "NaN", "None", "null"]:
                 if feat in self.feature_bounds:
                     sanitized[feat] = self.feature_bounds[feat][2]
                 else:
@@ -68,21 +75,71 @@ class KidneyDiagnosticPipeline:
             if feat in self.preprocessor.num_cols:
                 try:
                     num_val = float(str(raw_val).strip().replace('\t', ''))
-                    # Bounds checking
-                    if feat in self.feature_bounds:
+                    # Check for NaN or Inf
+                    if np.isnan(num_val) or np.isinf(num_val):
+                        num_val = self.feature_bounds[feat][2] if feat in self.feature_bounds else 0.0
+                    elif feat in self.feature_bounds:
                         low, high, default = self.feature_bounds[feat]
-                        if num_val < low or num_val > high:
-                            # Clamp to bounds to prevent out-of-distribution crashes
-                            num_val = max(low, min(high, num_val))
+                        num_val = max(low, min(high, num_val))
                     sanitized[feat] = num_val
                 except (ValueError, TypeError):
                     sanitized[feat] = self.feature_bounds[feat][2] if feat in self.feature_bounds else 0.0
             else:
-                # Categorical field sanitation
+                # Categorical field sanitation & synonym mapping
                 cat_val = str(raw_val).strip().lower().replace('\t', '')
+                if cat_val in ["1", "true", "t", "yes", "y", "present"]:
+                    cat_val = "yes" if feat in ["htn", "dm", "cad", "pe", "ane"] else "present"
+                elif cat_val in ["0", "false", "f", "no", "n", "notpresent", "absent"]:
+                    cat_val = "no" if feat in ["htn", "dm", "cad", "pe", "ane"] else "notpresent"
                 sanitized[feat] = cat_val
 
         return sanitized
+
+    def generate_clinical_report(self, patient_dict, result=None):
+        """
+        Generates a standard clinical diagnostic text report.
+        """
+        if result is None:
+            result = self.predict_single(patient_dict, include_attributions=True)
+
+        report = f"""================================================================================
+                    NEFROAI CLINICAL DIAGNOSTIC EVALUATION
+================================================================================
+Timestamp: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}
+System: NefroAI Clinical Decision Support System (IEEE Access Framework)
+Champion Model: {type(self.model).__name__} (5-Fold Stratified Tuned)
+
+1. PATIENT LABORATORY PARAMETERS:
+--------------------------------------------------------------------------------
+"""
+        for k in self.selected_features:
+            val = patient_dict.get(k, result['sanitized_inputs'].get(k, 'N/A'))
+            report += f"- {k:<6}: {val}\n"
+
+        report += f"""
+2. DIAGNOSTIC ASSESSMENT & RISK SCORE:
+--------------------------------------------------------------------------------
+- Diagnostic Class:                {result['diagnosis']}
+- Calibrated Disease Probability:  {result['risk_probability']*100:.2f}%
+- Clinical Triage Tier:            {result['risk_category']}
+- Model Confidence:                {result['confidence_score']*100:.2f}%
+
+3. EXPLAINABLE AI (XAI) ATTRIBUTIONS:
+--------------------------------------------------------------------------------
+Top risk contributors identified by Shapley feature weights:
+"""
+        if "feature_attributions" in result:
+            for k, v in result["feature_attributions"].items():
+                report += f"- {k:<6}: Importance Weight = {v['importance_weight']:.4f} (Normalized = {v['normalized_value']:+.2f})\n"
+
+        report += """
+================================================================================
+DISCLAIMER: This report is generated by a Clinical Decision Support System
+(CDSS) for investigational and triaging assistance. Final clinical judgment
+and therapeutic regimens must be verified by a board-certified physician.
+================================================================================
+"""
+        return report
 
     def predict_single(self, patient_dict, include_attributions=True):
         """
@@ -142,9 +199,59 @@ class KidneyDiagnosticPipeline:
 
         return result
 
-    def predict_batch(self, df):
-        """Batch prediction for multiple patient records."""
-        results = [self.predict_single(row.to_dict(), include_attributions=False) for _, row in df.iterrows()]
+    def predict_batch(self, df_or_records):
+        """
+        High-throughput vectorized batch prediction for multiple patient records.
+        Accepts pandas DataFrame or list of dicts.
+        """
+        if df_or_records is None:
+            return pd.DataFrame()
+        if isinstance(df_or_records, list):
+            if len(df_or_records) == 0:
+                return pd.DataFrame()
+            df = pd.DataFrame(df_or_records)
+        else:
+            df = df_or_records
+        if len(df) == 0:
+            return pd.DataFrame()
+
+        # Sanitize all incoming records
+        records = df.to_dict(orient="records")
+        sanitized_records = [self._validate_and_sanitize_record(r) for r in records]
+        df_sanitized = pd.DataFrame(sanitized_records)
+
+        # Batch transform via preprocessor
+        if hasattr(self.preprocessor, "transform_df"):
+            transformed_df = self.preprocessor.transform_df(df_sanitized)
+        else:
+            transformed_df = pd.concat([self.preprocessor.transform_single_record(r) for r in sanitized_records], ignore_index=True)
+
+        X_selected = transformed_df[self.selected_features]
+
+        # Vectorized model inference
+        preds = self.model.predict(X_selected)
+        probs = self.model.predict_proba(X_selected)[:, 1]
+
+        results = []
+        for pred, prob in zip(preds, probs):
+            p = float(prob)
+            cls_int = int(pred)
+            if p < 0.25:
+                cat = "Low Risk (Normal)"
+            elif p < 0.50:
+                cat = "Moderate Risk (Observation Suggested)"
+            elif p < 0.80:
+                cat = "High Risk (Clinical Evaluation Recommended)"
+            else:
+                cat = "Critical Risk (Urgent Nephrology Consultation Required)"
+
+            results.append({
+                "diagnostic_class": cls_int,
+                "diagnosis": self.class_names.get(cls_int, str(cls_int)),
+                "risk_probability": round(p, 4),
+                "risk_category": cat
+            })
+
         return pd.DataFrame(results)
 
     def save(self, filepath="models/clinical_pipeline.joblib"):

@@ -1,0 +1,101 @@
+{
+  "timestamp": "2026-11-02 20:10:19",
+  "total_tests": 24,
+  "passed": 24,
+  "failed": 0,
+  "success_rate_pct": 100.0,
+  "total_elapsed_seconds": 2.2344,
+  "suites": [
+    {
+      "dimension": "1. Normal Inputs",
+      "tests_run": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.056,
+      "status": "PASS"
+    },
+    {
+      "dimension": "2. Missing & Partial Inputs",
+      "tests_run": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.0757,
+      "status": "PASS"
+    },
+    {
+      "dimension": "3. Invalid Data Types & Rejection",
+      "tests_run": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.0799,
+      "status": "PASS"
+    },
+    {
+      "dimension": "4. Unusual Numerical Values & Outliers",
+      "tests_run": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.0856,
+      "status": "PASS"
+    },
+    {
+      "dimension": "5. Model Loading & Deserialization",
+      "tests_run": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.1379,
+      "status": "PASS"
+    },
+    {
+      "dimension": "6. Prediction Determinism & Monotonicity",
+      "tests_run": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 1.4003,
+      "status": "PASS"
+    },
+    {
+      "dimension": "7. Feature Attribution & XAI Generation",
+      "tests_run": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.1311,
+      "status": "PASS"
+    },
+    {
+      "dimension": "8. Diagnostic Report Assembly",
+      "tests_run": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.0995,
+      "status": "PASS"
+    },
+    {
+      "dimension": "9. Application Health & Visual Assets",
+      "tests_run": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.0097,
+      "status": "PASS"
+    },
+    {
+      "dimension": "10. End-to-End Workflow & Cohort Throughput",
+      "tests_run": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "elapsed_seconds": 0.1561,
+      "status": "PASS"
+    }
+  ],
+  "failures": []
+}
