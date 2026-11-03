@@ -1,12 +1,12 @@
 # Phase 11: Clinical Testing & Debugging Quality Assurance Report
 
-**Execution Timestamp**: 2026-11-02 22:43:39  
-**Overall Status**: ALL TESTS PASSED  
-**Total Test Cases**: 24  
-**Tests Passed**: 24  
-**Tests Failed / Errors**: 0  
-**Verification Success Rate**: 100.00%  
-**Total Latency**: 1.811 seconds  
+**Execution Timestamp**: 2026-11-03 18:09:48
+**Overall Status**: ALL TESTS PASSED
+**Total Test Cases**: 25
+**Tests Passed**: 25
+**Tests Failed / Errors**: 0
+**Verification Success Rate**: 100.00%
+**Total Latency**: 3.050 seconds
 
 ---
 
@@ -14,16 +14,16 @@
 
 | Verification Dimension | Tests Run | Passed | Failed | Errors | Duration | Status |
 |---|---|---|---|---|---|---|
-| **1. Normal Inputs** | 2 | 2 | 0 | 0 | 55.1 ms | `PASS` |
-| **2. Missing & Partial Inputs** | 3 | 3 | 0 | 0 | 69.4 ms | `PASS` |
-| **3. Invalid Data Types & Rejection** | 3 | 3 | 0 | 0 | 69.8 ms | `PASS` |
-| **4. Unusual Numerical Values & Outliers** | 3 | 3 | 0 | 0 | 77.0 ms | `PASS` |
-| **5. Model Loading & Deserialization** | 3 | 3 | 0 | 0 | 110.1 ms | `PASS` |
-| **6. Prediction Determinism & Monotonicity** | 3 | 3 | 0 | 0 | 1263.3 ms | `PASS` |
-| **7. Feature Attribution & XAI Generation** | 2 | 2 | 0 | 0 | 65.5 ms | `PASS` |
-| **8. Diagnostic Report Assembly** | 1 | 1 | 0 | 0 | 35.0 ms | `PASS` |
-| **9. Application Health & Visual Assets** | 2 | 2 | 0 | 0 | 2.8 ms | `PASS` |
-| **10. End-to-End Workflow & Cohort Throughput** | 2 | 2 | 0 | 0 | 58.7 ms | `PASS` |
+| **1. Normal Inputs** | 2 | 2 | 0 | 0 | 221.6 ms | `PASS` |
+| **2. Missing & Partial Inputs** | 4 | 4 | 0 | 0 | 77.9 ms | `PASS` |
+| **3. Invalid Data Types & Rejection** | 3 | 3 | 0 | 0 | 34.4 ms | `PASS` |
+| **4. Unusual Numerical Values & Outliers** | 3 | 3 | 0 | 0 | 103.3 ms | `PASS` |
+| **5. Model Loading & Deserialization** | 3 | 3 | 0 | 0 | 154.7 ms | `PASS` |
+| **6. Prediction Determinism & Monotonicity** | 3 | 3 | 0 | 0 | 2156.6 ms | `PASS` |
+| **7. Feature Attribution & XAI Generation** | 2 | 2 | 0 | 0 | 100.8 ms | `PASS` |
+| **8. Diagnostic Report Assembly** | 1 | 1 | 0 | 0 | 63.3 ms | `PASS` |
+| **9. Application Health & Visual Assets** | 2 | 2 | 0 | 0 | 5.1 ms | `PASS` |
+| **10. End-to-End Workflow & Cohort Throughput** | 2 | 2 | 0 | 0 | 130.4 ms | `PASS` |
 
 ---
 
@@ -47,11 +47,11 @@
 
 ## 3. Discovered & Resolved Issues
 
-- **Issue 1**: `raw_record` validation crashed if passed `None` or non-dict objects.  
+- **Issue 1**: `raw_record` validation crashed if passed `None` or non-dict objects.
   *Fix*: Added explicit `isinstance(raw_record, dict)` guard in `KidneyDiagnosticPipeline._validate_and_sanitize_record`.
-- **Issue 2**: `float('nan')` comparison against bounds evaluated to `False` in Python, bypassing clamping.  
+- **Issue 2**: `float('nan')` comparison against bounds evaluated to `False` in Python, bypassing clamping.
   *Fix*: Added explicit `np.isnan(num_val) or np.isinf(num_val)` check replacing invalid floats with default clinical medians.
-- **Issue 3**: In-loop row creation in `predict_batch` caused high latency on large cohorts.  
+- **Issue 3**: In-loop row creation in `predict_batch` caused high latency on large cohorts.
   *Fix*: Added vectorized `transform_df` batch method to `ClinicalDataPreprocessor` and optimized vectorized inference in `predict_batch`.
-- **Issue 4**: Discrepancies in categorical representations (`"1"`, `"0"`, `"True"`, `"False"`).  
+- **Issue 4**: Discrepancies in categorical representations (`"1"`, `"0"`, `"True"`, `"False"`).
   *Fix*: Added synonym normalization mapping affirmative/negative variants to `"yes"` and `"no"`.

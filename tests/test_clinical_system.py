@@ -66,33 +66,48 @@ class TestNormalInputs(unittest.TestCase):
 
 
 class TestMissingInputs(unittest.TestCase):
-    """2. Test fault-tolerant handling of incomplete and missing inputs."""
+    """2. Test safe handling of incomplete and missing inputs with clinical abstention guards."""
 
     @classmethod
     def setUpClass(cls):
         cls.pipeline = joblib.load("models/clinical_pipeline.joblib")
 
     def test_completely_empty_input(self):
+        """Empty input must be safely rejected or abstained, never yielding a normal diagnosis."""
         res = self.pipeline.predict_single({}, include_attributions=True)
-        self.assertIn(res["diagnostic_class"], [0, 1])
-        self.assertTrue(0.0 <= res["risk_probability"] <= 1.0)
-        self.assertIsNotNone(res["risk_category"])
+        self.assertIn(res["prediction_status"], ["REJECTED_INVALID_SCHEMA", "ABSTAIN_MISSING_CRITICAL_FEATURES"])
+        self.assertIsNone(res["diagnostic_class"])
+        self.assertIsNone(res["risk_probability"])
+        self.assertIsNotNone(res["abstention_reason"])
 
-    def test_sparse_partial_input(self):
+    def test_sparse_partial_input_missing_critical(self):
+        """Missing critical feature (e.g. al) must trigger safe prediction abstention."""
         partial = {"hemo": 14.5, "sc": 0.9}
         res = self.pipeline.predict_single(partial, include_attributions=True)
-        self.assertEqual(res["diagnostic_class"], 0)
-        self.assertIn("sanitized_inputs", res)
-        self.assertEqual(len(res["sanitized_inputs"]), 10)
+        self.assertEqual(res["prediction_status"], "ABSTAIN_MISSING_CRITICAL_FEATURES")
+        self.assertIsNone(res["diagnostic_class"])
+        self.assertIsNone(res["risk_probability"])
+        self.assertIn("al", res["missing_features"])
+
+    def test_sparse_partial_input_non_critical(self):
+        """When all critical features (sc, al, hemo) are present, missing non-critical features are imputed."""
+        partial = {"hemo": 14.5, "sc": 0.9, "al": 0}
+        res = self.pipeline.predict_single(partial, include_attributions=True)
+        self.assertEqual(res["prediction_status"], "INCOMPLETE_INPUT_ESTIMATE")
+        self.assertIn(res["diagnostic_class"], [0, 1])
+        self.assertIsNotNone(res["risk_probability"])
+        self.assertGreater(len(res["imputed_features"]), 0)
 
     def test_explicit_none_and_nan_values(self):
+        """Explicit NaN and None in critical fields must abstain rather than default to healthy values."""
         dirty = {
             "hemo": None, "sg": np.nan, "pcv": "nan", "sc": None,
             "rc": "null", "al": "", "bu": "  ", "bgr": "?", "htn": None, "dm": None
         }
         res = self.pipeline.predict_single(dirty, include_attributions=True)
-        self.assertIn(res["diagnostic_class"], [0, 1])
-        self.assertFalse(np.isnan(res["risk_probability"]))
+        self.assertIn(res["prediction_status"], ["ABSTAIN_MISSING_CRITICAL_FEATURES", "REJECTED_INVALID_SCHEMA"])
+        self.assertIsNone(res["diagnostic_class"])
+        self.assertIsNone(res["risk_probability"])
 
 
 class TestInvalidInputs(unittest.TestCase):
@@ -103,16 +118,21 @@ class TestInvalidInputs(unittest.TestCase):
         cls.pipeline = joblib.load("models/clinical_pipeline.joblib")
 
     def test_non_dict_input(self):
+        """Non-dict inputs must be rejected with invalid schema status."""
         res_none = self.pipeline.predict_single(None, include_attributions=True)
-        self.assertIn(res_none["diagnostic_class"], [0, 1])
+        self.assertEqual(res_none["prediction_status"], "REJECTED_INVALID_SCHEMA")
+        self.assertIsNone(res_none["diagnostic_class"])
         res_str = self.pipeline.predict_single("not_a_dict", include_attributions=True)
-        self.assertIn(res_str["diagnostic_class"], [0, 1])
+        self.assertEqual(res_str["prediction_status"], "REJECTED_INVALID_SCHEMA")
+        self.assertIsNone(res_str["diagnostic_class"])
 
     def test_unparseable_string_numbers(self):
+        """Corrupted numerical values in critical features must abstain, not default to normal values."""
         corrupted = {"hemo": "critically_anemic", "sc": "elevated_creatinine", "sg": "normal_gravity"}
         res = self.pipeline.predict_single(corrupted, include_attributions=True)
-        self.assertIn(res["diagnostic_class"], [0, 1])
-        self.assertFalse(np.isnan(res["risk_probability"]))
+        self.assertEqual(res["prediction_status"], "ABSTAIN_MISSING_CRITICAL_FEATURES")
+        self.assertIsNone(res["diagnostic_class"])
+        self.assertIsNone(res["risk_probability"])
 
     def test_categorical_synonym_mappings(self):
         cases = [
@@ -137,35 +157,60 @@ class TestUnusualNumericalValues(unittest.TestCase):
         cls.pipeline = joblib.load("models/clinical_pipeline.joblib")
 
     def test_extreme_high_outliers(self):
-        extreme_high = {
+        """Genuine clinical extremes are preserved without clamping; unphysical values are rejected."""
+        # Genuine high clinical presentation: severe CKD with acute uremic crisis
+        genuine_extreme = {
+            "hemo": 5.5, "sg": 1.010, "pcv": 20.0, "sc": 14.5, "rc": 2.2,
+            "al": 4, "bu": 180.0, "bgr": 450.0, "htn": "yes", "dm": "yes"
+        }
+        res = self.pipeline.predict_single(genuine_extreme, include_attributions=True)
+        self.assertEqual(res["prediction_status"], "PREDICTION_AVAILABLE")
+        self.assertEqual(res["diagnostic_class"], 1)
+        self.assertTrue(0.0 <= res["risk_probability"] <= 1.0)
+        # Verify genuine clinical measurements are preserved without silent clamping
+        self.assertEqual(res["sanitized_inputs"]["sc"], 14.5)
+        self.assertEqual(res["sanitized_inputs"]["bgr"], 450.0)
+
+        # Impossibly high unphysical values must be rejected, not clamped into fake valid numbers
+        impossible_high = {
             "hemo": 35.0, "sg": 1.150, "pcv": 90.0, "sc": 85.0, "rc": 20.0,
             "al": 10, "bu": 900.0, "bgr": 2500.0, "htn": "yes", "dm": "yes"
         }
-        res = self.pipeline.predict_single(extreme_high, include_attributions=True)
-        self.assertIn(res["diagnostic_class"], [0, 1])
-        self.assertTrue(0.0 <= res["risk_probability"] <= 1.0)
-        # Clamped values
-        self.assertLessEqual(res["sanitized_inputs"]["sc"], 25.0)
-        self.assertLessEqual(res["sanitized_inputs"]["bgr"], 600.0)
+        res_imp = self.pipeline.predict_single(impossible_high)
+        self.assertEqual(res_imp["prediction_status"], "ABSTAIN_MISSING_CRITICAL_FEATURES")
+        self.assertIsNone(res_imp["risk_probability"])
 
     def test_negative_values(self):
+        """Negative measurements are physiologically impossible; must abstain, never clamp to healthy values."""
         negative_input = {
             "hemo": -5.0, "sg": -1.0, "pcv": -30.0, "sc": -4.0, "rc": -2.0,
             "al": -1, "bu": -50.0, "bgr": -100.0, "htn": "no", "dm": "no"
         }
         res = self.pipeline.predict_single(negative_input, include_attributions=True)
-        self.assertGreaterEqual(res["sanitized_inputs"]["hemo"], 2.5)
-        self.assertGreaterEqual(res["sanitized_inputs"]["sc"], 0.2)
-        self.assertTrue(0.0 <= res["risk_probability"] <= 1.0)
+        self.assertEqual(res["prediction_status"], "ABSTAIN_MISSING_CRITICAL_FEATURES")
+        self.assertIsNone(res["diagnostic_class"])
+        self.assertIsNone(res["risk_probability"])
+        self.assertIn("sc", res["missing_features"])
 
     def test_infinities_and_raw_nans(self):
-        inf_input = {
+        # Infinity in critical features triggers safe abstention
+        inf_crit = {
             "hemo": float('inf'), "sc": float('-inf'), "bgr": float('nan'),
             "sg": 1.020, "pcv": 40.0, "rc": 4.5, "al": 0, "bu": 30.0, "htn": "no", "dm": "no"
         }
-        res = self.pipeline.predict_single(inf_input, include_attributions=True)
-        self.assertFalse(np.isinf(res["risk_probability"]))
-        self.assertFalse(np.isnan(res["risk_probability"]))
+        res_crit = self.pipeline.predict_single(inf_crit, include_attributions=True)
+        self.assertEqual(res_crit["prediction_status"], "ABSTAIN_MISSING_CRITICAL_FEATURES")
+        self.assertIsNone(res_crit["risk_probability"])
+
+        # NaN/Inf in non-critical features is imputed safely without crashing
+        inf_noncrit = {
+            "hemo": 14.0, "sc": 1.0, "al": 0, "bgr": float('nan'),
+            "sg": 1.020, "pcv": 40.0, "rc": 4.5, "bu": 30.0, "htn": "no", "dm": "no"
+        }
+        res_noncrit = self.pipeline.predict_single(inf_noncrit, include_attributions=True)
+        self.assertEqual(res_noncrit["prediction_status"], "INCOMPLETE_INPUT_ESTIMATE")
+        self.assertFalse(np.isinf(res_noncrit["risk_probability"]))
+        self.assertFalse(np.isnan(res_noncrit["risk_probability"]))
 
 
 class TestModelLoading(unittest.TestCase):

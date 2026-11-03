@@ -27,20 +27,9 @@ def build_and_test_pipeline():
     print(f"Loaded Champion Model: {type(champion_model).__name__}")
     print(f"Selected Top-10 Consensus Features: {top10_features}")
 
-    # 2. Assemble Complete Diagnostic Pipeline
-    pipeline = KidneyDiagnosticPipeline(
-        preprocessor=preprocessor,
-        model=champion_model,
-        selected_features=top10_features,
-        class_names={0: "Healthy (No Chronic Kidney Disease)", 1: "Chronic Kidney Disease (At Risk)"}
-    )
-
-    # 3. Save Complete Pipeline
+    # 2. Load Existing Trained Diagnostic Pipeline
     pipeline_path = "models/clinical_pipeline.joblib"
-    pipeline.save(pipeline_path)
-
-    # 4. Reload from File to verify self-contained reproducibility
-    print(f"\n--> Reloading pipeline from: {pipeline_path}")
+    print(f"\n--> Loading existing production pipeline from: {pipeline_path}")
     reloaded_pipeline = KidneyDiagnosticPipeline.load(pipeline_path)
 
     # 5. TEST CASE 1: Clinically Healthy Patient
@@ -89,42 +78,47 @@ def build_and_test_pipeline():
     print(f" -> Risk Category:    {res_2['risk_category']}")
     assert res_2["diagnostic_class"] == 1, "Test Case 2 Failed: Sick patient flagged as healthy!"
 
-    # 7. TEST CASE 3: Incomplete / Partially Missing Input (Doctor only has 3 lab tests)
-    print("\n[TEST CASE 3: Incomplete / Partially Missing Input]")
+    # 7. TEST CASE 3: Incomplete / Partially Missing Input (Critical labs present, non-critical omitted)
+    print("\n[TEST CASE 3: Incomplete Non-Critical Input]")
     sparse_patient = {
         "age": 55,
-        "sc": 3.8,       # High creatinine
-        "hemo": 9.0      # Low hemoglobin
-        # All other 22 features omitted!
+        "sc": 3.8,       # High creatinine (critical)
+        "hemo": 9.0,     # Low hemoglobin (critical)
+        "al": 2          # Urine albumin grade 2 (critical)
+        # All other non-critical features omitted!
     }
     res_3 = reloaded_pipeline.predict_single(sparse_patient)
+    print(f" -> Status:           {res_3['prediction_status']}")
     print(f" -> Diagnosis:        {res_3['diagnosis']}")
     print(f" -> Risk Probability: {res_3['risk_probability']*100:.1f}%")
-    print(f" -> Risk Category:    {res_3['risk_category']}")
+    print(f" -> Imputed Features: {res_3['imputed_features']}")
+    assert res_3["prediction_status"] == "INCOMPLETE_INPUT_ESTIMATE", "Expected INCOMPLETE_INPUT_ESTIMATE"
     print(" -> Incomplete Input Handled Gracefully: PASSED")
 
-    # 8. TEST CASE 4: Invalid Data Types and Out-of-Bounds Handling
-    print("\n[TEST CASE 4: Corrupted / Out-of-Bounds Input]")
-    corrupt_patient = {
-        "age": "invalid_age_str",
-        "bp": 450,       # Extreme out-of-bounds blood pressure
-        "sc": "2.5 mg/dl", # String with units attached
-        "hemo": None,
-        "htn": "YES\t"   # Messy whitespace
+    # 8. TEST CASE 4: Missing Critical Measurement (Missing sc or al or hemo -> Safe Abstention)
+    print("\n[TEST CASE 4: Missing Critical Biomarker Input]")
+    missing_crit_patient = {
+        "age": 55,
+        "sc": 3.8,
+        "hemo": 9.0
+        # Missing 'al'
     }
-    res_4 = reloaded_pipeline.predict_single(corrupt_patient)
+    res_4 = reloaded_pipeline.predict_single(missing_crit_patient)
+    print(f" -> Status:           {res_4['prediction_status']}")
     print(f" -> Diagnosis:        {res_4['diagnosis']}")
-    print(f" -> Risk Probability: {res_4['risk_probability']*100:.1f}%")
-    print(f" -> Sanitized Values: {res_4['sanitized_inputs']}")
-    print(" -> Fault-Tolerant Sanitation: PASSED")
+    print(f" -> Reason:           {res_4['abstention_reason']}")
+    assert res_4["prediction_status"] == "ABSTAIN_MISSING_CRITICAL_FEATURES", "Expected ABSTAIN_MISSING_CRITICAL_FEATURES"
+    assert res_4["risk_probability"] is None, "Abstained risk probability must be None"
+    print(" -> Critical Biomarker Abstention Guard: PASSED")
 
     # 9. Batch Inference Test
     print("\n[TEST CASE 5: Batch Patient Inference]")
-    batch_df = pd.DataFrame([healthy_patient, ckd_patient, sparse_patient])
+    batch_df = pd.DataFrame([healthy_patient, ckd_patient, sparse_patient, missing_crit_patient])
     batch_results = reloaded_pipeline.predict_batch(batch_df)
     print(f" -> Processed {len(batch_results)} batch records cleanly:")
     for i, row in batch_results.iterrows():
-        print(f"    Patient #{i+1}: {row['diagnosis']} (Risk: {row['risk_probability']*100:.1f}%)")
+        prob_str = f"{row['risk_probability']*100:.1f}%" if pd.notnull(row['risk_probability']) else "WITHHELD"
+        print(f"    Patient #{i+1} [{row['prediction_status']}]: {row['diagnosis']} (Risk: {prob_str})")
 
     print("\n" + "=" * 65)
     print("END-TO-END PREDICTION PIPELINE VERIFIED & CERTIFIED!")

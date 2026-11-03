@@ -233,54 +233,93 @@ elif menu == "🩺 Patient Clinical Diagnosis":
             "al": al, "bu": bu, "bgr": bgr, "htn": htn, "dm": dm
         }
 
-        # Predict via pipeline
+        # Predict via pipeline with clinical input safety guards
         result = pipeline.predict_single(patient_data, include_attributions=True)
-        risk_pct = result["risk_probability"] * 100
+        status = result.get("prediction_status", "PREDICTION_AVAILABLE")
 
         st.markdown("---")
         st.subheader("Diagnostic Results & Clinical Triage")
 
-        res_col1, res_col2 = st.columns([1.5, 2])
-
-        with res_col1:
-            if result["diagnostic_class"] == 1:
-                st.markdown(f"""
-                <div class="risk-high">
-                    <h3 style="color:#b91c1c; margin-top:0;">⚠️ {result['diagnosis']}</h3>
-                    <p style="font-size:1.1rem; margin-bottom:0.5rem;"><b>Calculated Disease Risk:</b> {risk_pct:.1f}%</p>
-                    <p><b>Clinical Category:</b> {result['risk_category']}</p>
-                    <p style="font-size:0.9rem; color:#7f1d1d;">Immediate confirmation with serum eGFR and renal ultrasound recommended.</p>
-                </div>
-                """, unsafe_allow_html=True)
+        # 1. Handle Safety Abstention / Rejection Cases
+        if status.startswith("ABSTAIN") or status.startswith("REJECTED"):
+            if status == "ABSTAIN_MISSING_CRITICAL_FEATURES":
+                st.warning(f"⚠️ **Automated Prediction Withheld (Missing Critical Biomarkers)**\n\n{result['abstention_reason']}")
+            elif status == "ABSTAIN_OUT_OF_DOMAIN_MEASUREMENT":
+                st.warning(f"⚠️ **Automated Prediction Withheld (Out-of-Domain Measurement)**\n\n{result['abstention_reason']}")
+            elif status == "ABSTAIN_INVALID_INPUT_MEASUREMENT":
+                st.warning(f"⚠️ **Automated Prediction Withheld (Invalid Numerical Input)**\n\n{result['abstention_reason']}")
             else:
-                st.markdown(f"""
-                <div class="risk-low">
-                    <h3 style="color:#047857; margin-top:0;">✅ {result['diagnosis']}</h3>
-                    <p style="font-size:1.1rem; margin-bottom:0.5rem;"><b>Calculated Disease Risk:</b> {risk_pct:.1f}%</p>
-                    <p><b>Clinical Category:</b> {result['risk_category']}</p>
-                    <p style="font-size:0.9rem; color:#065f46;">All primary renal biomarkers fall within safe physiological thresholds.</p>
-                </div>
-                """, unsafe_allow_html=True)
+                st.error(f"❌ **Input Rejected (Invalid Schema)**\n\n{result['abstention_reason']}")
 
-            st.progress(risk_pct / 100.0)
+            mcol1, mcol2 = st.columns(2)
+            with mcol1:
+                st.metric("Laboratory Panel Completeness", f"{result.get('data_completeness_ratio', 0.0)*100:.1f}%")
+            with mcol2:
+                missing_str = ", ".join(result.get('missing_features', [])) if result.get('missing_features') else "None"
+                st.metric("Missing Features", missing_str)
 
-        with res_col2:
-            st.markdown("#### Patient Biomarker Impact Weights")
-            if "feature_attributions" in result:
-                impacts = result["feature_attributions"]
-                feats = list(impacts.keys())
-                weights = [impacts[f]["importance_weight"] for f in feats]
-                
-                fig, ax = plt.subplots(figsize=(6, 3.5), dpi=100)
-                y_pos = np.arange(len(feats))
-                ax.barh(y_pos, weights, color='#0f4c81', alpha=0.85)
-                ax.set_yticks(y_pos)
-                ax.set_yticklabels(feats)
-                ax.invert_yaxis()
-                ax.set_xlabel("Feature Leverage Weight")
-                plt.tight_layout()
-                st.pyplot(fig)
-                plt.close()
+            st.markdown(f"""
+            <div class="risk-high" style="border-left: 5px solid #d97706; background-color: #fffbeb;">
+                <h3 style="color:#b45309; margin-top:0;">⚠️ {result['diagnosis']}</h3>
+                <p style="font-size:1.0rem; margin-bottom:0.5rem;"><b>Safety Status:</b> {status}</p>
+                <p><b>Clinical Category:</b> {result['risk_category']}</p>
+                <p style="font-size:0.9rem; color:#92400e;">Automated prediction has been withheld. Verify the laboratory measurement and obtain qualified clinical review.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # 2. Handle Valid Predictions (Complete or Imputed Estimates)
+        else:
+            if status == "INCOMPLETE_INPUT_ESTIMATE":
+                st.info(
+                    f"ℹ️ **Incomplete Input Estimate (Panel Completeness: {result['data_completeness_ratio']*100:.1f}%)**: "
+                    f"Missing non-critical features were estimated using training medians/modes: `{result['imputed_features']}`. "
+                    "Clinical caution advised; complete laboratory panel recommended."
+                )
+            else:
+                st.success("✅ **Complete Laboratory Panel**: All 10 consensus renal biomarkers validated.")
+
+            risk_pct = result["risk_probability"] * 100
+            res_col1, res_col2 = st.columns([1.5, 2])
+
+            with res_col1:
+                if result["diagnostic_class"] == 1:
+                    st.markdown(f"""
+                    <div class="risk-high">
+                        <h3 style="color:#b91c1c; margin-top:0;">⚠️ {result['diagnosis']}</h3>
+                        <p style="font-size:1.1rem; margin-bottom:0.5rem;"><b>Calculated Disease Risk:</b> {risk_pct:.1f}%</p>
+                        <p><b>Clinical Category:</b> {result['risk_category']}</p>
+                        <p style="font-size:0.9rem; color:#7f1d1d;">Model evaluation indicates elevated risk based on consensus features. Comprehensive diagnostic workup and qualified clinical review advised.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                    <div class="risk-low">
+                        <h3 style="color:#047857; margin-top:0;">✅ {result['diagnosis']}</h3>
+                        <p style="font-size:1.1rem; margin-bottom:0.5rem;"><b>Calculated Disease Risk:</b> {risk_pct:.1f}%</p>
+                        <p><b>Clinical Category:</b> {result['risk_category']}</p>
+                        <p style="font-size:0.9rem; color:#065f46;">Model evaluation indicates low risk based on the consensus features evaluated.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.progress(risk_pct / 100.0)
+
+            with res_col2:
+                st.markdown("#### Patient Biomarker Impact Weights")
+                if "feature_attributions" in result:
+                    impacts = result["feature_attributions"]
+                    feats = list(impacts.keys())
+                    weights = [impacts[f]["importance_weight"] for f in feats]
+
+                    fig, ax = plt.subplots(figsize=(6, 3.5), dpi=100)
+                    y_pos = np.arange(len(feats))
+                    ax.barh(y_pos, weights, color='#0f4c81', alpha=0.85)
+                    ax.set_yticks(y_pos)
+                    ax.set_yticklabels(feats)
+                    ax.invert_yaxis()
+                    ax.set_xlabel("Feature Leverage Weight")
+                    plt.tight_layout()
+                    st.pyplot(fig)
+                    plt.close()
 
         # Save current evaluation in session state for report download
         st.session_state.last_result = result
@@ -377,48 +416,10 @@ elif menu == "📄 Clinical Report Export":
 
         # Preview Report
         st.markdown("### Report Preview")
-        report_text = f"""================================================================================
-                    NEFROAI CLINICAL DIAGNOSTIC EVALUATION
-================================================================================
-Generated Date: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}
-System: NefroAI Renal Decision Support System (IEEE Access Framework)
-Champion Model: Random Forest Classifier (5-Fold Stratified Tuned)
-
-1. PATIENT LABORATORY PARAMETERS:
---------------------------------------------------------------------------------
-- Hemoglobin (hemo):               {pat.get('hemo')} g/dL
-- Specific Gravity (sg):           {pat.get('sg')}
-- Packed Cell Volume (pcv):        {pat.get('pcv')} %
-- Serum Creatinine (sc):           {pat.get('sc')} mg/dL
-- Red Blood Cell Count (rc):       {pat.get('rc')} M/mcL
-- Urine Albumin (al):              Grade {pat.get('al')}
-- Blood Urea (bu):                 {pat.get('bu')} mg/dL
-- Blood Glucose Random (bgr):      {pat.get('bgr')} mg/dL
-- Systemic Hypertension (htn):     {pat.get('htn').upper()}
-- Diabetes Mellitus (dm):          {pat.get('dm').upper()}
-
-2. DIAGNOSTIC ASSESSMENT & RISK SCORE:
---------------------------------------------------------------------------------
-- Diagnostic Class:                {res['diagnosis']}
-- Calibrated Disease Probability:  {res['risk_probability']*100:.2f}%
-- Clinical Triage Tier:            {res['risk_category']}
-- Model Confidence:                {res['confidence_score']*100:.2f}%
-
-3. EXPLAINABLE AI (XAI) ATTRIBUTIONS:
---------------------------------------------------------------------------------
-Primary risk contributors identified by Shapley feature weights:
-"""
-        if "feature_attributions" in res:
-            for k, v in res["feature_attributions"].items():
-                report_text += f"- {k:<6}: Importance Weight = {v['importance_weight']:.4f} (Normalized = {v['normalized_value']:+.2f})\n"
-
-        report_text += """
-================================================================================
-DISCLAIMER: This report is generated by a Clinical Decision Support System
-(CDSS) for investigational and triaging assistance. Final clinical judgment
-and therapeutic regimens must be verified by a board-certified physician.
-================================================================================
-"""
+        if pipeline:
+            report_text = pipeline.generate_clinical_report(pat, result=res)
+        else:
+            report_text = f"Report Generation Unavailable: Pipeline not loaded."
 
         st.code(report_text, language="text")
 
