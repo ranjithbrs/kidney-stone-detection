@@ -67,3 +67,7 @@ secrets.json
 secrets.yaml
 *.sqlite3
 *.db
+
+# Reproducible external datasets & intermediate processing files (NHANES 2017-2018)
+datasets/external/nhanes_2017_2018/raw/*.xpt
+datasets/external/nhanes_2017_2018/processed/nhanes_2017_2018_merged.csv

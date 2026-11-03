@@ -1,0 +1,185 @@
+{
+  "SEQN": {
+    "harmonized_name": "participant_id",
+    "role": "identifier",
+    "canonical_unit": "integer_id",
+    "description": "Respondent sequence number (unique participant ID)",
+    "exclude_from_model": true
+  },
+  "RIDAGEYR": {
+    "harmonized_name": "age_years",
+    "role": "clinical_predictor",
+    "canonical_unit": "years",
+    "description": "Age in years at screening interview (top-coded at 80 years for age >= 80)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      0.0,
+      120.0
+    ]
+  },
+  "RIDEXAGM": {
+    "harmonized_name": "age_months_exam",
+    "role": "demographic_metadata",
+    "canonical_unit": "months",
+    "description": "Age in months at MEC examination for participants aged 0-19 years (used for exact examination-age eligibility at 18-year boundary: >=216 months)",
+    "exclude_from_model": true
+  },
+  "RIDSTATR": {
+    "harmonized_name": "interview_exam_status",
+    "role": "survey_metadata",
+    "canonical_unit": "cdc_categorical",
+    "description": "Interview/Examination status: 1 = Interviewed only, 2 = Both interviewed and MEC examined",
+    "exclude_from_model": true,
+    "valid_categories": [
+      1,
+      2
+    ]
+  },
+  "RIAGENDR": {
+    "harmonized_name": "sex_code",
+    "role": "clinical_predictor",
+    "canonical_unit": "cdc_categorical",
+    "description": "Gender: 1 = Male, 2 = Female",
+    "exclude_from_model": false,
+    "valid_categories": [
+      1,
+      2
+    ]
+  },
+  "LBXSCR": {
+    "harmonized_name": "serum_creatinine",
+    "role": "clinical_predictor",
+    "canonical_unit": "mg/dL",
+    "description": "Serum creatinine (conventional unit: mg/dL, enzymatic/kinetic alkaline picrate)",
+    "si_counterpart": "LBDSCRSI (umol/L)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      0.1,
+      30.0
+    ]
+  },
+  "LBXSGL": {
+    "harmonized_name": "serum_glucose",
+    "role": "clinical_predictor",
+    "canonical_unit": "mg/dL",
+    "description": "Serum glucose (conventional unit: mg/dL, hexokinase method)",
+    "si_counterpart": "LBDSGLSI (mmol/L)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      10.0,
+      1000.0
+    ]
+  },
+  "LBXSBU": {
+    "harmonized_name": "blood_urea_nitrogen",
+    "role": "clinical_predictor",
+    "canonical_unit": "mg/dL",
+    "description": "Blood urea nitrogen (BUN; mg/dL). SEMANTIC DISTINCTION: BUN is not UCI whole blood urea (bu)",
+    "si_counterpart": "LBDSBUSI (mmol/L)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      1.0,
+      200.0
+    ]
+  },
+  "LBXSNASI": {
+    "harmonized_name": "sodium",
+    "role": "clinical_predictor",
+    "canonical_unit": "mmol/L",
+    "description": "Serum sodium (mmol/L, ion selective electrode)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      100.0,
+      180.0
+    ]
+  },
+  "LBXSKSI": {
+    "harmonized_name": "potassium",
+    "role": "clinical_predictor",
+    "canonical_unit": "mmol/L",
+    "description": "Serum potassium (mmol/L, ion selective electrode)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      1.5,
+      10.0
+    ]
+  },
+  "URXUMA": {
+    "harmonized_name": "urine_albumin",
+    "role": "clinical_predictor",
+    "canonical_unit": "ug/mL",
+    "description": "Urine albumin (ug/mL; 1 ug/mL = 1 mg/L). SEMANTIC DISTINCTION: Not UCI dipstick albumin (al)",
+    "si_counterpart": "URXUMS (mg/L)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      0.0,
+      10000.0
+    ]
+  },
+  "URXUCR": {
+    "harmonized_name": "urine_creatinine",
+    "role": "clinical_predictor",
+    "canonical_unit": "mg/dL",
+    "description": "Urine creatinine (mg/dL). SEMANTIC DISTINCTION: Urine creatinine is not serum creatinine",
+    "si_counterpart": "URXCRS (umol/L)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      1.0,
+      1000.0
+    ]
+  },
+  "URDACT": {
+    "harmonized_name": "uacr",
+    "role": "clinical_marker",
+    "canonical_unit": "mg/g",
+    "description": "Urine albumin-to-creatinine ratio (mg/g; official published ratio URDACT)",
+    "exclude_from_model": false,
+    "physiological_domain": [
+      0.0,
+      20000.0
+    ]
+  },
+  "URDUMALC": {
+    "harmonized_name": "urine_albumin_comment_code",
+    "role": "qc_metadata",
+    "canonical_unit": "cdc_comment_code",
+    "description": "Urine Albumin Comment Code: 0 = At or above lower detection limit (LOD 0.3 ug/mL); 1 = Below lower detection limit (filled by NHANES with LLOD/sqrt(2) = 0.21 ug/mL)",
+    "exclude_from_model": true,
+    "valid_categories": [
+      0,
+      1
+    ]
+  },
+  "URDUCRLC": {
+    "harmonized_name": "urine_creatinine_comment_code",
+    "role": "qc_metadata",
+    "canonical_unit": "cdc_comment_code",
+    "description": "Urine Creatinine Comment Code: 0 = At or above lower detection limit (LOD 5.0 mg/dL); 1 = Below lower detection limit (filled by NHANES with LLOD/sqrt(2) = 3.54 mg/dL)",
+    "exclude_from_model": true,
+    "valid_categories": [
+      0,
+      1
+    ]
+  },
+  "WTMEC2YR": {
+    "harmonized_name": "survey_weight",
+    "role": "survey_metadata",
+    "canonical_unit": "probability_weight",
+    "description": "Full sample 2-year Mobile Examination Center (MEC) exam weight",
+    "exclude_from_model": true
+  },
+  "SDMVSTRA": {
+    "harmonized_name": "survey_stratum",
+    "role": "survey_metadata",
+    "canonical_unit": "sampling_stratum",
+    "description": "Masked variance stratum for complex survey standard error estimation",
+    "exclude_from_model": true
+  },
+  "SDMVPSU": {
+    "harmonized_name": "survey_psu",
+    "role": "survey_metadata",
+    "canonical_unit": "sampling_unit",
+    "description": "Masked variance primary sampling unit (PSU) for cluster design",
+    "exclude_from_model": true
+  }
+}

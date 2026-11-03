@@ -1,0 +1,1818 @@
+{
+  "audit_timestamp": "2026-11-03T13:52:47.040283+00:00",
+  "structural": {
+    "total_records": 9254,
+    "total_columns": 93,
+    "duplicate_rows": 0,
+    "duplicate_participants": 0,
+    "participant_id_column": "SEQN"
+  },
+  "component_intersection_and_completeness": {
+    "demo_participant_count": 9254,
+    "interview_only_participants": 550,
+    "mec_examined_participants": 8704,
+    "biopro_component_membership": 6401,
+    "alb_cr_component_membership": 7936,
+    "intersection_biopro_and_alb_cr": 6401,
+    "records_with_valid_serum_creatinine": 5903,
+    "records_missing_creatinine_within_biopro": 498,
+    "records_with_valid_uacr": 7632,
+    "records_missing_uacr_within_alb_cr": 304,
+    "records_with_both_valid_measurements_all_ages": 5800,
+    "complete_adult_severity_records": 5069,
+    "distinction_note": "Component membership indicates presence of a participant in a laboratory data file, whereas measurement completeness indicates non-missing valid laboratory results. For example, 498 BIOPRO_J participants lack valid serum creatinine, and 304 ALB_CR_J participants lack valid UACR. Official CDC counts confirm 550 participants were interview-only (RIDSTATR=1) and 8,704 were examined at the Mobile Examination Center (RIDSTATR=2)."
+  },
+  "adult_severity_cohort": {
+    "total_participants": 9254,
+    "adult_participants_age_18_and_older": 5863,
+    "adult_population_denominator": 5863,
+    "mec_examined_adult_denominator": 5540,
+    "interview_only_adult_denominator": 323,
+    "pediatric_participants_age_under_18": 3391,
+    "pediatric_population_denominator": 3391,
+    "mec_examined_pediatric_denominator": 3164,
+    "interview_only_pediatric_denominator": 227,
+    "adults_missing_sex": 0,
+    "all_ages_with_serum_creatinine": 5903,
+    "all_ages_with_uacr": 7632,
+    "all_ages_with_both_measurements": 5800,
+    "complete_adult_severity_cohort": 5069,
+    "complete_pediatric_cases_with_both_measurements": 731,
+    "adults_excluded_missing_measurements": 794,
+    "adults_missing_creatinine": 703,
+    "adults_missing_uacr": 469,
+    "adults_missing_both_creatinine_and_uacr": 378,
+    "total_excluded_from_adult_severity": 4185,
+    "adult_severity_retention_rate_pct": 86.46,
+    "adult_severity_retention_of_all_adults_pct": 86.46,
+    "adult_severity_retention_of_mec_adults_pct": 91.5,
+    "adult_severity_share_of_total_pct": 54.78,
+    "preserves_age_80_top_coding": true,
+    "age_determination": "examination_age_exact",
+    "interview_only_18_19_investigation": {
+      "count": 19,
+      "classified_as_adult": 19,
+      "classified_as_pediatric": 0,
+      "has_laboratory_records": false,
+      "status": "Correctly classified as adult; excluded from complete lab severity cohort due to missing MEC examination"
+    },
+    "missing_laboratory_denominators": {
+      "all_adults_denominator": 5863,
+      "all_adults_missing_creatinine_count": 703,
+      "all_adults_missing_creatinine_pct": 11.99,
+      "all_adults_missing_uacr_count": 469,
+      "all_adults_missing_uacr_pct": 8.0,
+      "all_adults_missing_both_count": 378,
+      "all_adults_missing_both_pct": 6.45,
+      "all_adults_excluded_missing_labs_count": 794,
+      "all_adults_excluded_missing_labs_pct": 13.54,
+      "mec_examined_adults_denominator": 5540,
+      "mec_adults_missing_creatinine_count": 380,
+      "mec_adults_missing_creatinine_pct": 6.86,
+      "mec_adults_missing_uacr_count": 146,
+      "mec_adults_missing_uacr_pct": 2.64,
+      "mec_adults_missing_both_count": 55,
+      "mec_adults_missing_both_pct": 0.99,
+      "mec_adults_excluded_missing_labs_count": 471,
+      "mec_adults_excluded_missing_labs_pct": 8.5
+    },
+    "screening_vs_exam_age_reconciliation": {
+      "adults_using_screening_age": 5856,
+      "adults_using_examination_age": 5863,
+      "participants_transitioned_at_boundary": 7,
+      "complete_adults_using_screening_age": 5063,
+      "complete_adults_using_examination_age": 5069,
+      "reconciled_delta_complete_adults": 6
+    },
+    "methodological_basis": "CKD-EPI 2021 race-free creatinine equation is validated exclusively for adults aged >= 18 years. For participants aged 0-19 examined at MEC, age at examination (RIDEXAGM >= 216 months) was used, reconciling 7 participants who turned 18 between screening and examination (6 complete cases added). Pediatric cases (n=731 with both labs) require separate pediatric eGFR formulas (e.g. Bedside Schwartz) and are excluded from the adult severity analysis cohort. NHANES age top-coding at 80 years is preserved."
+  },
+  "missingness": {
+    "total_records": 9254,
+    "complete_clinical_cases": 5794,
+    "complete_clinical_cases_pct": 62.61,
+    "clinical_columns_evaluated": [
+      "RIDAGEYR",
+      "RIAGENDR",
+      "LBXSCR",
+      "LBXSGL",
+      "LBXSBU",
+      "LBXSNASI",
+      "LBXSKSI",
+      "URXUMA",
+      "URXUCR",
+      "URDACT"
+    ],
+    "columns": {
+      "SEQN": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "SDDSRVYR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIDSTATR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIAGENDR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIDAGEYR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIDAGEMN": {
+        "missing_count": 8657,
+        "missing_pct": 93.55,
+        "present_count": 597,
+        "dtype": "float64"
+      },
+      "RIDRETH1": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIDRETH3": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "RIDEXMON": {
+        "missing_count": 550,
+        "missing_pct": 5.94,
+        "present_count": 8704,
+        "dtype": "float64"
+      },
+      "RIDEXAGM": {
+        "missing_count": 5821,
+        "missing_pct": 62.9,
+        "present_count": 3433,
+        "dtype": "float64"
+      },
+      "DMQMILIZ": {
+        "missing_count": 3250,
+        "missing_pct": 35.12,
+        "present_count": 6004,
+        "dtype": "float64"
+      },
+      "DMQADFC": {
+        "missing_count": 8693,
+        "missing_pct": 93.94,
+        "present_count": 561,
+        "dtype": "float64"
+      },
+      "DMDBORN4": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDCITZN": {
+        "missing_count": 3,
+        "missing_pct": 0.03,
+        "present_count": 9251,
+        "dtype": "float64"
+      },
+      "DMDYRSUS": {
+        "missing_count": 7306,
+        "missing_pct": 78.95,
+        "present_count": 1948,
+        "dtype": "float64"
+      },
+      "DMDEDUC3": {
+        "missing_count": 6948,
+        "missing_pct": 75.08,
+        "present_count": 2306,
+        "dtype": "float64"
+      },
+      "DMDEDUC2": {
+        "missing_count": 3685,
+        "missing_pct": 39.82,
+        "present_count": 5569,
+        "dtype": "float64"
+      },
+      "DMDMARTL": {
+        "missing_count": 3685,
+        "missing_pct": 39.82,
+        "present_count": 5569,
+        "dtype": "float64"
+      },
+      "RIDEXPRG": {
+        "missing_count": 8144,
+        "missing_pct": 88.01,
+        "present_count": 1110,
+        "dtype": "float64"
+      },
+      "SIALANG": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "SIAPROXY": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "SIAINTRP": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "FIALANG": {
+        "missing_count": 474,
+        "missing_pct": 5.12,
+        "present_count": 8780,
+        "dtype": "float64"
+      },
+      "FIAPROXY": {
+        "missing_count": 474,
+        "missing_pct": 5.12,
+        "present_count": 8780,
+        "dtype": "float64"
+      },
+      "FIAINTRP": {
+        "missing_count": 474,
+        "missing_pct": 5.12,
+        "present_count": 8780,
+        "dtype": "float64"
+      },
+      "MIALANG": {
+        "missing_count": 2570,
+        "missing_pct": 27.77,
+        "present_count": 6684,
+        "dtype": "float64"
+      },
+      "MIAPROXY": {
+        "missing_count": 2570,
+        "missing_pct": 27.77,
+        "present_count": 6684,
+        "dtype": "float64"
+      },
+      "MIAINTRP": {
+        "missing_count": 2570,
+        "missing_pct": 27.77,
+        "present_count": 6684,
+        "dtype": "float64"
+      },
+      "AIALANGA": {
+        "missing_count": 4277,
+        "missing_pct": 46.22,
+        "present_count": 4977,
+        "dtype": "float64"
+      },
+      "DMDHHSIZ": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDFMSIZ": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHHSZA": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHHSZB": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHHSZE": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHRGND": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHRAGZ": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "DMDHREDZ": {
+        "missing_count": 490,
+        "missing_pct": 5.3,
+        "present_count": 8764,
+        "dtype": "float64"
+      },
+      "DMDHRMAZ": {
+        "missing_count": 191,
+        "missing_pct": 2.06,
+        "present_count": 9063,
+        "dtype": "float64"
+      },
+      "DMDHSEDZ": {
+        "missing_count": 4503,
+        "missing_pct": 48.66,
+        "present_count": 4751,
+        "dtype": "float64"
+      },
+      "WTINT2YR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "WTMEC2YR": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "SDMVPSU": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "SDMVSTRA": {
+        "missing_count": 0,
+        "missing_pct": 0.0,
+        "present_count": 9254,
+        "dtype": "float64"
+      },
+      "INDHHIN2": {
+        "missing_count": 491,
+        "missing_pct": 5.31,
+        "present_count": 8763,
+        "dtype": "float64"
+      },
+      "INDFMIN2": {
+        "missing_count": 474,
+        "missing_pct": 5.12,
+        "present_count": 8780,
+        "dtype": "float64"
+      },
+      "INDFMPIR": {
+        "missing_count": 1231,
+        "missing_pct": 13.3,
+        "present_count": 8023,
+        "dtype": "float64"
+      },
+      "LBXSATSI": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBDSATLC": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBXSAL": {
+        "missing_count": 3349,
+        "missing_pct": 36.19,
+        "present_count": 5905,
+        "dtype": "float64"
+      },
+      "LBDSALSI": {
+        "missing_count": 3349,
+        "missing_pct": 36.19,
+        "present_count": 5905,
+        "dtype": "float64"
+      },
+      "LBXSAPSI": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBXSASSI": {
+        "missing_count": 3372,
+        "missing_pct": 36.44,
+        "present_count": 5882,
+        "dtype": "float64"
+      },
+      "LBXSC3SI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSBU": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSBUSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSCLSI": {
+        "missing_count": 3350,
+        "missing_pct": 36.2,
+        "present_count": 5904,
+        "dtype": "float64"
+      },
+      "LBXSCK": {
+        "missing_count": 3355,
+        "missing_pct": 36.25,
+        "present_count": 5899,
+        "dtype": "float64"
+      },
+      "LBXSCR": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBDSCRSI": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBXSGB": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSGBSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSGL": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSGLSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSGTSI": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBDSGTLC": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBXSIR": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBDSIRSI": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBXSLDSI": {
+        "missing_count": 3481,
+        "missing_pct": 37.62,
+        "present_count": 5773,
+        "dtype": "float64"
+      },
+      "LBXSOSSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSPH": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSPHSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSKSI": {
+        "missing_count": 3355,
+        "missing_pct": 36.25,
+        "present_count": 5899,
+        "dtype": "float64"
+      },
+      "LBXSNASI": {
+        "missing_count": 3350,
+        "missing_pct": 36.2,
+        "present_count": 5904,
+        "dtype": "float64"
+      },
+      "LBXSTB": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBDSTBSI": {
+        "missing_count": 3352,
+        "missing_pct": 36.22,
+        "present_count": 5902,
+        "dtype": "float64"
+      },
+      "LBDSTBLC": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBXSCA": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSCASI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSCH": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBDSCHSI": {
+        "missing_count": 3351,
+        "missing_pct": 36.21,
+        "present_count": 5903,
+        "dtype": "float64"
+      },
+      "LBXSTP": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSTPSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSTR": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSTRSI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBXSUA": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "LBDSUASI": {
+        "missing_count": 3353,
+        "missing_pct": 36.23,
+        "present_count": 5901,
+        "dtype": "float64"
+      },
+      "URXUMA": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URXUMS": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URDUMALC": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URXUCR": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URXCRS": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URDUCRLC": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      },
+      "URDACT": {
+        "missing_count": 1622,
+        "missing_pct": 17.53,
+        "present_count": 7632,
+        "dtype": "float64"
+      }
+    }
+  },
+  "numerical_distributions": {
+    "SEQN": {
+      "count": 9254,
+      "min": 93703.0,
+      "max": 102956.0,
+      "mean": 98329.5,
+      "std": 2671.544,
+      "median": 98329.5,
+      "q25": 96016.25,
+      "q75": 100642.75,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SDDSRVYR": {
+      "count": 9254,
+      "min": 10.0,
+      "max": 10.0,
+      "mean": 10.0,
+      "std": 0.0,
+      "median": 10.0,
+      "q25": 10.0,
+      "q75": 10.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDSTATR": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9406,
+      "std": 0.2364,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIAGENDR": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.5076,
+      "std": 0.5,
+      "median": 2.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDAGEYR": {
+      "count": 9254,
+      "min": 0.0,
+      "max": 80.0,
+      "mean": 34.3342,
+      "std": 25.5003,
+      "median": 31.0,
+      "q25": 11.0,
+      "q75": 58.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDAGEMN": {
+      "count": 597,
+      "min": 0.0,
+      "max": 24.0,
+      "mean": 10.4372,
+      "std": 7.093,
+      "median": 10.0,
+      "q25": 4.0,
+      "q75": 17.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDRETH1": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 5.0,
+      "mean": 3.234,
+      "std": 1.2776,
+      "median": 3.0,
+      "q25": 3.0,
+      "q75": 4.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDRETH3": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 7.0,
+      "mean": 3.4972,
+      "std": 1.701,
+      "median": 3.0,
+      "q25": 3.0,
+      "q75": 4.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDEXMON": {
+      "count": 8704,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.5173,
+      "std": 0.4997,
+      "median": 2.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDEXAGM": {
+      "count": 3433,
+      "min": 0.0,
+      "max": 239.0,
+      "mean": 107.4757,
+      "std": 70.6182,
+      "median": 106.0,
+      "q25": 43.0,
+      "q75": 166.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMQMILIZ": {
+      "count": 6004,
+      "min": 1.0,
+      "max": 9.0,
+      "mean": 1.9094,
+      "std": 0.319,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMQADFC": {
+      "count": 561,
+      "min": 1.0,
+      "max": 7.0,
+      "mean": 1.4848,
+      "std": 0.5512,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDBORN4": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 99.0,
+      "mean": 1.2375,
+      "std": 1.5622,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDCITZN": {
+      "count": 9251,
+      "min": 1.0,
+      "max": 9.0,
+      "mean": 1.1186,
+      "std": 0.4667,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDYRSUS": {
+      "count": 1948,
+      "min": 1.0,
+      "max": 99.0,
+      "mean": 9.2839,
+      "std": 18.6331,
+      "median": 6.0,
+      "q25": 3.0,
+      "q75": 7.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDEDUC3": {
+      "count": 2306,
+      "min": 0.0,
+      "max": 66.0,
+      "mean": 6.3495,
+      "std": 5.8432,
+      "median": 6.0,
+      "q25": 3.0,
+      "q75": 9.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDEDUC2": {
+      "count": 5569,
+      "min": 1.0,
+      "max": 9.0,
+      "mean": 3.5258,
+      "std": 1.2402,
+      "median": 4.0,
+      "q25": 3.0,
+      "q75": 4.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDMARTL": {
+      "count": 5569,
+      "min": 1.0,
+      "max": 77.0,
+      "mean": 2.6888,
+      "std": 3.0732,
+      "median": 2.0,
+      "q25": 1.0,
+      "q75": 5.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "RIDEXPRG": {
+      "count": 1110,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 2.0306,
+      "std": 0.359,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SIALANG": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.1036,
+      "std": 0.3048,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SIAPROXY": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.6556,
+      "std": 0.4752,
+      "median": 2.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SIAINTRP": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9688,
+      "std": 0.1739,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "FIALANG": {
+      "count": 8780,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.0956,
+      "std": 0.294,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "FIAPROXY": {
+      "count": 8780,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9981,
+      "std": 0.044,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "FIAINTRP": {
+      "count": 8780,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9728,
+      "std": 0.1627,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "MIALANG": {
+      "count": 6684,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.0721,
+      "std": 0.2587,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "MIAPROXY": {
+      "count": 6684,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9925,
+      "std": 0.0862,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "MIAINTRP": {
+      "count": 6684,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.9782,
+      "std": 0.1462,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "AIALANGA": {
+      "count": 4977,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 1.1258,
+      "std": 0.377,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHHSIZ": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 7.0,
+      "mean": 3.7174,
+      "std": 1.7121,
+      "median": 4.0,
+      "q25": 2.0,
+      "q75": 5.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDFMSIZ": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 7.0,
+      "mean": 3.5926,
+      "std": 1.7585,
+      "median": 4.0,
+      "q25": 2.0,
+      "q75": 5.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHHSZA": {
+      "count": 9254,
+      "min": 0.0,
+      "max": 3.0,
+      "mean": 0.4982,
+      "std": 0.8039,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHHSZB": {
+      "count": 9254,
+      "min": 0.0,
+      "max": 3.0,
+      "mean": 0.8786,
+      "std": 1.0613,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHHSZE": {
+      "count": 9254,
+      "min": 0.0,
+      "max": 3.0,
+      "mean": 0.4907,
+      "std": 0.7553,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 1.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHRGND": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.4998,
+      "std": 0.5,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHRAGZ": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 4.0,
+      "mean": 2.8601,
+      "std": 0.8101,
+      "median": 3.0,
+      "q25": 2.0,
+      "q75": 4.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHREDZ": {
+      "count": 8764,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 2.0508,
+      "std": 0.6528,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHRMAZ": {
+      "count": 9063,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 1.4727,
+      "std": 0.7212,
+      "median": 1.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "DMDHSEDZ": {
+      "count": 4751,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 2.1107,
+      "std": 0.6885,
+      "median": 2.0,
+      "q25": 2.0,
+      "q75": 3.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "WTINT2YR": {
+      "count": 9254,
+      "min": 2571.0687,
+      "max": 433085.0053,
+      "mean": 34670.7068,
+      "std": 41356.6673,
+      "median": 21098.4543,
+      "q25": 13074.4332,
+      "q75": 36923.3164,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "WTMEC2YR": {
+      "count": 9254,
+      "min": 0.0,
+      "max": 419762.8365,
+      "mean": 34670.7068,
+      "std": 43343.9968,
+      "median": 21059.8945,
+      "q25": 12347.3119,
+      "q75": 37561.998,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SDMVPSU": {
+      "count": 9254,
+      "min": 1.0,
+      "max": 2.0,
+      "mean": 1.5176,
+      "std": 0.4997,
+      "median": 2.0,
+      "q25": 1.0,
+      "q75": 2.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "SDMVSTRA": {
+      "count": 9254,
+      "min": 134.0,
+      "max": 148.0,
+      "mean": 140.9659,
+      "std": 4.2008,
+      "median": 141.0,
+      "q25": 137.0,
+      "q75": 145.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "INDHHIN2": {
+      "count": 8763,
+      "min": 1.0,
+      "max": 99.0,
+      "mean": 12.5001,
+      "std": 17.3076,
+      "median": 8.0,
+      "q25": 6.0,
+      "q75": 14.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "INDFMIN2": {
+      "count": 8780,
+      "min": 1.0,
+      "max": 99.0,
+      "mean": 12.2025,
+      "std": 17.1553,
+      "median": 8.0,
+      "q25": 6.0,
+      "q75": 14.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "INDFMPIR": {
+      "count": 8023,
+      "min": 0.0,
+      "max": 5.0,
+      "mean": 2.3755,
+      "std": 1.6003,
+      "median": 1.92,
+      "q25": 1.04,
+      "q75": 3.69,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSATSI": {
+      "count": 5902,
+      "min": 2.0,
+      "max": 420.0,
+      "mean": 21.4202,
+      "std": 16.9494,
+      "median": 17.0,
+      "q25": 12.0,
+      "q75": 25.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSATLC": {
+      "count": 5902,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0002,
+      "std": 0.013,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSAL": {
+      "count": 5905,
+      "min": 2.1,
+      "max": 5.4,
+      "mean": 4.0786,
+      "std": 0.345,
+      "median": 4.1,
+      "q25": 3.9,
+      "q75": 4.3,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSALSI": {
+      "count": 5905,
+      "min": 21.0,
+      "max": 54.0,
+      "mean": 40.7865,
+      "std": 3.4503,
+      "median": 41.0,
+      "q25": 39.0,
+      "q75": 43.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSAPSI": {
+      "count": 5903,
+      "min": 16.0,
+      "max": 638.0,
+      "mean": 90.6161,
+      "std": 52.3927,
+      "median": 79.0,
+      "q25": 64.0,
+      "q75": 98.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSASSI": {
+      "count": 5882,
+      "min": 6.0,
+      "max": 272.0,
+      "mean": 21.7605,
+      "std": 12.9526,
+      "median": 19.0,
+      "q25": 16.0,
+      "q75": 23.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSC3SI": {
+      "count": 5901,
+      "min": 16.0,
+      "max": 38.0,
+      "mean": 25.5414,
+      "std": 2.4818,
+      "median": 26.0,
+      "q25": 24.0,
+      "q75": 27.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSBU": {
+      "count": 5901,
+      "min": 2.0,
+      "max": 79.0,
+      "mean": 14.6155,
+      "std": 5.9843,
+      "median": 14.0,
+      "q25": 11.0,
+      "q75": 17.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSBUSI": {
+      "count": 5901,
+      "min": 0.71,
+      "max": 28.2,
+      "mean": 5.2181,
+      "std": 2.1365,
+      "median": 5.0,
+      "q25": 3.93,
+      "q75": 6.07,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSCLSI": {
+      "count": 5904,
+      "min": 84.0,
+      "max": 117.0,
+      "mean": 101.0327,
+      "std": 2.7868,
+      "median": 101.0,
+      "q25": 99.0,
+      "q75": 103.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSCK": {
+      "count": 5899,
+      "min": 16.0,
+      "max": 16959.0,
+      "mean": 174.8691,
+      "std": 404.329,
+      "median": 115.0,
+      "q25": 77.0,
+      "q75": 181.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSCR": {
+      "count": 5903,
+      "min": 0.25,
+      "max": 12.74,
+      "mean": 0.8752,
+      "std": 0.4469,
+      "median": 0.82,
+      "q25": 0.68,
+      "q75": 0.98,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSCRSI": {
+      "count": 5903,
+      "min": 22.1,
+      "max": 1126.22,
+      "mean": 77.3704,
+      "std": 39.5063,
+      "median": 72.49,
+      "q25": 60.11,
+      "q75": 86.63,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSGB": {
+      "count": 5901,
+      "min": 1.8,
+      "max": 6.0,
+      "mean": 3.0872,
+      "std": 0.4313,
+      "median": 3.1,
+      "q25": 2.8,
+      "q75": 3.3,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSGBSI": {
+      "count": 5901,
+      "min": 18.0,
+      "max": 60.0,
+      "mean": 30.8717,
+      "std": 4.3129,
+      "median": 31.0,
+      "q25": 28.0,
+      "q75": 33.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSGL": {
+      "count": 5901,
+      "min": 47.0,
+      "max": 626.0,
+      "mean": 100.8776,
+      "std": 34.8347,
+      "median": 92.0,
+      "q25": 86.0,
+      "q75": 101.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSGLSI": {
+      "count": 5901,
+      "min": 2.61,
+      "max": 34.75,
+      "mean": 5.5996,
+      "std": 1.9337,
+      "median": 5.11,
+      "q25": 4.77,
+      "q75": 5.61,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSGTSI": {
+      "count": 5902,
+      "min": 2.0,
+      "max": 1192.0,
+      "mean": 29.6894,
+      "std": 42.677,
+      "median": 19.0,
+      "q25": 13.0,
+      "q75": 30.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSGTLC": {
+      "count": 5902,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0002,
+      "std": 0.013,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSIR": {
+      "count": 5902,
+      "min": 10.0,
+      "max": 476.0,
+      "mean": 87.2823,
+      "std": 36.6225,
+      "median": 83.0,
+      "q25": 62.0,
+      "q75": 107.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSIRSI": {
+      "count": 5902,
+      "min": 1.8,
+      "max": 85.3,
+      "mean": 15.6331,
+      "std": 6.5581,
+      "median": 14.9,
+      "q25": 11.1,
+      "q75": 19.2,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSLDSI": {
+      "count": 5773,
+      "min": 51.0,
+      "max": 779.0,
+      "mean": 159.6626,
+      "std": 35.0306,
+      "median": 155.0,
+      "q25": 137.0,
+      "q75": 176.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSOSSI": {
+      "count": 5901,
+      "min": 246.0,
+      "max": 314.0,
+      "mean": 280.8212,
+      "std": 5.8269,
+      "median": 281.0,
+      "q25": 277.0,
+      "q75": 284.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSPH": {
+      "count": 5901,
+      "min": 1.9,
+      "max": 9.6,
+      "mean": 3.6647,
+      "std": 0.5945,
+      "median": 3.6,
+      "q25": 3.3,
+      "q75": 4.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSPHSI": {
+      "count": 5901,
+      "min": 0.614,
+      "max": 3.1,
+      "mean": 1.1833,
+      "std": 0.192,
+      "median": 1.162,
+      "q25": 1.066,
+      "q75": 1.292,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSKSI": {
+      "count": 5899,
+      "min": 2.8,
+      "max": 6.6,
+      "mean": 4.094,
+      "std": 0.364,
+      "median": 4.1,
+      "q25": 3.9,
+      "q75": 4.3,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSNASI": {
+      "count": 5904,
+      "min": 121.0,
+      "max": 151.0,
+      "mean": 140.324,
+      "std": 2.7528,
+      "median": 140.0,
+      "q25": 138.0,
+      "q75": 142.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSTB": {
+      "count": 5903,
+      "min": 0.1,
+      "max": 3.7,
+      "mean": 0.4605,
+      "std": 0.2803,
+      "median": 0.4,
+      "q25": 0.3,
+      "q75": 0.6,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSTBSI": {
+      "count": 5902,
+      "min": 1.71,
+      "max": 63.27,
+      "mean": 7.8755,
+      "std": 4.7936,
+      "median": 6.84,
+      "q25": 5.13,
+      "q75": 10.26,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSTBLC": {
+      "count": 5903,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0002,
+      "std": 0.013,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSCA": {
+      "count": 5901,
+      "min": 6.4,
+      "max": 11.7,
+      "mean": 9.3198,
+      "std": 0.373,
+      "median": 9.3,
+      "q25": 9.1,
+      "q75": 9.6,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSCASI": {
+      "count": 5901,
+      "min": 1.6,
+      "max": 2.925,
+      "mean": 2.3299,
+      "std": 0.0932,
+      "median": 2.325,
+      "q25": 2.275,
+      "q75": 2.4,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSCH": {
+      "count": 5903,
+      "min": 77.0,
+      "max": 438.0,
+      "mean": 183.2417,
+      "std": 41.2877,
+      "median": 180.0,
+      "q25": 153.0,
+      "q75": 208.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSCHSI": {
+      "count": 5903,
+      "min": 1.991,
+      "max": 11.327,
+      "mean": 4.7386,
+      "std": 1.0677,
+      "median": 4.655,
+      "q25": 3.957,
+      "q75": 5.379,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSTP": {
+      "count": 5901,
+      "min": 5.3,
+      "max": 10.0,
+      "mean": 7.1658,
+      "std": 0.4354,
+      "median": 7.2,
+      "q25": 6.9,
+      "q75": 7.4,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSTPSI": {
+      "count": 5901,
+      "min": 53.0,
+      "max": 100.0,
+      "mean": 71.6582,
+      "std": 4.3536,
+      "median": 72.0,
+      "q25": 69.0,
+      "q75": 74.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSTR": {
+      "count": 5901,
+      "min": 25.0,
+      "max": 2923.0,
+      "mean": 137.4376,
+      "std": 109.1306,
+      "median": 111.0,
+      "q25": 77.0,
+      "q75": 162.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSTRSI": {
+      "count": 5901,
+      "min": 0.282,
+      "max": 33.001,
+      "mean": 1.5517,
+      "std": 1.2321,
+      "median": 1.253,
+      "q25": 0.869,
+      "q75": 1.829,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBXSUA": {
+      "count": 5901,
+      "min": 0.8,
+      "max": 15.1,
+      "mean": 5.4024,
+      "std": 1.4809,
+      "median": 5.3,
+      "q25": 4.3,
+      "q75": 6.3,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "LBDSUASI": {
+      "count": 5901,
+      "min": 47.6,
+      "max": 898.1,
+      "mean": 321.3352,
+      "std": 88.0852,
+      "median": 315.2,
+      "q25": 255.8,
+      "q75": 374.7,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URXUMA": {
+      "count": 7632,
+      "min": 0.21,
+      "max": 14040.0,
+      "mean": 45.801,
+      "std": 311.1692,
+      "median": 9.3,
+      "q25": 4.9,
+      "q75": 18.4,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URXUMS": {
+      "count": 7632,
+      "min": 0.21,
+      "max": 14040.0,
+      "mean": 45.801,
+      "std": 311.1692,
+      "median": 9.3,
+      "q25": 4.9,
+      "q75": 18.4,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URDUMALC": {
+      "count": 7632,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0001,
+      "std": 0.0114,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URXUCR": {
+      "count": 7632,
+      "min": 3.54,
+      "max": 621.0,
+      "mean": 125.3575,
+      "std": 84.7948,
+      "median": 109.0,
+      "q25": 61.0,
+      "q75": 169.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URXCRS": {
+      "count": 7632,
+      "min": 312.9,
+      "max": 54896.4,
+      "mean": 11081.6042,
+      "std": 7495.856,
+      "median": 9635.6,
+      "q25": 5392.4,
+      "q75": 14939.6,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URDUCRLC": {
+      "count": 7632,
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0001,
+      "std": 0.0114,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.0,
+      "negative_count": 0,
+      "non_finite_count": 0
+    },
+    "URDACT": {
+      "count": 7632,
+      "min": 0.27,
+      "max": 11676.92,
+      "mean": 42.8042,
+      "std": 299.6947,
+      "median": 8.28,
+      "q25": 5.23,
+      "q75": 15.88,
+      "negative_count": 0,
+      "non_finite_count": 0
+    }
+  },
+  "uacr_verification": {
+    "valid_triplet_count": 7632,
+    "agreement_tolerance": 0.05,
+    "agreement_count": 7632,
+    "agreement_percentage": 100.0,
+    "mean_absolute_difference": 0.0024,
+    "median_absolute_difference": 0.0024,
+    "max_absolute_difference": 0.005,
+    "mean_relative_difference": 0.0003,
+    "median_relative_difference": 0.0002,
+    "sample_discrepancies": [],
+    "methodological_note": "URDACT is published to two decimal places by NCHS; rounding differences account for minor discrepancies under 1%. Official URDACT is preserved."
+  },
+  "clinical_safeguards": {
+    "imputation_performed": false,
+    "clamping_performed": false,
+    "classification_labels_assigned": false,
+    "survey_weights_as_predictors": false
+  },
+  "merge_statistics": {
+    "demographic_cohort_count": 9254,
+    "biopro_source_count": 6401,
+    "alb_cr_source_count": 7936,
+    "biopro_matched_count": 6401,
+    "biopro_unmatched_in_demo": 2853,
+    "biopro_orphans_outside_demo": 0,
+    "alb_cr_matched_count": 7936,
+    "alb_cr_unmatched_in_demo": 1318,
+    "alb_cr_orphans_outside_demo": 0,
+    "complete_cases_all_three_components": 6401,
+    "merged_row_count": 9254,
+    "merged_column_count": 93,
+    "timestamp": "2026-11-03T13:52:45.951423+00:00"
+  }
+}

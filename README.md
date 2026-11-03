@@ -95,9 +95,14 @@ project/
 │   ├── evaluate_models.py      # Multi-model evaluation & MCDA ranker
 │   ├── explainability.py       # Dual-layer SHAP & LIME engine
 │   ├── streamlit_app.py        # Streamlit point-of-care clinical application
-│   └── run_test_suite.py       # Automated QA test runner
+│   ├── run_test_suite.py       # Automated QA test runner
+│   └── data_sources/           # External dataset ingestion & harmonization engines
+│       └── nhanes_loader.py    # Official NHANES 2017-2018 loader & quality auditor
+├── scripts/                    # Automation scripts
+│   └── download_nhanes_2017_2018.py # CDC NHANES downloader & processing pipeline
 ├── tests/                      # Formal unit & integration test suite
-│   └── test_clinical_system.py # 24 clinical verification tests across 10 dimensions
+│   ├── test_clinical_system.py # 25 clinical verification tests across 10 dimensions
+│   └── test_dataset_harmonization.py # 20 NHANES harmonization & validation tests
 ├── app_streamlit.py            # Root launcher for the Streamlit web application
 ├── App.py                      # Flask web portal (Part 2 Multimodal Integration)
 └── requirements.txt            # Pinned dependencies
@@ -131,6 +136,10 @@ Executes all 24 verification tests covering normal inputs, missing inputs, inval
 
 ## Documentation Links
 
+- [Phase 5 Existing Dataset Inventory](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_EXISTING_DATASET_INVENTORY.md)
+- [Phase 5 NHANES Data Dictionary](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_NHANES_DATA_DICTIONARY.md)
+- [Phase 5 Data Harmonization Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_DATA_HARMONIZATION_REPORT.md)
+- [Phase 5 Multi-Engine Feasibility Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_DATASET_FEASIBILITY_REPORT.md)
 - [Final Project Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/FINAL_PROJECT_REPORT.md)
 - [Presentation Slide Deck (15 Slides)](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PRESENTATION_DECK.md)
 - [Live Demo Script & Viva Defense Guide](file:///c:/Users/B%20Ranjith/Downloads/project/docs/DEMO_GUIDE.md)
