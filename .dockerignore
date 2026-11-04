@@ -1,0 +1,111 @@
+# =============================================================================
+# NEFROAI-X Docker Ignore File
+#
+# Excludes everything not required by the Dockerfile COPY instructions.
+# Minimises build context, prevents secrets / large ML artefacts / raw
+# datasets from being silently copied into the image.
+# =============================================================================
+
+# --- Python virtual environment (never copy into image) ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- Python byte-code caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Secrets and environment files ---
+# The real .env is NEVER copied. Only .env.example is included by Dockerfile.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+secrets.json
+secrets.yaml
+
+# --- Large ML weight artefacts NOT used by the CKD clinical app ---
+# YOLO computer-vision model weights (kidney stone detection only)
+models/best.pt
+models/yolo11n.pt
+models/tuned/
+models/baselines/
+models/feature_selected/
+models/preprocessor_Dataset_B.joblib
+models/preprocessor_Dataset_C.joblib
+
+# --- Raw and restricted datasets ---
+# Exclude NHANES raw XPT files (restricted public health data)
+datasets/external/
+# Exclude legacy/contaminant datasets not used by Engine 1-3
+datasets/clinical/dataset_B_kidney_stone.csv
+datasets/clinical/dataset_C_kaggle_ckd.csv
+datasets/clinical/dataset_C_simpson_kidney.csv
+# Exclude processed train/test splits (reproducible from pipeline)
+datasets/processed/
+# Exclude computer-vision image datasets (YOLO only)
+datasets/train/
+datasets/valid/
+datasets/test/
+datasets/data.yaml
+
+# --- Git and CI metadata ---
+.git/
+.github/
+.gitignore
+.pytest_cache/
+
+# --- IDE and OS artefacts ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Build / distribution artefacts ---
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# --- Installer archives ---
+*.exe
+*.rar
+*.zip
+
+# --- Documentation (informational only, not required at runtime) ---
+docs/
+README.md
+AGENTS.md
+GEMINI.md
+
+# --- Legacy Flask portal entry point (included for test suite parity) ---
+# App.py
+trainyolo.py
+
+# --- Database SQL dumps ---
+database/
+
+# --- Jupyter / share artefacts ---
+.streamlit/.DS_Store
+
+# --- Logs, reports, and temporary artefacts ---
+*.log
+reports/
+runs/audit/
+runs/baseline/
+runs/detect/
+runs/evaluation/
+runs/feature_selection/
+runs/testing/
+runs/tuning/
+# explainability plots ARE included (handled by Dockerfile explicit COPY)

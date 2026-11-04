@@ -1,6 +1,19 @@
-"""Data sources package for clinical datasets and external cohorts.
+"""Data sources package for clinical datasets, external cohorts, and test fixtures.
 """
 
+from src.data_sources.longitudinal_simulator import (
+    SYNTHETIC_DISCLAIMER,
+    SYNTHETIC_PROVENANCE_TAG,
+    LongitudinalDataSimulator,
+)
+from src.data_sources.longitudinal_loader import (
+    LongitudinalVisit,
+    LongitudinalPatientHistory,
+    LongitudinalCohort,
+    load_longitudinal_from_dataframe,
+    CRICLongitudinalAdapter,
+    BIOLOGICAL_BOUNDS,
+)
 from src.data_sources.nhanes_loader import (
     OFFICIAL_NHANES_URLS,
     STANDARDIZED_FEATURE_MAPPING,
@@ -29,4 +42,13 @@ __all__ = [
     "merge_nhanes_components",
     "validate_nhanes_source_schema",
     "verify_uacr_agreement",
+    "LongitudinalDataSimulator",
+    "SYNTHETIC_PROVENANCE_TAG",
+    "SYNTHETIC_DISCLAIMER",
+    "LongitudinalVisit",
+    "LongitudinalPatientHistory",
+    "LongitudinalCohort",
+    "load_longitudinal_from_dataframe",
+    "CRICLongitudinalAdapter",
+    "BIOLOGICAL_BOUNDS",
 ]

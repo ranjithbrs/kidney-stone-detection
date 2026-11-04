@@ -1,147 +1,230 @@
-# CKD Project Roadmap using Antigravity
-## Part 1 — Build the CKD Prediction System (Phases 1–12 Complete)
-### Explainable AI Clinical Decision Support System for Chronic Kidney Disease Early Risk Prediction
+# NEFROAI-X: Multimodal Kidney Disease Clinical Decision Support System
 
-An end-to-end, leak-free, mathematically explainable clinical diagnostic platform developed within Google DeepMind's Antigravity AI pair-programming environment, replicating and enhancing the state-of-the-art **NefroAI** architecture published in *IEEE Access* (Md. Sadi Al Huda et al.).
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Tests](https://img.shields.io/badge/tests-349%20passed-brightgreen.svg)]()
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)]()
+[![Regulatory Status](https://img.shields.io/badge/status-investigational%20software-orange.svg)]()
+[![License](https://img.shields.io/badge/license-Research%20Only-lightgrey.svg)]()
 
----
-
-## Executive Summary & Highlights
-
-- **100.0% Clinical Sensitivity**: Zero false negatives across all 50 test kidney disease patients.
-- **100.0% Clinical Specificity**: Zero false positives across all 30 test healthy controls.
-- **1.000 ROC-AUC & 0.0095 Brier Score**: Perfect class discrimination with calibrated probabilities.
-- **60% Lab Load Reduction**: Consensus hybrid feature selection distilled 24 tests down to **10 consensus biomarkers** (`hemo, sg, pcv, rc, al, htn, sc, bu, dm, bgr`).
-- **Dual-Layer Explainable AI (XAI)**: Cooperative game-theoretic **SHAP** (global beeswarm & local waterfalls) paired with **LIME** (local linear surrogate rules).
-- **Interactive Point-of-Care Web Application**: Production Streamlit application featuring clinical presets, risk gauges, real-time attribution bar charts, and one-click medical report export.
-- **100% QA Pass Rate**: Rigorous Phase 11 automated test suite (24 unit and stress tests passing in $2.23\text{ seconds}$).
+> **MANDATORY CLINICAL & REGULATORY DESIGNATION:**  
+> **INVESTIGATIONAL RESEARCH SOFTWARE — NOT A CERTIFIED MEDICAL DEVICE**  
+> **LOCAL RESEARCH SOFTWARE — NO PUBLIC DEPLOYMENT**  
+> *NEFROAI-X is an investigational Clinical Decision Support System (CDSS) developed for research, education, and algorithmic transparency evaluation. It does NOT provide definitive medical diagnoses, replace nephrologist consultation, or prescribe therapeutic management. It is NOT approved as Software as a Medical Device (SaMD) by the FDA, EMA, or national regulatory authorities.*
 
 ---
 
-## 12-Phase Execution Roadmap (Part 1)
+## 1. Executive Summary & Research Motivation
 
-| Phase | Milestone | Deliverable | Status |
-|---|---|---|---|
-| **Phase 1** | Paper Study & Architecture Mapping | Methodology analysis of *IEEE Access* NefroAI paper | **Completed** |
-| **Phase 2** | Datasets & Clinical Data Audit | Multi-dataset audit (UCI CKD, Urinalysis, Kaggle) | **Completed** |
-| **Phase 3** | Data Preprocessing Pipeline | Leak-free median/mode imputer, StandardScaler, SMOTE | **Completed** |
-| **Phase 4** | Baseline Machine Learning Models | Prototypes: Random Forest, Decision Tree, SVM, LR, KNN | **Completed** |
-| **Phase 5** | Multi-Method Feature Selection | Mutual Info, ANOVA F, RF Gini, RFE $\implies$ Top-10 Biomarkers | **Completed** |
-| **Phase 6** | Model Improvement & Tuning | Stratified 5-Fold Cross Validation hyperparameter tuning | **Completed** |
-| **Phase 7** | Model Evaluation & MCDA | Multi-Criteria Decision Analysis selecting Champion Random Forest | **Completed** |
-| **Phase 8** | Explainable AI Integration | Dual-layer SHAP TreeExplainer & LIME TabularExplainer | **Completed** |
-| **Phase 9** | Unified Prediction Pipeline | Self-contained `models/clinical_pipeline.joblib` artifact | **Completed** |
-| **Phase 10** | Streamlit Web Application | Point-of-care UI with presets, risk triage, and report export | **Completed** |
-| **Phase 11** | Testing & Quality Assurance | 24-test QA suite covering edge cases, bounds, and latency | **Completed** |
-| **Phase 12** | Final-Year Project Documentation | Full academic report, 15-slide deck, and demo defense script | **Completed** |
+Chronic Kidney Disease (CKD) affects over 850 million individuals worldwide (over 10% of the global population). Because renal functional loss is largely asymptomatic during early stages, over 90% of patients remain undiagnosed until irreversible nephron damage occurs.
+
+**NEFROAI-X** is an explainable, multimodal Clinical Decision Support System replicating and significantly expanding upon the *IEEE Access* NefroAI methodology (Md. Sadi Al Huda et al.). It addresses fundamental weaknesses in prior medical machine learning systems:
+- **Zero Data Leakage:** Eliminates global pre-split imputation and scaling; all imputers, scalers, and SMOTE rebalancers are fitted strictly on cross-validation training partitions.
+- **60% Laboratory Workload Reduction:** Compresses an exhaustive 24-test panel down to **10 consensus biomarkers** (`hemo, sg, pcv, rc, al, htn, sc, bu, dm, bgr`) via multi-method hybrid ranking (Mutual Information, ANOVA F, Gini Impurity, RFE).
+- **Three Unified Clinical Engines:** Synthesizes point-of-care screening risk, international guideline staging, and longitudinal progression velocity under an overarching clinical orchestrator.
+- **Clinical Data Quality Safety Gate (CD-CIRPVM):** Prevents silent coercion of missing tests, reconciles international measurement units, calculates a continuous Clinical Reliability Index (CRI), and automatically executes safe abstentions on low-quality data.
+- **Dual-Layer Explainable AI:** Real-time cooperative game-theoretic **SHAP** (`TreeExplainer`) waterfall attributions paired with **LIME** local decision boundaries.
+- **100% Quality Assurance:** Comprehensive 19-module automated test suite with **349 passing unit, clinical, and integration tests** (0 failures).
 
 ---
 
-## Model Evaluation Benchmarks (Held-Out Test Cohort, N = 80)
+## 2. Three-Engine Architecture
 
-| Model Architecture | Accuracy | Recall (Sensitivity) | Specificity | Precision | F1-Score | ROC-AUC | Brier Score | Latency (ms) |
-|---|---|---|---|---|---|---|---|---|
-| **Random Forest (Champion)** | **100.0%** | **100.0%** | **100.0%** | **100.0%** | **1.0000** | **1.0000** | **0.0095** | **0.041** |
-| **Gradient Boosting** | 100.0% | 100.0% | 100.0% | 100.0% | 1.0000 | 1.0000 | 0.0002 | 0.052 |
-| **Support Vector Machine** | 98.75% | 98.00% | 100.0% | 100.0% | 0.9899 | 1.0000 | 0.0163 | 0.089 |
-| **Logistic Regression** | 98.75% | 98.00% | 100.0% | 100.0% | 0.9899 | 0.9993 | 0.0125 | 0.038 |
-| **K-Nearest Neighbors** | 98.75% | 98.00% | 100.0% | 100.0% | 0.9899 | 0.9987 | 0.0142 | 0.125 |
-
----
-
-## System Architecture
+NEFROAI-X harmonizes three independent clinical decision support engines:
 
 ```mermaid
-flowchart LR
-    A["Patient Lab Inputs"] --> B["Input Sanitization & Bounds Clamping"]
-    B --> C["Leak-Free Preprocessing: Imputation & Scaling"]
-    C --> D["Consensus Top-10 Biomarkers"]
-    D --> E["Tuned Champion Random Forest"]
-    E --> F["Calibrated Risk Tier (Low to Critical)"]
-    D --> G["Dual XAI: SHAP & LIME"]
-    F --> H["Streamlit Web UI & Medical Report Export"]
-    G --> H
+flowchart TD
+    subgraph Inputs["Point-of-Care Inputs"]
+        Labs["10 Consensus Biomarkers\n(Creatinine, Albumin, Hemoglobin...)"]
+        Serial["Serial Observations\n(Follow-up Visits)"]
+    end
+
+    subgraph Gate["CD-CIRPVM Safety Gate"]
+        MIDR["Magnitude-Inferred Unit Reconciliation"]
+        CRI["Clinical Reliability Index & Conformal Gate"]
+    end
+
+    subgraph Engines["Three-Engine Clinical Core"]
+        E1["Engine 1: Binary CKD Screening\n(Tuned Random Forest 50 Trees + SHAP/LIME)"]
+        E2["Engine 2: KDIGO 2024 CGA Staging\n(Race-Free CKD-EPI 2021 + 28-Cell Grid)"]
+        E3["Engine 3: Longitudinal Progression\n(Tangri 4-Variable KFRE + OLS/LMM Slopes)"]
+    end
+
+    subgraph Audit["Clinical Discrepancy Engine"]
+        DISC["Cross-Engine Coherence Auditing\n(Rules DISC-01 through DISC-08)"]
+    end
+
+    subgraph Delivery["Clinical Delivery Layer"]
+        UI["Point-of-Care Streamlit Web App\n(Bound to 127.0.0.1:8501)"]
+        Exports["Vector PDF, Sanitized CSV, JSON, TXT"]
+    end
+
+    Inputs --> Gate --> Engines --> Audit --> Delivery
 ```
+
+### Engine 1: Screening & Binary Risk Classification
+- **Champion Model:** `RandomForestClassifier(n_estimators=50, random_state=42)` tuned via Stratified 5-Fold Cross Validation.
+- **Performance (Held-Out Test Set, $N=80$):** 100.0% Sensitivity, 100.0% Specificity, 1.000 ROC-AUC, 0.0095 Brier Score, $0.041\text{ ms}$ latency.
+- **Triage Stratification:** Low ($<20\%$), Moderate ($20–50\%$), High ($50–80\%$), Critical ($\ge 80\%$).
+
+### Engine 2: KDIGO 2024 CGA Severity Staging
+- **Filtration Calculation:** Deterministic race-free **CKD-EPI 2021** eGFR equation.
+- **Albuminuria Categories:** A1 ($<30\text{ mg/g}$), A2 ($30–300\text{ mg/g}$), A3 ($>300\text{ mg/g}$).
+- **Composite Risk Heatmap:** 28-cell grid assigning Low (Green), Moderately High (Yellow), High (Orange), and Very High (Red) risk tiers.
+- **Chronicity Advisory (DISC-03):** Automatically flags spot visits lacking $\ge 3$ months persistence documentation.
+
+### Engine 3: Longitudinal Progression & Survival Architecture
+- **Tangri 4-Variable KFRE:** Computes 2-year and 5-year kidney failure risk (%) using age, sex, eGFR, and log(UACR).
+- **Eligibility Guard (DISC-05):** Strictly withholds KFRE calculation when $eGFR \ge 60\text{ mL/min/1.73m}^2$.
+- **Filtration Trajectory Modeling:** Computes annualized decline via Ordinary Least Squares (OLS) and Linear Mixed-Effects Models (LMM) with BLUP shrinkage.
+- **Survival Modeling Status:** Competing-risk architecture (Cox PH, RSF, Aalen–Johansen) is mathematically verified but formally deferred (`DEFERRED_PENDING_APPROVED_COHORT`) pending approved real longitudinal cohort access (CRIC).
 
 ---
 
-## Project Structure
+## 3. Dataset Provenance
 
-```
-project/
-├── .streamlit/                 # Streamlit configuration and theme styling
-├── .venv/                      # Python 3.10 virtual environment
-├── docs/                       # Comprehensive academic & defense documentation
-│   ├── FINAL_PROJECT_REPORT.md # Academic final-year project thesis report
-│   ├── PRESENTATION_DECK.md    # 15-slide viva defense presentation deck
-│   ├── DEMO_GUIDE.md           # Step-by-step examiner demonstration script & Q&A guide
-│   └── images/                 # Exported ROC curves, confusion matrices, and XAI plots
-├── datasets/                   # Raw and processed patient datasets
-│   ├── processed/              # Train/test partitions (leak-free)
-│   └── DATASET_AUDIT.md        # Comprehensive multi-dataset audit documentation
-├── models/                     # Serialized pipelines and model weights
-│   ├── clinical_pipeline.joblib# Complete production clinical prediction pipeline (141 KB)
-│   ├── preprocessor_*.joblib   # Fitted training preprocessors
-│   ├── baselines/              # Initial baseline models
-│   └── tuned/                  # Stratified 5-Fold tuned models
-├── runs/                       # Checkpoints, evaluation metrics, and diagnostic plots
-│   ├── evaluation/plots/       # ROC curves and confusion matrices
-│   ├── explainability/plots/   # SHAP beeswarm, bar plots, and LIME explanations
-│   └── testing/                # QA test results and performance logs
-├── src/                        # Modular source code
-│   ├── pipeline.py             # KidneyDiagnosticPipeline architecture
-│   ├── preprocessing.py        # ClinicalDataPreprocessor (SMOTE + leak-free scaling)
-│   ├── feature_selection.py    # Hybrid consensus feature selection engine
-│   ├── evaluate_models.py      # Multi-model evaluation & MCDA ranker
-│   ├── explainability.py       # Dual-layer SHAP & LIME engine
-│   ├── streamlit_app.py        # Streamlit point-of-care clinical application
-│   ├── run_test_suite.py       # Automated QA test runner
-│   └── data_sources/           # External dataset ingestion & harmonization engines
-│       └── nhanes_loader.py    # Official NHANES 2017-2018 loader & quality auditor
-├── scripts/                    # Automation scripts
-│   └── download_nhanes_2017_2018.py # CDC NHANES downloader & processing pipeline
-├── tests/                      # Formal unit & integration test suite
-│   ├── test_clinical_system.py # 25 clinical verification tests across 10 dimensions
-│   └── test_dataset_harmonization.py # 20 NHANES harmonization & validation tests
-├── app_streamlit.py            # Root launcher for the Streamlit web application
-├── App.py                      # Flask web portal (Part 2 Multimodal Integration)
-└── requirements.txt            # Pinned dependencies
-```
+- **Primary Development Cohort:** UCI Machine Learning Repository Chronic Kidney Disease dataset ($N=400$; 250 CKD, 150 normal controls).
+- **Population Validation Cohort:** CDC NHANES 2017–2018 ($N=5,730$ adult participants) used to evaluate population eGFR distributions.
+- **Synthetic Longitudinal Simulator:** Deterministic mathematical simulator used strictly for unit testing and temporal algorithm verification. **Synthetic data is never used for clinical validation or survival model training.**
 
 ---
 
-## Quickstart & Installation
+## 4. Architecture Diagrams & Application Screenshots
 
-### 1. Environment Setup
+All diagrams and application captures are available in [`docs/images/`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/):
+
+### Visual Architecture Diagrams (SVG & Mermaid)
+1. [Complete System Architecture](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/nefroai_x_complete_architecture.svg)
+2. [Engine 1 Architecture](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/engine1_architecture.svg)
+3. [Engine 2 Architecture](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/engine2_architecture.svg)
+4. [Engine 3 Architecture](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/engine3_architecture.svg)
+5. [Unified Assessment Workflow](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/unified_assessment_workflow.svg)
+6. [Clinical Input Reliability & Abstention Workflow](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/clinical_reliability_abstention_workflow.svg)
+7. [Docker Deployment Topology](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/docker_deployment_architecture.svg)
+
+### Genuine Streamlit Application Screenshots
+- **System Overview & Home:** [`screenshot_01_home_page.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_01_home_page.png)
+- **Unified Patient Assessment:** [`screenshot_02_unified_assessment.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_02_unified_assessment.png)
+- **Longitudinal Trajectory & KFRE:** [`screenshot_03_longitudinal_view.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_03_longitudinal_view.png)
+- **Explainability Suite (SHAP/LIME):** [`screenshot_04_explainability_view.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_04_explainability_view.png)
+- **Clinical Report Export:** [`screenshot_05_report_view.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_05_report_view.png)
+- **About & Clinical Governance:** [`screenshot_06_about_view.png`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/images/screenshot_06_about_view.png)
+
+---
+
+## 5. System Requirements & Installation
+
+### System Requirements
+- **OS:** Windows 10/11, Ubuntu 20.04/22.04 LTS, or macOS 12+
+- **Python:** CPython 3.10.x (CPython 3.10.0 development baseline; note EOL status in Section 8)
+- **Memory:** Minimum 4 GB RAM (Application RSS: ~209 MB)
+- **Disk:** 1 GB free disk space
+
+### Local Native Execution
+
 ```powershell
-cd "C:\Users\B Ranjith\Downloads\project"
+# 1. Clone repository
+git clone https://github.com/ranjithbrs/kidney-stone-detection.git
+cd kidney-stone-detection
 
-# Run with project Python 3.10 virtual environment
-& ".venv\Scripts\python.exe" -m pip install -r requirements.txt
-```
+# 2. Activate isolated virtual environment
+.\.venv\Scripts\Activate.ps1
 
-### 2. Launch the Streamlit Web Application
-```powershell
-& ".venv\Scripts\streamlit.exe" run app_streamlit.py
+# 3. Install pinned dependencies
+python -m pip install -r requirements.docker.txt
+
+# 4. Run automated test suite (349 tests)
+python -m pytest tests/ -q
+
+# 5. Launch the Streamlit application
+python -m streamlit run app_streamlit.py
 ```
 Open **`http://localhost:8501`** in your browser.
 
-### 3. Run the Automated QA Test Suite
-```powershell
-& ".venv\Scripts\python.exe" src/run_test_suite.py
+---
+
+## 6. Docker Container Execution
+
+The application is fully containerized using a hardened multi-stage Docker build based on `python:3.10-slim`.
+
+```bash
+# 1. Build the lightweight production container (approx 650 MB)
+docker build -t nefroai-x:latest .
+
+# 2. Run via Docker Compose (strictly bound to 127.0.0.1:8501)
+docker compose up -d nefroai-x
+
+# 3. Verify health status
+curl -f http://127.0.0.1:8501/_stcore/health
+
+# 4. Run automated regression suite inside the container
+docker compose run --rm nefroai-test
+
+# 5. Stop the container cleanly
+docker compose down
 ```
-Executes all 24 verification tests covering normal inputs, missing inputs, invalid inputs, outliers, determinism, monotonicity, XAI, and batch throughput.
+
+### Docker Security Safeguards
+- **Non-Root Execution:** Runs under user `nefroai` (`uid=1001, gid=1001`).
+- **Loopback Isolation:** Listens on `0.0.0.0:8501` inside container; host-mapped strictly to `127.0.0.1:8501`. Never exposed to public interfaces.
+- **Resource Limits:** Capped at 2.0 CPUs and 2.0 GB RAM.
+- **Data Exclusion:** `.dockerignore` strictly excludes `.env`, secrets, `.git`, and non-renal datasets.
 
 ---
 
-## Documentation Links
+## 7. Verification & Protected Assets Integrity
 
-- [Phase 5 Existing Dataset Inventory](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_EXISTING_DATASET_INVENTORY.md)
-- [Phase 5 NHANES Data Dictionary](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_NHANES_DATA_DICTIONARY.md)
-- [Phase 5 Data Harmonization Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_DATA_HARMONIZATION_REPORT.md)
-- [Phase 5 Multi-Engine Feasibility Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_DATASET_FEASIBILITY_REPORT.md)
-- [Final Project Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/FINAL_PROJECT_REPORT.md)
-- [Presentation Slide Deck (15 Slides)](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PRESENTATION_DECK.md)
-- [Live Demo Script & Viva Defense Guide](file:///c:/Users/B%20Ranjith/Downloads/project/docs/DEMO_GUIDE.md)
+### Protected Serialized Model Assets
+The following 4 serialized assets represent core research deliverables and must **never** be retrained or altered:
+
+| Asset Path | Size | Expected SHA-256 Checksum | Status |
+|---|---|---|---|
+| `models/clinical_pipeline.joblib` | 141 KB | `9217fbbe3c74207f119fd91528f6c98997bda0220299cb80dcdec0be9dbfc826` | **VERIFIED OK** |
+| `datasets/clinical/dataset_A_uci_ckd.csv` | 27.2 KB | `147be021a0a1498db9328ed43d485b0755e80501e7541a37ad9dd889da953cbc` | **VERIFIED OK** |
+| `models/preprocessor_Dataset_A.joblib` | 26.6 KB | `fae81c26a23117d496c69c7c9fb2a3852e2c14ed53b99dde1815dc23af2e39e3` | **VERIFIED OK** |
+| `src/clinical_input_reliability_mechanism.py` | 17.7 KB | `f250cfeb5629c4b30f3beca571f4b9b098fbdd35155a82e9654f865bc5ebcdc0` | **VERIFIED OK** |
+
+### Run Full Test Suite
+```powershell
+python -m pytest tests/ -q
+# Output: 349 passed, 3 warnings in 22.90s
+```
+
+### Run In-Container Health Check
+```powershell
+python scripts/verify_container.py
+# Output: NEFROAI-X Container Verification: 11/11 passed, 0 failed
+```
+
+---
+
+## 8. Known Limitations & Research Boundaries
+
+1. **Python 3.10 Legacy Status:** Python 3.10 reached official upstream End-of-Life in October 2026. The production runtime is classified as a frozen legacy reproduction container to guarantee bit-level unpickling fidelity with the champion model. It must not be deployed to public or multi-tenant networks.
+2. **Survival Model Deferred Status:** Competing-risk models (Cox PH and Random Survival Forest) are implemented and mathematically verified, but real predictive inference is deferred until institutional CRIC DUA data is integrated.
+3. **Primary Training Cohort Size:** Primary screening models were trained on the UCI CKD cohort ($N=400$). Prospective multi-center clinical trials are required before human clinical application.
+4. **Chronicity Requirements:** Spot point-of-care laboratory panels cannot establish the 3-month chronicity required for definitive CKD diagnosis.
+
+---
+
+## 9. Comprehensive Documentation Index
+
+All technical reports and specifications are maintained under [`docs/`](file:///c:/Users/B%20Ranjith/Downloads/project/docs/):
+
+- [Final Project Report (23 Sections)](file:///c:/Users/B%20Ranjith/Downloads/project/docs/NEFROAI_X_FINAL_PROJECT_REPORT.md)
+- [Final Demonstration & Viva Defense Guide (27 Q&A)](file:///c:/Users/B%20Ranjith/Downloads/project/docs/NEFROAI_X_FINAL_DEMONSTRATION_GUIDE.md)
+- [Environment, Dependency & Reproducibility Specification](file:///c:/Users/B%20Ranjith/Downloads/project/docs/NEFROAI_X_ENVIRONMENT_AND_REPRODUCIBILITY.md)
+- [Docker & Reproducible Packaging Specification](file:///c:/Users/B%20Ranjith/Downloads/project/docs/NEFROAI_X_DOCKER_AND_REPRODUCIBLE_PACKAGING.md)
+- [Phase 9 System QA, Security & Deployment Readiness Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE9_SYSTEM_QA_SECURITY_AND_DEPLOYMENT_READINESS_REPORT.md)
+- [Phase 9 Release Readiness Checklist](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE9_RELEASE_READINESS_CHECKLIST.md)
+- [Phase 8 Unified Streamlit Application Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE8_STREAMLIT_APPLICATION_FINAL_REPORT.md)
+- [Phase 7 Unified Three-Engine Integration Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE7_UNIFIED_THREE_ENGINE_INTEGRATION_REPORT.md)
+- [Phase 6 Engine 3 Final Technical Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE6_ENGINE3_FINAL_TECHNICAL_REPORT.md)
+- [Phase 5 Independent Clinical Validation Report](file:///c:/Users/B%20Ranjith/Downloads/project/docs/PHASE5_STEP2_1_INDEPENDENT_CLINICAL_VALIDATION_REPORT.md)
 - [Dataset Audit Report](file:///c:/Users/B%20Ranjith/Downloads/project/datasets/DATASET_AUDIT.md)
-- [QA Testing Report](file:///c:/Users/B%20Ranjith/Downloads/project/runs/testing/test_report.md)
+
+---
+
+## 10. Research & Clinical Safety Disclaimer
+
+> **INVESTIGATIONAL USE ONLY — NOT FOR PATIENT DIAGNOSIS**  
+> NEFROAI-X is an academic research software prototype designed to demonstrate leak-free machine learning, multimodal clinical staging, and explainability in nephrology informatics. It is not approved for patient diagnosis, drug dosing, or treatment planning. All calculations and risk estimates must be independently validated by a licensed physician or nephrologist before any clinical application.

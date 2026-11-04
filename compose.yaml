@@ -1,0 +1,97 @@
+# =============================================================================
+# NEFROAI-X — Docker Compose Configuration
+# Version: Compose Specification (no version key required)
+#
+# LOCAL RESEARCH SOFTWARE ONLY.
+# All ports bind to 127.0.0.1. This service must never be exposed publicly.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # nefroai-x: Primary Streamlit Clinical Application
+  # ---------------------------------------------------------------------------
+  nefroai-x:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nefroai-x:latest
+    container_name: nefroai-x-app
+
+    # ---- Local-only port binding (127.0.0.1 prevents external exposure) -----
+    ports:
+      - "127.0.0.1:8501:8501"
+
+    # ---- Runtime environment ------------------------------------------------
+    environment:
+      # Application mode
+      - PYTHONPATH=/app/src:/app
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - MPLCONFIGDIR=/tmp/matplotlib
+      # Streamlit (listens on 0.0.0.0 inside container; host-mapped strictly to 127.0.0.1)
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+
+    # ---- Secrets injection (optional; application runs without SMTP) ---------
+    # Uncomment and populate .env (never commit) to enable SMTP alerting:
+    # env_file:
+    #   - .env
+
+    # ---- Named volume for runtime-generated reports and XAI plots -----------
+    volumes:
+      - nefroai_reports:/app/reports
+      - nefroai_runs:/app/runs/explainability/plots
+
+    # ---- Health check mirroring Dockerfile definition -----------------------
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+    # ---- Restart policy: never restart automatically in research mode --------
+    restart: "no"
+
+    # ---- Resource limits (research-desktop defaults) ------------------------
+    # Adjust mem_limit for systems with less RAM.
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "2g"
+
+  # ---------------------------------------------------------------------------
+  # nefroai-test: Test runner (runs test suite and exits; does not serve UI)
+  # ---------------------------------------------------------------------------
+  nefroai-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nefroai-x:latest
+    container_name: nefroai-x-test
+    profiles:
+      - test
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - MPLCONFIGDIR=/tmp/matplotlib
+    command: >
+      python -m pytest tests/
+      -q
+      --tb=short
+      --no-header
+    restart: "no"
+
+# =============================================================================
+# Named volumes (persist between container restarts)
+# =============================================================================
+volumes:
+  nefroai_reports:
+    driver: local
+  nefroai_runs:
+    driver: local

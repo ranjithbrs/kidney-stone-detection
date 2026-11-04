@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="100%" height="100%">
+  <rect width="900" height="500" fill="#f8fafc"/>
+  <rect x="20" y="20" width="860" height="60" rx="6" fill="#1e3a8a"/>
+  <text x="40" y="55" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">Engine 1: Binary CKD Screening &amp; Explainable Classification</text>
+
+  <!-- Flow Steps -->
+  <g transform="translate(30, 110)" font-family="system-ui, sans-serif" font-size="12">
+    <!-- Step 1 -->
+    <rect width="180" height="180" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+    <rect width="180" height="35" rx="6" fill="#dbeafe"/>
+    <text x="15" y="23" font-weight="bold" fill="#1e40af">1. Consensus Inputs</text>
+    <text x="15" y="55" fill="#334155">Top-10 Biomarkers:</text>
+    <text x="15" y="73" fill="#64748b" font-size="11">- Hemoglobin (hemo)</text>
+    <text x="15" y="89" fill="#64748b" font-size="11">- Specific Gravity (sg)</text>
+    <text x="15" y="105" fill="#64748b" font-size="11">- Packed Cell Vol (pcv)</text>
+    <text x="15" y="121" fill="#64748b" font-size="11">- Red Blood Cells (rc)</text>
+    <text x="15" y="137" fill="#64748b" font-size="11">- Albumin (al)</text>
+    <text x="15" y="153" fill="#64748b" font-size="11">- SC, BU, BGR, HTN, DM</text>
+
+    <!-- Arrow 1 -->
+    <path d="M 190 90 L 220 90" stroke="#3b82f6" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(230, 0)">
+      <rect width="180" height="180" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+      <rect width="180" height="35" rx="6" fill="#dbeafe"/>
+      <text x="15" y="23" font-weight="bold" fill="#1e40af">2. Preprocessing</text>
+      <text x="15" y="60" fill="#334155" font-weight="bold">Leak-Free Pipeline:</text>
+      <text x="15" y="80" fill="#64748b" font-size="11">- Median imputation</text>
+      <text x="15" y="96" fill="#64748b" font-size="11">  (fitted on X_train)</text>
+      <text x="15" y="116" fill="#64748b" font-size="11">- Standard scaling</text>
+      <text x="15" y="132" fill="#64748b" font-size="11">  (zero train/test leak)</text>
+      <text x="15" y="152" fill="#64748b" font-size="11">- Categorical mapping</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(450, 0)">
+      <rect width="180" height="180" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+      <rect width="180" height="35" rx="6" fill="#dbeafe"/>
+      <text x="15" y="23" font-weight="bold" fill="#1e40af">3. Champion Model</text>
+      <text x="15" y="60" fill="#334155" font-weight="bold">Random Forest:</text>
+      <text x="15" y="80" fill="#64748b" font-size="11">- 50 Estimators</text>
+      <text x="15" y="96" fill="#64748b" font-size="11">- Random state 42</text>
+      <text x="15" y="116" fill="#64748b" font-size="11">- Stratified 5-Fold</text>
+      <text x="15" y="132" fill="#64748b" font-size="11">  hyperparameter tuned</text>
+      <text x="15" y="152" fill="#64748b" font-size="11">- 141 KB bundle</text>
+    </g>
+
+    <!-- Step 4 -->
+    <g transform="translate(670, 0)">
+      <rect width="170" height="180" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+      <rect width="170" height="35" rx="6" fill="#dbeafe"/>
+      <text x="15" y="23" font-weight="bold" fill="#1e40af">4. Explainability</text>
+      <text x="15" y="60" fill="#334155" font-weight="bold">Dual-Layer XAI:</text>
+      <text x="15" y="80" fill="#64748b" font-size="11">- SHAP TreeExplainer</text>
+      <text x="15" y="96" fill="#64748b" font-size="11">  (Game-theoretic values)</text>
+      <text x="15" y="116" fill="#64748b" font-size="11">- Local waterfall plots</text>
+      <text x="15" y="136" fill="#64748b" font-size="11">- LIME surrogate rules</text>
+      <text x="15" y="152" fill="#64748b" font-size="11">  (Linear bounds)</text>
+    </g>
+  </g>
+
+  <!-- Bottom Output Banner -->
+  <rect x="30" y="320" width="840" height="140" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="50" y="350" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#1e293b">Engine 1 Outputs &amp; Decision Support Stratification:</text>
+  <text x="50" y="380" font-family="system-ui, sans-serif" font-size="12" fill="#475569">- Diagnostic Class: 0 (Normal / Healthy Control) vs 1 (Chronic Kidney Disease At Risk)</text>
+  <text x="50" y="405" font-family="system-ui, sans-serif" font-size="12" fill="#475569">- Risk Probability: Continuous calibrated probability [0.0 - 1.0] derived from ensemble vote</text>
+  <text x="50" y="430" font-family="system-ui, sans-serif" font-size="12" fill="#475569">- Clinical Triage Tiers: Low (&lt;20%), Moderate (20-50%), High (50-80%), Critical (&gt;=80%)</text>
+</svg>

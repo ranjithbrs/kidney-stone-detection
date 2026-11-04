@@ -18,9 +18,8 @@ if SRC_DIR not in sys.path:
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-# Execute the main Streamlit application
-streamlit_app_path = os.path.join(SRC_DIR, "streamlit_app.py")
+# Import and invoke main application
+import src.streamlit_app as app
 
-with open(streamlit_app_path, "r", encoding="utf-8") as f:
-    code = compile(f.read(), streamlit_app_path, "exec")
-    exec(code, globals())
+if __name__ == "__main__":
+    app.main()

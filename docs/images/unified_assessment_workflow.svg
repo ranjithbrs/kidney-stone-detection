@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#f8fafc"/>
+  <rect x="20" y="20" width="920" height="55" rx="6" fill="#0f172a"/>
+  <text x="40" y="53" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">Unified Multi-Engine Assessment &amp; Discrepancy Synthesis Workflow</text>
+
+  <!-- Flowchart Steps -->
+  <g transform="translate(30, 100)" font-family="system-ui, sans-serif" font-size="12">
+    <!-- Step 1 -->
+    <rect width="160" height="130" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+    <rect width="160" height="30" rx="6" fill="#f1f5f9"/>
+    <text x="12" y="20" font-weight="bold" fill="#1e293b">1. Patient Input</text>
+    <text x="12" y="50" fill="#475569">Demographics</text>
+    <text x="12" y="70" fill="#475569">Serum Creatinine</text>
+    <text x="12" y="90" fill="#475569">UACR &amp; 10 Biomarkers</text>
+    <text x="12" y="110" fill="#475569">Longitudinal Visits</text>
+
+    <!-- Arrow -->
+    <path d="M 165 65 L 195 65" stroke="#0f172a" stroke-width="2" fill="none"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(200, 0)">
+      <rect width="160" height="130" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+      <rect width="160" height="30" rx="6" fill="#f1f5f9"/>
+      <text x="12" y="20" font-weight="bold" fill="#1e293b">2. Quality Gate</text>
+      <text x="12" y="50" fill="#475569">Unit conversion</text>
+      <text x="12" y="70" fill="#475569">Biological bounds</text>
+      <text x="12" y="90" fill="#475569">CRI Score &gt;= 0.60?</text>
+      <text x="12" y="110" fill="#dc2626" font-size="11">Else Safe Abstain</text>
+    </g>
+
+    <!-- Arrow -->
+    <path d="M 365 65 L 395 65" stroke="#0f172a" stroke-width="2" fill="none"/>
+
+    <!-- Step 3: 3 parallel engines -->
+    <g transform="translate(400, 0)">
+      <rect width="210" height="130" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+      <rect width="210" height="30" rx="6" fill="#dbeafe"/>
+      <text x="12" y="20" font-weight="bold" fill="#1e40af">3. Parallel Execution</text>
+      <text x="12" y="50" fill="#1e40af" font-size="11">- Engine 1: Screening Risk</text>
+      <text x="12" y="75" fill="#15803d" font-size="11">- Engine 2: KDIGO CGA Matrix</text>
+      <text x="12" y="100" fill="#7e22ce" font-size="11">- Engine 3: KFRE Progression</text>
+    </g>
+
+    <!-- Arrow -->
+    <path d="M 615 65 L 645 65" stroke="#0f172a" stroke-width="2" fill="none"/>
+
+    <!-- Step 4: Discrepancy Engine -->
+    <g transform="translate(650, 0)">
+      <rect width="240" height="130" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+      <rect width="240" height="30" rx="6" fill="#fef3c7"/>
+      <text x="12" y="20" font-weight="bold" fill="#92400e">4. Discrepancy Auditing</text>
+      <text x="12" y="50" fill="#b45309" font-size="11">DISC-01: Low Risk vs Severe CGA</text>
+      <text x="12" y="70" fill="#b45309" font-size="11">DISC-02: High Risk vs Normal CGA</text>
+      <text x="12" y="90" fill="#b45309" font-size="11">DISC-03: Single Visit Chronicity</text>
+      <text x="12" y="110" fill="#b45309" font-size="11">DISC-05: KFRE eGFR &gt;= 60 Gate</text>
+    </g>
+  </g>
+
+  <!-- Output Delivery Block -->
+  <g transform="translate(30, 260)">
+    <rect width="890" height="180" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="30" y="35" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#1e293b">5. Unified Clinical Assessment Synthesis &amp; Export Layer</text>
+    <text x="30" y="65" font-family="system-ui, sans-serif" font-size="12" fill="#475569">&#10004; UnifiedAssessmentResponse Dataclass combining E1, E2, E3 findings and flags</text>
+    <text x="30" y="90" font-family="system-ui, sans-serif" font-size="12" fill="#475569">&#10004; Interactive Streamlit Point-of-Care Display with side-by-side risk cards &amp; discrepancy alerts</text>
+    <text x="30" y="115" font-family="system-ui, sans-serif" font-size="12" fill="#475569">&#10004; Multi-channel medical export: Clean vector PDF, machine-readable JSON, sanitized CSV (CWE-1236)</text>
+    <text x="30" y="140" font-family="system-ui, sans-serif" font-size="12" fill="#475569">&#10004; Unmistakable demonstration watermark on synthetic preset evaluations</text>
+  </g>
+</svg>
