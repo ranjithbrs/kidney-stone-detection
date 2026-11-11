@@ -132,11 +132,19 @@
 | Static XAI evaluation plots | **IMPLEMENTED** | SHAP beeswarm, waterfall, and LIME plots in `runs/explainability/`. |
 | Medical report text export | **IMPLEMENTED** | Functional in Streamlit UI (exports single-patient evaluation). |
 | CD-CIRPVM invention prototype | **IMPLEMENTED (STANDALONE)** | Implemented in `src/clinical_input_reliability_mechanism.py`. |
-| Batch CSV upload in Streamlit UI | **PLANNED (REMEDIATION)** | `predict_batch()` exists in pipeline, but UI lacks file uploader. |
-| Strict schema validation guard | **PLANNED (REMEDIATION)** | Must reject non-renal CSVs (e.g. kidney stone urinalysis). |
-| Dynamic live TreeSHAP waterfall | **PLANNED (REMEDIATION)** | Wire cached `shap.TreeExplainer` for live patient waterfalls. |
-| CD-CIRPVM UI integration | **PLANNED (REMEDIATION)** | Wire CRI gauge and conformal prediction set into Streamlit. |
-| Dynamic conformal calibration | **PLANNED (REMEDIATION)** | Replace hardcoded $\hat{q}=0.261$ with calibration split fitting. |
+| Batch CSV upload in Streamlit UI | **IMPLEMENTED** | Tabbed batch screening CSV uploader in `assessment_view.py` + `batch_screening.py` with CWE-1236 export. |
+| Strict schema validation guard | **IMPLEMENTED** | Enforced in `pipeline.validate_schema()` & batch CSV uploader (rejects non-renal CSVs). |
+| Dynamic live TreeSHAP waterfall | **IMPLEMENTED** | Cached `shap.TreeExplainer` waterfall & additivity check in `xai_live.py` & `explainability_view.py`. |
+| CD-CIRPVM UI integration | **IMPLEMENTED** | CRI gauge, conformal prediction set, MIDR audit, and `DISC-08` wired in Engine 1 & UI. |
+| Dynamic conformal calibration | **IMPLEMENTED** | `conformal_calibrator.py` computes training-only OOF/split quantiles & Mondrian class-conditional quantiles. |
+| 4-Family Stacking Ensemble & Calibration UI | **IMPLEMENTED** | `stacking_ensemble.py` (RF, XGBoost, SVM-RBF, MLP + LR meta-learner) & `performance_view.py` (PR-AUC, Brier, calibration, CIs, subgroups). |
+| 5-Method Fold-Safe Feature Selection | **IMPLEMENTED** | MI, ANOVA F, RF, RFE, and inner-fold `TreeExplainer` SHAP stability with Jaccard scoring in `feature_selection.py`. |
+| Cross-Analyte Coherence Verifier (`COH-01`–`04`) | **IMPLEMENTED** | `coherence_verifier.py` checks Hemo–PCV, MCV proxy, BU/SC, and Dipstick–uACR invariants; raises `DISC-09`. |
+| Live LIME, XAI Concordance & Counterfactuals | **IMPLEMENTED** | `xai_live.py` & `explainability_view.py` provide live LIME rules, SHAP/LIME/KDIGO concordance, and constrained counterfactual recourse. |
+| Batch Covariate-Shift & Mahalanobis OOD Monitor | **IMPLEMENTED** | `drift_monitor.py` computes training-anchored PSI, two-sample KS, and Mahalanobis OOD alerts for CSV cohorts. |
+| AKI Velocity Guard & Trajectory Backtest | **IMPLEMENTED** | `progression_features.py` separates acute creatinine spikes from `>=90d` persistence and computes walk-forward MAE/RMSE/R². |
+| Safety-Max Arbitration (`DISC-01`–`10`) & SHA-256 Attestation | **IMPLEMENTED** | `attestation.py` & `unified_assessment_engine.py` compute non-compensatory action tiers and tamper-evident SHA-256 manifests. |
+| Authenticated Patient History & Audit Vault | **IMPLEMENTED** | `patient_store.py` (SQLite + PBKDF2) & `history_view.py` support saving/loading Engine 3 trajectories and report verification. |
 
 ---
 
@@ -171,6 +179,7 @@
   - Keep the working tree clean and write descriptive, imperative commit messages (`feat: ...`, `fix: ...`, `test: ...`, `docs: ...`).
 - **Testing & Quality Assurance**:
   - Automated test runner: `.venv\Scripts\python.exe src/run_test_suite.py`
-  - Formal clinical test suite: `.venv\Scripts\python.exe -m pytest tests/test_clinical_system.py`
+  - Formal clinical test suite: `.venv\Scripts\python.exe -m pytest tests/ -v`
   - Invention verification: `.venv\Scripts\python.exe src/test_invention_prototype.py`
+  - Option A/B verification: `.venv\Scripts\python.exe -m pytest tests/test_option_ab_extensions.py -v`
   - All tests must pass before proposing commits.

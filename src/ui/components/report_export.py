@@ -68,10 +68,35 @@ MANDATORY CLINICAL DISCLAIMER:
 - Model Confidence:       {f"{e1.confidence_score*100:.1f}%" if e1 and e1.confidence_score is not None else 'N/A'}
 - Consensus Completeness: {f"{e1.data_completeness_ratio*100:.1f}%" if e1 else 'N/A'}
 """
+    if e1 and e1.clinical_reliability_index is not None:
+        report += (
+            f"- Clinical Reliability:   CRI={e1.clinical_reliability_index:.2f} | "
+            f"Conformal Set={e1.conformal_set} | "
+            f"Gate={e1.conformal_gate_decision} ({e1.conformal_gate_status})\n"
+        )
+    if e1 and e1.mondrian_conformal_set is not None:
+        report += f"- Mondrian Set (95%):     {e1.mondrian_conformal_set} (Quantiles={e1.mondrian_quantiles})\n"
+    if e1 and e1.stacking_probability is not None:
+        report += (
+            f"- 4-Family Stacking Risk: {e1.stacking_probability * 100:.2f}% | "
+            f"Spread={f'{e1.ensemble_disagreement_spread * 100:.1f}%' if e1.ensemble_disagreement_spread is not None else 'N/A'} | "
+            f"Divergent={e1.has_architecture_disagreement}\n"
+        )
+    if e1 and e1.coherence_audit is not None:
+        coh = e1.coherence_audit
+        report += (
+            f"- Analyte Coherence:      Coherent={coh.get('is_coherent')} | "
+            f"Score={coh.get('coherence_score', 1.0):.2f} | Findings={len(coh.get('findings', []))}\n"
+        )
     if e1 and e1.missing_features:
         report += f"- Missing Features:       {e1.missing_features}\n"
     if e1 and e1.abstention_reason:
         report += f"- Abstention Rationale:   {e1.abstention_reason}\n"
+    if e1 and e1.live_shap_attributions:
+        top_shaps = e1.live_shap_attributions.get("top_drivers", [])[:5]
+        if top_shaps:
+            driver_str = ", ".join(f"{d['feature']} ({d['shap_value']:+.3f})" for d in top_shaps)
+            report += f"- Top TreeSHAP Drivers:   {driver_str}\n"
 
     report += f"""
 2. ENGINE 2: KDIGO CGA SEVERITY STAGING (2024 GUIDELINES)
@@ -94,7 +119,17 @@ MANDATORY CLINICAL DISCLAIMER:
 - KFRE 5-Year Risk:       {f"{e3.kfre_5year_risk*100:.1f}%" if e3 and e3.kfre_5year_risk is not None else 'Withheld / Out of Scope'}
 - KFRE Calibration:       {e3.kfre_calibration_profile if e3 else 'N/A'}
 - Survival Model Status:  {e3.survival_status if e3 else 'DEFERRED'} (Requires Approved CRIC Cohort DUA)
+"""
+    if e3 and e3.chronicity_aki_assessment:
+        aki = e3.chronicity_aki_assessment
+        report += f"- Chronicity / AKI Guard: {aki.get('status')} — {aki.get('summary')}\n"
+    if e3 and e3.trajectory_backtest and e3.trajectory_backtest.get("eligible"):
+        bt = e3.trajectory_backtest
+        report += (
+            f"- Walk-Forward Backtest:  MAE={bt.get('mae')} | RMSE={bt.get('rmse')} | R2={bt.get('r2')}\n"
+        )
 
+    report += """
 4. CROSS-ENGINE CLINICAL DISCREPANCIES & SAFETY ALERTS
 --------------------------------------------------------------------------------
 """
@@ -105,6 +140,18 @@ MANDATORY CLINICAL DISCLAIMER:
             report += f"  Action:  {d.get('clinical_action')}\n\n"
     else:
         report += "No cross-engine discordance detected across evaluated models.\n"
+
+    arb_tier = (response.overall_completeness or {}).get("arbitration_tier", "ROUTINE_MONITORING")
+    arb_detail = (response.overall_completeness or {}).get("arbitration_detail") or {}
+    att_sha = (response.provenance or {}).get("attestation_sha256", "NOT_COMPUTED")
+
+    report += f"""
+5. SAFETY-MAX ARBITRATION & PROVENANCE ATTESTATION
+--------------------------------------------------------------------------------
+- Arbitration Priority:   {arb_tier}
+- Recommended Action:     {arb_detail.get('recommended_action', 'Proceed with standard clinical correlation.')}
+- Attestation SHA-256:    {att_sha}
+"""
 
     report += """
 ================================================================================
@@ -139,6 +186,13 @@ def generate_csv_export(response: UnifiedAssessmentResponse, patient_input: Opti
         "e1_diagnosis": response.engine1_result.diagnosis if response.engine1_result else None,
         "e1_risk_probability": response.engine1_result.risk_probability if response.engine1_result else None,
         "e1_risk_category": response.engine1_result.risk_category if response.engine1_result else None,
+        "e1_cri": response.engine1_result.clinical_reliability_index if response.engine1_result else None,
+        "e1_conformal_set": str(response.engine1_result.conformal_set) if response.engine1_result and response.engine1_result.conformal_set is not None else None,
+        "e1_conformal_gate": response.engine1_result.conformal_gate_decision if response.engine1_result else None,
+        "e1_mondrian_set": str(response.engine1_result.mondrian_conformal_set) if response.engine1_result and response.engine1_result.mondrian_conformal_set is not None else None,
+        "e1_stacking_probability": response.engine1_result.stacking_probability if response.engine1_result else None,
+        "e1_ensemble_spread": response.engine1_result.ensemble_disagreement_spread if response.engine1_result else None,
+        "e1_coherence_score": (response.engine1_result.coherence_audit or {}).get("coherence_score") if response.engine1_result else None,
         # Engine 2
         "e2_status": response.engine2_result.status if response.engine2_result else None,
         "e2_egfr": response.engine2_result.egfr if response.engine2_result else None,
@@ -152,7 +206,10 @@ def generate_csv_export(response: UnifiedAssessmentResponse, patient_input: Opti
         "e3_lmm_slope": response.engine3_result.lmm_annual_slope if response.engine3_result else None,
         "e3_kfre_2yr": response.engine3_result.kfre_2year_risk if response.engine3_result else None,
         "e3_kfre_5yr": response.engine3_result.kfre_5year_risk if response.engine3_result else None,
+        "e3_chronicity_aki_status": (response.engine3_result.chronicity_aki_assessment or {}).get("status") if response.engine3_result else None,
         "discrepancies_count": len(response.clinical_discrepancies),
+        "arbitration_tier": (response.overall_completeness or {}).get("arbitration_tier"),
+        "attestation_sha256": (response.provenance or {}).get("attestation_sha256"),
     }
     sanitized_flat = {k: sanitize_csv_cell(v) for k, v in flat.items()}
     df = pd.DataFrame([sanitized_flat])
@@ -191,11 +248,23 @@ def generate_pdf_report(
         e1_body = "Engine 1 was not executed or not requested."
         if e1:
             if e1.risk_probability is not None:
+                cri_line = (
+                    f"\nCD-CIRPVM Gate: {e1.conformal_gate_decision} | CRI: {e1.clinical_reliability_index:.2f} | "
+                    f"Conformal Set: {e1.conformal_set} (q̂={e1.conformal_quantile:.3f})"
+                    if e1.clinical_reliability_index is not None and e1.conformal_quantile is not None
+                    else ""
+                )
+                extra_e1 = ""
+                if e1.stacking_probability is not None or e1.mondrian_conformal_set is not None:
+                    stk_p = f"{e1.stacking_probability*100:.1f}%" if e1.stacking_probability is not None else "N/A"
+                    coh_sc = (e1.coherence_audit or {}).get("coherence_score", 1.0)
+                    extra_e1 = f"\nStacking Risk: {stk_p} | Mondrian Set: {e1.mondrian_conformal_set} | Coherence: {coh_sc:.2f}"
                 e1_body = (
                     f"Diagnostic Class: {e1.diagnosis}\n"
                     f"Calibrated Disease Risk: {e1.risk_probability*100:.1f}%  |  "
                     f"Triage Tier: {e1.risk_category}  |  Confidence: {e1.confidence_score*100:.1f}%\n"
                     f"Panel Completeness: {e1.data_completeness_ratio*100:.1f}% (Top-10 Features)"
+                    f"{cri_line}{extra_e1}"
                 )
             else:
                 e1_body = f"Screening Withheld: {e1.abstention_reason}"
@@ -259,10 +328,12 @@ def generate_pdf_report(
             slope = e3.historical_egfr_slope
             lmm_slope = e3.lmm_annual_slope
             kfre_txt = f"2-Yr: {e3.kfre_2year_risk*100:.1f}%, 5-Yr: {e3.kfre_5year_risk*100:.1f}% ({e3.kfre_calibration_profile})" if e3.kfre_2year_risk is not None else "Withheld / Out of Target Scope"
+            aki_stat = (e3.chronicity_aki_assessment or {}).get("status", "N/A")
             e3_body = (
                 f"Historical eGFR Slope (OLS): {f'{slope:+.2f} mL/min/1.73m²/yr' if slope else 'Insufficient visits (<2)'}\n"
                 f"LMM BLUP Random Slope:        {f'{lmm_slope:+.2f} mL/min/1.73m²/yr' if lmm_slope else 'Insufficient visits (<3)'}\n"
                 f"Tangri 4-Variable KFRE Risk:  {kfre_txt}\n"
+                f"Chronicity / AKI Velocity:    {aki_stat}\n"
                 f"Survival Model Inference:     DEFERRED (Pending Approved NIDDK CRIC Longitudinal Cohort DUA)"
             )
 
@@ -279,15 +350,19 @@ def generate_pdf_report(
         ax2.imshow(t_img, extent=[0.10, 0.90, 0.28, 0.72])
 
         # Clinical Sign-off block
+        arb_tier_pdf = (response.overall_completeness or {}).get("arbitration_tier", "ROUTINE_MONITORING")
+        att_sha_pdf = (response.provenance or {}).get("attestation_sha256", "N/A")
         sign_txt = (
             "================================================================================\n"
+            f"SAFETY-MAX ARBITRATION: {arb_tier_pdf}\n"
+            f"PROVENANCE SHA-256:     {att_sha_pdf}\n"
             "CLINICAL REVIEW & ATTESTATION:\n"
             "Attending Physician: ___________________________    Date: _____________________\n"
             "Signature:          ___________________________    NPI:  _____________________\n"
             "Clinical Judgment:  [ ] Approved for Screening   [ ] Formal Nephrology Referral\n"
             "================================================================================"
         )
-        ax2.text(0.05, 0.08, sign_txt, fontsize=8.5, family="monospace", color="#334155")
+        ax2.text(0.05, 0.06, sign_txt, fontsize=8.0, family="monospace", color="#334155")
 
         pdf.savefig(fig2)
         plt.close(fig2)

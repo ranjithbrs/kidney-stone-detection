@@ -274,3 +274,46 @@ withholding automated diagnostic output upon detecting decision-boundary epistem
    - For **USPTO**: File as a non-provisional utility application claiming benefit of any provisional filings.
    - For **EPO**: Frame the technical effect under Problem-and-Solution Approach as achieving "robust interoperability and certified safety in automated diagnostic systems."
    - For **Indian Patent Office (IPO)**: Emphasize that the invention is not a pure algorithm or computer program per se under Section 3(k), but produces a technical effect and technical advancement in a practical clinical diagnosis computer apparatus.
+
+---
+
+## 11. EXTENSION ADDENDUM: OPTION B ALGORITHMIC RELIABILITY & MULTI-ENGINE COORDINATION MECHANISMS (FOR ATTORNEY REVIEW)
+
+[0027] *Objective Technical Disclosure Note*: The following implemented software-level mechanisms extend the core CD-CIRPVM architecture (`src/clinical_input_reliability_mechanism.py`) across multi-engine Chronic Kidney Disease (CKD) decision support pipelines. They are documented objectively as candidate technical enhancements for Registered Patent Attorney prior-art evaluation and claim drafting; legal patentability is not asserted herein.
+
+### 11.1 Summary of Implemented Extension Modules
+
+1. **Mondrian Class-Conditional Conformal Prediction & Cross-Architecture Disagreement Gating (`src/clinical/conformal_calibrator.py`, `src/clinical/stacking_ensemble.py`)**:
+   - Computes separate class-conditional out-of-fold non-conformity quantiles (`q_healthy`, `q_ckd`) strictly on the 320-patient training partition (excluding held-out test records), protecting the disease-positive CKD class against under-coverage under class imbalance.
+   - Couples conformal set construction with a leak-free 4-family Stacking Ensemble (Random Forest, XGBoost, SVM-RBF, ANN-MLP with Logistic Regression meta-learner) to track inter-architecture vote splits, probability spread, and predictive entropy (`DISC-10`).
+
+2. **Pre-Inference Cross-Analyte Physiological & Stoichiometric Coherence Verifier (`src/clinical/coherence_verifier.py`)**:
+   - Evaluates multi-analyte biological coupling invariants prior to diagnostic acceptance: `COH-01` (Hemoglobin–Hematocrit Rule-of-3 tolerance), `COH-02` (MCV proxy plausibility), `COH-03` (Blood Urea / Serum Creatinine proportionality), and `COH-04` (urine dipstick `al` vs. quantitative `uACR` concordance). Contradictions reduce CRI, flag `DISC-09`, and trigger `SPECIMEN_VERIFICATION_REDRAW`.
+
+3. **Temporal AKI Velocity vs. Chronicity Disambiguation & Walk-Forward Trajectory Backtest (`src/clinical/progression_features.py`)**:
+   - Separates rapid acute creatinine spikes ($\Delta \text{SC} \ge 0.3\text{ mg/dL}$ in $\le 7$ days or $\ge 1.5\times$ baseline in $\le 90$ days) from confirmed $\ge 90$-day CKD persistence, accompanied by expanding-window walk-forward eGFR regression validation (`MAE`, `RMSE`, `R²`).
+
+4. **Training-Anchored Batch Covariate-Shift (`PSI`, `KS`) & Mahalanobis OOD Monitor (`src/clinical/drift_monitor.py`, `src/clinical/batch_screening.py`)**:
+   - Anchors distribution references strictly on training data (`N=320`) to quantify Population Stability Index, two-sample Kolmogorov–Smirnov statistics, and per-row Mahalanobis 99th-percentile OOD outliers alongside strict non-renal dataset rejection.
+
+5. **Cross-XAI Concordance Auditor & Constrained Conformal Counterfactual Recourse (`src/clinical/xai_live.py`)**:
+   - Quantifies Spearman rank agreement ($\rho$), Top-3 biomarker overlap, and sign agreement between exact `shap.TreeExplainer` values and local LIME surrogates, while searching minimal counterfactual biomarker adjustments under locked immutable demographics/comorbidities (`age`, `sex`, `htn`, `dm`).
+
+6. **Non-Compensatory Safety-Max Arbitration State Machine & Tamper-Evident SHA-256 Attestation (`src/clinical/attestation.py`, `src/clinical/patient_store.py`)**:
+   - Enforces non-compensatory priority ordering across `DISC-01`–`DISC-10` so severe contradictions or discrepancies are never averaged down, and binds sanitized inputs, protected model digests, and multi-engine outputs into deterministic `NEFROAI-X-ATTEST-1.0` SHA-256 verification manifests.
+
+### 11.2 Candidate Continuation Claims (Draft for Counsel Review)
+
+**14.** The system of claim 1, further comprising a cross-analyte physiological coherence verification module configured to evaluate quantitative inter-analyte invariant rules prior to accepting an automated classification, including hemoglobin-to-hematocrit proportionality and quantitative uACR-to-dipstick albumin concordance, and to withhold automated risk inference in favor of a specimen re-draw alert when an invariant contradiction is detected.
+
+**15.** The system of claim 8, wherein the inductive conformal non-conformity gate implements class-conditional Mondrian calibration computing distinct non-conformity quantiles $\hat{q}_{\text{healthy}}$ and $\hat{q}_{\text{disease}}$ on out-of-fold training partitions to construct asymmetric conformal prediction sets while excluding held-out test records.
+
+**16.** The system of claim 1, further comprising a multi-architecture stacking ensemble executing diverse tree-based, margin-based, and neural base learners within independent fold-safe imputation and resampling pipelines, coupled to an inter-architecture disagreement gate that triggers human escalation upon detecting classification vote splits or cross-model probability spread exceeding a threshold.
+
+**17.** The system of claim 1, further comprising a temporal progression engine executed on dated patient laboratory sequences, configured to disambiguate acute creatinine velocity spikes from sustained $\ge 90$-day chronic biomarker persistence and compute walk-forward out-of-time regression error metrics prior to forecasting decline.
+
+**18.** The system of claim 1, further comprising a covariate drift and outlier monitoring engine anchored strictly to training-partition statistics to compute Population Stability Index (PSI), Kolmogorov–Smirnov statistics, and Mahalanobis distance flags for incoming batch cohorts.
+
+**19.** The system of claim 1, further comprising a constrained counterfactual recourse engine generating minimal modifiable biomarker perturbations while locking immutable clinical covariates (`age`, `sex`, `htn`, `dm`), paired with a cross-explanation concordance auditor comparing Shapley attributions and local surrogate weights.
+
+**20.** The system of claim 1, further comprising a non-compensatory Safety-Max escalation state machine governing action tiers across multi-engine discrepancy signals and generating a deterministic cryptographic SHA-256 attestation digest binding sanitized clinical inputs, serialized model hashes, and multi-engine outputs for tamper-evident audit verification.

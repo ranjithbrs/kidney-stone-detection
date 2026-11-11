@@ -25,7 +25,7 @@ def render_report_view() -> None:
     visits = st.session_state.get("e3_observations", [])
 
     if resp is None:
-        st.info("ℹ️ No patient assessment has been executed in the current session. Go to **🩺 Patient Clinical Diagnosis**, enter values or select a preset, and execute an assessment.")
+        st.info("ℹ️ No patient assessment has been executed in the current session. Go to **🩺 Patient Clinical Assessment**, enter values or select a preset, and execute an assessment.")
         return
 
     st.success(f"✅ Assessment found for patient `{resp.patient_id}` (ID: `{resp.assessment_id}`).")

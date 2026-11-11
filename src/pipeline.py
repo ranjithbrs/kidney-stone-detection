@@ -1124,4 +1124,13 @@ and therapeutic regimens must be verified by a board-certified physician.
     @staticmethod
     def load(filepath="models/clinical_pipeline.joblib"):
         """Loads a pre-trained serialized pipeline."""
+        import sys
+
+        sys.modules.setdefault("pipeline", sys.modules[__name__])
+        if "preprocessing" not in sys.modules:
+            try:
+                import src.preprocessing as _prep_mod
+                sys.modules.setdefault("preprocessing", _prep_mod)
+            except ImportError:
+                import preprocessing  # noqa: F401
         return joblib.load(filepath)

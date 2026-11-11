@@ -218,6 +218,25 @@ class Engine1Result:
     model_version: str = "1.0.0-champion-rf"
     provenance: str = "UNKNOWN"
     warnings: List[str] = field(default_factory=list)
+    # CD-CIRPVM Conformal Reliability & Live TreeSHAP extensions
+    clinical_reliability_index: Optional[float] = None
+    conformal_set: Optional[List[int]] = None
+    conformal_gate_decision: Optional[str] = None
+    conformal_gate_status: Optional[str] = None
+    conformal_quantile: Optional[float] = None
+    conformal_coverage_target: Optional[float] = None
+    conformal_calibration_method: Optional[str] = None
+    unit_reconciliation_audit: Dict[str, Any] = field(default_factory=dict)
+    bounds_clamping_audit: Dict[str, Any] = field(default_factory=dict)
+    live_shap_attributions: Optional[Dict[str, Any]] = None
+    # Mondrian conformal, Stacking Disagreement & Cross-Analyte Coherence extensions
+    mondrian_conformal_set: Optional[List[int]] = None
+    mondrian_quantiles: Optional[Dict[str, float]] = None
+    stacking_probability: Optional[float] = None
+    stacking_base_probabilities: Optional[Dict[str, float]] = None
+    ensemble_disagreement_spread: Optional[float] = None
+    has_architecture_disagreement: Optional[bool] = None
+    coherence_audit: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -238,6 +257,23 @@ class Engine1Result:
             "model_version": self.model_version,
             "provenance": self.provenance,
             "warnings": list(self.warnings),
+            "clinical_reliability_index": self.clinical_reliability_index,
+            "conformal_set": list(self.conformal_set) if self.conformal_set is not None else None,
+            "conformal_gate_decision": self.conformal_gate_decision,
+            "conformal_gate_status": self.conformal_gate_status,
+            "conformal_quantile": self.conformal_quantile,
+            "conformal_coverage_target": self.conformal_coverage_target,
+            "conformal_calibration_method": self.conformal_calibration_method,
+            "unit_reconciliation_audit": dict(self.unit_reconciliation_audit),
+            "bounds_clamping_audit": dict(self.bounds_clamping_audit),
+            "live_shap_attributions": self.live_shap_attributions,
+            "mondrian_conformal_set": list(self.mondrian_conformal_set) if self.mondrian_conformal_set is not None else None,
+            "mondrian_quantiles": dict(self.mondrian_quantiles) if self.mondrian_quantiles is not None else None,
+            "stacking_probability": self.stacking_probability,
+            "stacking_base_probabilities": dict(self.stacking_base_probabilities) if self.stacking_base_probabilities is not None else None,
+            "ensemble_disagreement_spread": self.ensemble_disagreement_spread,
+            "has_architecture_disagreement": self.has_architecture_disagreement,
+            "coherence_audit": dict(self.coherence_audit) if self.coherence_audit is not None else None,
         }
 
 
@@ -322,6 +358,8 @@ class Engine3Result:
     clinical_reliability: Dict[str, Any] = field(default_factory=dict)
     warnings: List[str] = field(default_factory=list)
     provenance: str = "UNKNOWN"
+    chronicity_aki_assessment: Optional[Dict[str, Any]] = None
+    trajectory_backtest: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -346,6 +384,8 @@ class Engine3Result:
             "clinical_reliability": dict(self.clinical_reliability),
             "warnings": list(self.warnings),
             "provenance": self.provenance,
+            "chronicity_aki_assessment": dict(self.chronicity_aki_assessment) if self.chronicity_aki_assessment is not None else None,
+            "trajectory_backtest": dict(self.trajectory_backtest) if self.trajectory_backtest is not None else None,
         }
 
 

@@ -677,3 +677,161 @@ def extract_progression_features(
     return ProgressionFeatureResult(
         is_eligible=True, features=features, abstention=None
     )
+
+
+def evaluate_chronicity_and_aki_status(
+    record: LongitudinalPatientRecord,
+    landmark_time: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Disambiguate KDIGO >=90-day CKD persistence from rapid acute creatinine spikes (AKI).
+
+    Evaluates strictly observations prior to `landmark_time`:
+    - Acute spike criteria: creatinine increase >= 0.3 mg/dL within <= 7 days OR
+      >= 1.5x baseline creatinine rise within <= 90 days.
+    - Chronic persistence criteria: >= 2 abnormal kidney markers (eGFR < 60 or uACR >= 30)
+      separated by >= 90 days.
+    """
+    if not record.observations:
+        return {
+            "status": "NO_OBSERVATIONS",
+            "acute_spike_detected": False,
+            "chronic_persistence_confirmed": False,
+            "abnormal_span_days": 0.0,
+            "summary": "No dated longitudinal observations available.",
+        }
+
+    eff_lm = landmark_time or max(o.timestamp for o in record.observations)
+    eligible = sorted(
+        [o for o in record.observations if o.timestamp <= eff_lm],
+        key=lambda o: o.timestamp,
+    )
+    if len(eligible) < 2:
+        return {
+            "status": "SINGLE_TIMEPOINT_UNVERIFIED",
+            "acute_spike_detected": False,
+            "chronic_persistence_confirmed": False,
+            "abnormal_span_days": 0.0,
+            "summary": "Only 1 visit prior to landmark; >=90-day chronicity cannot be verified.",
+        }
+
+    acute_spike = False
+    spike_detail = None
+    for i in range(len(eligible)):
+        for j in range(i + 1, len(eligible)):
+            o1, o2 = eligible[i], eligible[j]
+            if o1.serum_creatinine is None or o2.serum_creatinine is None:
+                continue
+            dt_days = (o2.timestamp - o1.timestamp).total_seconds() / 86400.0
+            delta_sc = float(o2.serum_creatinine) - float(o1.serum_creatinine)
+            ratio_sc = float(o2.serum_creatinine) / max(0.1, float(o1.serum_creatinine))
+            if (dt_days <= 7.0 and delta_sc >= 0.3) or (dt_days <= 90.0 and ratio_sc >= 1.5):
+                acute_spike = True
+                spike_detail = (
+                    f"SC rose {o1.serum_creatinine:.2f} -> {o2.serum_creatinine:.2f} mg/dL "
+                    f"over {dt_days:.0f} days."
+                )
+                break
+        if acute_spike:
+            break
+
+    first_ts = eligible[0].timestamp
+    abnormal_dates: List[datetime] = []
+    for obs in eligible:
+        age_obs = float(record.age_baseline) + max(
+            0.0, (obs.timestamp - first_ts).total_seconds() / (365.25 * 86400.0)
+        )
+        egfr_val = resolve_observation_egfr(obs, age_obs, record.sex)
+        is_abn_egfr = egfr_val is not None and egfr_val < 60.0
+        is_abn_uacr = obs.uacr is not None and float(obs.uacr) >= 30.0
+        if is_abn_egfr or is_abn_uacr:
+            abnormal_dates.append(obs.timestamp)
+
+    abnormal_span = (
+        (abnormal_dates[-1] - abnormal_dates[0]).total_seconds() / 86400.0
+        if len(abnormal_dates) >= 2
+        else 0.0
+    )
+    chronic_confirmed = len(abnormal_dates) >= 2 and abnormal_span >= 90.0
+
+    if acute_spike and chronic_confirmed:
+        status = "ACUTE_ON_CHRONIC_DETERIORATION"
+        summary = f"Confirmed >=90d persistence ({abnormal_span:.0f}d) with acute-on-chronic creatinine spike: {spike_detail}"
+    elif acute_spike:
+        status = "SUSPECTED_ACUTE_SPIKE_AKI"
+        summary = f"Rapid creatinine acceleration detected ({spike_detail}); rule out AKI before labeling chronic progression."
+    elif chronic_confirmed:
+        status = "CONFIRMED_CHRONIC_PERSISTENCE"
+        summary = f"Abnormal renal markers persisted across {abnormal_span:.0f} days (>=90-day KDIGO chronicity met)."
+    else:
+        status = "STABLE_OR_UNCONFIRMED_CHRONICITY"
+        summary = "No >=90-day sustained renal abnormality or acute creatinine spike detected."
+
+    return {
+        "status": status,
+        "acute_spike_detected": acute_spike,
+        "chronic_persistence_confirmed": chronic_confirmed,
+        "abnormal_span_days": round(abnormal_span, 1),
+        "summary": summary,
+    }
+
+
+def backtest_egfr_trajectory(
+    record: LongitudinalPatientRecord,
+    landmark_time: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Expanding-window OLS trajectory backtest reporting MAE, RMSE, and R^2 on observed visits."""
+    if not record.observations:
+        return {"eligible": False, "reason": "No observations."}
+
+    eff_lm = landmark_time or max(o.timestamp for o in record.observations)
+    eligible = sorted(
+        [o for o in record.observations if o.timestamp <= eff_lm],
+        key=lambda o: o.timestamp,
+    )
+
+    points: List[Tuple[float, float]] = []
+    t0 = eligible[0].timestamp if eligible else eff_lm
+    for obs in eligible:
+        t_yrs = (obs.timestamp - t0).total_seconds() / (365.25 * 86400.0)
+        age_obs = float(record.age_baseline) + max(0.0, t_yrs)
+        egfr_val = resolve_observation_egfr(obs, age_obs, record.sex)
+        if egfr_val is not None:
+            points.append((t_yrs, float(egfr_val)))
+
+    if len(points) < 3:
+        return {
+            "eligible": False,
+            "n_points": len(points),
+            "reason": "Requires >= 3 valid eGFR visits for expanding-window regression backtest.",
+        }
+
+    actuals: List[float] = []
+    preds: List[float] = []
+    for k in range(2, len(points)):
+        xs = np.array([p[0] for p in points[:k]], dtype=float)
+        ys = np.array([p[1] for p in points[:k]], dtype=float)
+        if np.ptp(xs) < 1e-6:
+            pred_y = float(np.mean(ys))
+        else:
+            slope, intercept = np.polyfit(xs, ys, 1)
+            pred_y = float(slope * points[k][0] + intercept)
+        actuals.append(points[k][1])
+        preds.append(max(1.0, min(150.0, pred_y)))
+
+    act_arr = np.asarray(actuals, dtype=float)
+    pred_arr = np.asarray(preds, dtype=float)
+    mae = float(np.mean(np.abs(act_arr - pred_arr)))
+    rmse = float(np.sqrt(np.mean((act_arr - pred_arr) ** 2)))
+    ss_res = float(np.sum((act_arr - pred_arr) ** 2))
+    ss_tot = float(np.sum((act_arr - np.mean(act_arr)) ** 2))
+    r2 = round(1.0 - (ss_res / ss_tot), 4) if ss_tot > 1e-8 else None
+
+    return {
+        "eligible": True,
+        "evaluated_steps": len(actuals),
+        "mae": round(mae, 3),
+        "rmse": round(rmse, 3),
+        "r2": r2,
+        "actual_values": [round(x, 2) for x in actuals],
+        "predicted_values": [round(x, 2) for x in preds],
+    }

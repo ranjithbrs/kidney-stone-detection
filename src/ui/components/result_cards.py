@@ -21,13 +21,16 @@ def render_engine1_card(e1: Optional[Engine1Result]) -> None:
         return
 
     # Check abstention or failure
-    if e1.status in [EngineStatus.ABSTAINED.value, "ABSTAIN_MISSING_CRITICAL_FEATURES", "REJECTED_INVALID_SCHEMA", EngineStatus.EXECUTION_ERROR.value]:
+    if e1.status in [EngineStatus.ABSTAINED.value, "ABSTAIN_MISSING_CRITICAL_FEATURES", "REJECTED_INVALID_SCHEMA", "ABSTAIN_INVALID_INPUT_MEASUREMENT", "ABSTAIN_OUT_OF_DOMAIN_MEASUREMENT", EngineStatus.EXECUTION_ERROR.value]:
         st.warning(f"⚠️ **Automated Screening Withheld ({e1.status})**\n\n{e1.abstention_reason or 'Critical biomarker safety requirement not met.'}")
-        m1, m2 = st.columns(2)
+        m1, m2, m3 = st.columns(3)
         with m1:
             st.metric("Consensus Panel Completeness", f"{e1.data_completeness_ratio * 100:.1f}%")
         with m2:
             st.metric("Missing Biomarkers", ", ".join(e1.missing_features) if e1.missing_features else "None")
+        with m3:
+            cri_txt = f"{e1.clinical_reliability_index:.2f}" if e1.clinical_reliability_index is not None else "N/A"
+            st.metric("Clinical Reliability Index (CRI)", cri_txt)
         return
 
     # Valid prediction display
@@ -68,6 +71,127 @@ def render_engine1_card(e1: Optional[Engine1Result]) -> None:
 
         if e1.imputed_features:
             st.caption(f"ℹ️ Non-critical features estimated via training medians: `{e1.imputed_features}`")
+
+    # CD-CIRPVM Reliability & Conformal Prediction Gate Panel
+    if e1.clinical_reliability_index is not None or e1.conformal_gate_decision is not None:
+        st.markdown("---")
+        st.markdown("#### 🛡️ CD-CIRPVM Conformal Reliability & Safety Gate")
+        gcol1, gcol2, gcol3 = st.columns(3)
+
+        cri_val = e1.clinical_reliability_index if e1.clinical_reliability_index is not None else 0.0
+        cov_pct = int(round((e1.conformal_coverage_target or 0.95) * 100))
+        class_labels = {0: "Healthy (0)", 1: "CKD (1)"}
+        cset_str = (
+            "{" + ", ".join(class_labels.get(c, str(c)) for c in e1.conformal_set) + "}"
+            if e1.conformal_set is not None
+            else "N/A"
+        )
+
+        with gcol1:
+            st.metric(
+                "Clinical Reliability Index (CRI)",
+                f"{cri_val:.2f} / 1.00",
+                "Above 0.60 threshold" if cri_val >= 0.60 else "Below 0.60 threshold",
+            )
+            st.progress(min(max(cri_val, 0.0), 1.0))
+
+        with gcol2:
+            q_str = f"q̂={e1.conformal_quantile:.3f}" if e1.conformal_quantile is not None else "Calibrated"
+            st.metric(f"Conformal Prediction Set ({cov_pct}%)", cset_str, q_str)
+
+        with gcol3:
+            gate_dec = e1.conformal_gate_decision or "N/A"
+            gate_stat = e1.conformal_gate_status or ""
+            st.metric("CD-CIRPVM Gate Decision", gate_dec, gate_stat)
+
+        if e1.conformal_gate_decision == "ABSTAIN":
+            st.warning(
+                f"⚠️ **CD-CIRPVM Advises Human Review (`{e1.conformal_gate_status}`)**: "
+                f"Conformal prediction set `{cset_str}` indicates boundary uncertainty or low data reliability "
+                f"(CRI={cri_val:.2f}). Confirm laboratory measurements and obtain physician adjudication."
+            )
+        elif e1.conformal_calibration_method:
+            st.caption(
+                f"Dynamic conformal calibration: `{e1.conformal_calibration_method}` "
+                f"(q̂ = {e1.conformal_quantile:.3f}, target coverage {cov_pct}%, fitted strictly on training partition)."
+            )
+
+        if e1.unit_reconciliation_audit or e1.bounds_clamping_audit:
+            with st.expander("🔍 Unit Reconciliation (MIDR) & Physiological Bounds Audit"):
+                if e1.unit_reconciliation_audit:
+                    st.markdown("**Detected Non-Standard / SI Unit Conversions:**")
+                    st.json(e1.unit_reconciliation_audit)
+                if e1.bounds_clamping_audit:
+                    st.markdown("**Reliability & Bounds Notes:**")
+                    st.json(e1.bounds_clamping_audit)
+
+    # 4-Family Stacking Ensemble Disagreement & Mondrian Class-Conditional Conformal Set
+    if e1.stacking_probability is not None or e1.mondrian_conformal_set is not None:
+        st.markdown("#### 🤝 Multi-Architecture Consensus & Class-Conditional Conformal Set")
+        mcol1, mcol2, mcol3 = st.columns(3)
+        with mcol1:
+            if e1.stacking_probability is not None:
+                st.metric(
+                    "4-Family Stacking Ensemble Risk",
+                    f"{e1.stacking_probability * 100:.1f}%",
+                    "LR Meta-Learner (RF + XGB + SVM + MLP)",
+                )
+            else:
+                st.metric("4-Family Stacking Ensemble Risk", "N/A")
+        with mcol2:
+            if e1.ensemble_disagreement_spread is not None:
+                dis_label = "Cross-Model Divergence" if e1.has_architecture_disagreement else "Architectures Aligned"
+                st.metric(
+                    "Cross-Architecture Spread",
+                    f"{e1.ensemble_disagreement_spread * 100:.1f}%",
+                    dis_label,
+                )
+            else:
+                st.metric("Cross-Architecture Spread", "N/A")
+        with mcol3:
+            if e1.mondrian_conformal_set is not None:
+                m_labels = {0: "Healthy", 1: "CKD"}
+                m_str = "{" + ", ".join(m_labels.get(c, str(c)) for c in e1.mondrian_conformal_set) + "}" if e1.mondrian_conformal_set else "{Empty}"
+                mq = e1.mondrian_quantiles or {}
+                mq_str = (
+                    f"q₀={mq.get('q_healthy', 0.0):.2f} | q₁={mq.get('q_ckd', 0.0):.2f}"
+                    if mq
+                    else "Class-Conditional"
+                )
+                st.metric("Mondrian Conformal Set (95%)", m_str, mq_str)
+            else:
+                st.metric("Mondrian Conformal Set (95%)", "N/A")
+
+        if e1.has_architecture_disagreement:
+            st.warning(
+                f"⚠️ **Architecture Disagreement Gate Triggered**: Base learners (RF, XGBoost, SVM-RBF, MLP) "
+                f"exhibit a spread of {e1.ensemble_disagreement_spread * 100:.1f}% or split classification votes. "
+                f"Review cross-family probabilities below."
+            )
+        if e1.stacking_base_probabilities:
+            with st.expander("📐 Base Learner Risk Probabilities (RF / XGBoost / SVM-RBF / MLP)"):
+                st.json({k: round(float(v), 4) for k, v in e1.stacking_base_probabilities.items()})
+
+    # Cross-Analyte Physiological & Stoichiometric Coherence Verifier
+    if e1.coherence_audit:
+        st.markdown("#### 🧪 Cross-Analyte Physiological Coherence Audit (`COH-01`–`04`)")
+        coh = e1.coherence_audit
+        if coh.get("is_coherent", True):
+            st.success(
+                f"✅ **Analytes Physiologically Coherent** (Coherence Score: `{coh.get('coherence_score', 1.0):.2f}` | "
+                f"{coh.get('checks_evaluated', 0)} invariant checks passed)."
+            )
+        else:
+            st.error(
+                f"⛔ **Cross-Analyte Coherence Contradiction Detected** "
+                f"(Score: `{coh.get('coherence_score', 0.0):.2f}` | CRI Penalty: `-{coh.get('total_cri_penalty', 0.0):.2f}`)"
+            )
+            for finding in coh.get("findings", []):
+                st.markdown(
+                    f"- **`{finding.get('check_id')}` — {finding.get('title')}** (`{finding.get('severity')}`): "
+                    f"{finding.get('observed_detail')} *(Expected: {finding.get('expected_invariant')})*  \n"
+                    f"  *Action:* {finding.get('clinical_action')}"
+                )
 
 
 def render_engine2_card(e2: Optional[Engine2Result]) -> None:
@@ -162,6 +286,36 @@ def render_engine3_card(e3: Optional[Engine3Result]) -> None:
                 st.warning(f"⚠️ **KFRE Risk Withheld**: {e3.kfre_applicability_explanation}")
             else:
                 st.info("KFRE calculation requires age, sex, eGFR, and uACR.")
+
+    # AKI-vs-CKD Velocity Disambiguation & Expanding-Window Trajectory Backtest
+    if e3.chronicity_aki_assessment or e3.trajectory_backtest:
+        st.markdown("---")
+        col_aki, col_bt = st.columns(2)
+        with col_aki:
+            st.markdown("#### ⚡ Chronicity vs. Acute Velocity (AKI Guard)")
+            aki = e3.chronicity_aki_assessment or {}
+            aki_status = aki.get("status", "UNKNOWN")
+            if aki.get("acute_spike_detected"):
+                st.error(f"🚨 **`{aki_status}`** — {aki.get('summary', '')}")
+            elif aki.get("chronic_persistence_confirmed"):
+                st.success(f"✅ **`{aki_status}`** — {aki.get('summary', '')}")
+            else:
+                st.info(f"ℹ️ **`{aki_status}`** — {aki.get('summary', '')}")
+        with col_bt:
+            st.markdown("#### 📉 Expanding-Window eGFR Trajectory Backtest")
+            bt = e3.trajectory_backtest or {}
+            if bt.get("eligible"):
+                b1, b2, b3 = st.columns(3)
+                with b1:
+                    st.metric("Walk-Forward MAE", f"{bt.get('mae', 0.0):.2f}")
+                with b2:
+                    st.metric("Walk-Forward RMSE", f"{bt.get('rmse', 0.0):.2f}")
+                with b3:
+                    r2_val = bt.get("r2")
+                    st.metric("Out-of-Time R²", f"{r2_val:.3f}" if r2_val is not None else "N/A")
+                st.caption(f"Evaluated across {bt.get('evaluated_steps', 0)} historical walk-forward step(s).")
+            else:
+                st.caption(bt.get("reason", "Requires >= 3 dated eGFR observations for walk-forward backtest."))
 
     st.markdown("---")
     # Machine Learning Survival Models Gating Notice

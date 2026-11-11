@@ -91,6 +91,8 @@ COPY .streamlit/                  /app/.streamlit/
 # Serialised model artefacts (protected; never retrain in container)
 COPY models/clinical_pipeline.joblib      /app/models/clinical_pipeline.joblib
 COPY models/preprocessor_Dataset_A.joblib /app/models/preprocessor_Dataset_A.joblib
+# Cached 4-family leak-free Stacking Ensemble (RF + XGBoost + SVM-RBF + MLP)
+COPY models/stacking_ensemble.joblib      /app/models/stacking_ensemble.joblib
 # UCI CKD ground-truth dataset (required by test suite and SHAP population plots)
 COPY datasets/clinical/dataset_A_uci_ckd.csv /app/datasets/clinical/dataset_A_uci_ckd.csv
 # Static and template assets for UI

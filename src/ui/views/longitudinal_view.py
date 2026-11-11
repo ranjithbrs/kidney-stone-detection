@@ -127,7 +127,7 @@ def render_longitudinal_view() -> None:
     st.markdown(f"### 📋 Recorded Longitudinal Visits ({len(visits)} Visits)")
 
     if not visits:
-        st.info("No longitudinal observations currently in session. Use the controls above or select a preset in **Patient Clinical Diagnosis**.")
+        st.info("No longitudinal observations currently in session. Use the controls above or select a preset in **🩺 Patient Clinical Assessment**.")
         return
 
     # Build display table with calculated eGFR

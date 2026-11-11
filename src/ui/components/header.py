@@ -1,97 +1,156 @@
-"""Header component with persistent research-software disclaimers and status badges."""
+"""Header component with modern SaaS navigation bar, engine status pills, and persistent clinical disclaimer."""
 
 from __future__ import annotations
 
+import html
+
 import streamlit as st
+
+from src.ui.components.styles import inject_professional_styles
 
 
 def render_app_header() -> None:
-    """Render the application branding, status badges, and persistent clinical disclaimer."""
-    st.markdown("""
-    <style>
-        .app-header {
+    """Render global SaaS design styles, top clinical navbar, status pills, and safety notice."""
+    inject_professional_styles()
+
+    active_user = st.session_state.get("auth_username")
+    if active_user:
+        user_badge_html = (
+            f'<span class="nx-pill nx-pill-live"><span class="nx-dot-green"></span> @{html.escape(str(active_user))}</span>'
+        )
+    else:
+        user_badge_html = '<span class="nx-pill nx-pill-muted">GUEST SESSION</span>'
+
+    header_html = """
+        <style>
+        .nx-topbar {
+            background: linear-gradient(135deg, #0b1f3a 0%, #0f4c81 58%, #0e7490 100%);
+            border-radius: 14px;
+            padding: 0.85rem 1.25rem;
+            margin-bottom: 0.55rem;
             display: flex;
+            flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(11, 31, 58, 0.14);
+            border: 1px solid rgba(56, 189, 248, 0.22);
         }
-        .app-title-group h1 {
-            font-size: 2.1rem;
-            font-weight: 800;
-            color: #0f4c81;
-            margin: 0;
-            line-height: 1.2;
+        @media (max-width: 1120px) {
+            .nx-topbar { flex-wrap: wrap; }
         }
-        .app-title-group p {
-            font-size: 1.0rem;
-            color: #475569;
-            margin: 0.2rem 0 0 0;
-        }
-        .persistent-disclaimer-box {
-            background-color: #fffbeb;
-            border-left: 5px solid #d97706;
-            color: #92400e;
-            padding: 0.65rem 1rem;
-            border-radius: 4px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
+        .nx-brand-wrap {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.72rem;
+            flex: 0 1 auto;
         }
-        .engine-badge {
-            display: inline-block;
-            padding: 0.2rem 0.55rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
+        .nx-logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .nx-brand-title {
+            margin: 0;
+            font-size: 1.42rem;
+            font-weight: 800;
+            color: #ffffff !important;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        .nx-brand-sub {
+            margin: 0.15rem 0 0 0;
+            font-size: 0.80rem;
+            color: #cbd5e1 !important;
+            font-weight: 500;
+        }
+        .nx-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.35rem;
+            justify-content: flex-end;
+        }
+        .nx-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.32rem;
+            padding: 0.22rem 0.56rem;
+            border-radius: 999px;
+            font-size: 0.68rem;
             font-weight: 700;
-            margin-right: 0.35rem;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
         }
-        .badge-online {
-            background-color: #ecfdf5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+        .nx-pill-live {
+            background: rgba(16, 185, 129, 0.18);
+            color: #d1fae5 !important;
+            border: 1px solid rgba(52, 211, 153, 0.45);
         }
-        .badge-deferred {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #cbd5e1;
+        .nx-pill-ver {
+            background: rgba(255, 255, 255, 0.14);
+            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.28);
         }
-        .badge-research {
-            background-color: #eff6ff;
-            color: #1e40af;
-            border: 1px solid #bfdbfe;
+        .nx-pill-muted {
+            background: rgba(148, 163, 184, 0.16);
+            color: #cbd5e1 !important;
+            border: 1px solid rgba(148, 163, 184, 0.32);
         }
-    </style>
-    """, unsafe_allow_html=True)
+        .nx-dot-green {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #34d399;
+            display: inline-block;
+        }
+        .nx-disclaimer-strip {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 4px solid #d97706;
+            border-radius: 10px;
+            padding: 0.55rem 0.95rem;
+            margin-bottom: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.80rem;
+            font-weight: 600;
+            color: #92400e;
+            box-shadow: 0 1px 2px rgba(217, 119, 6, 0.06);
+        }
+        </style>
 
-    # Top title and badges
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-        <div class="app-title-group">
-            <h1>NEFROAI-X</h1>
-            <p>Unified Explainable Clinical Decision Support System for Renal Medicine</p>
+        <div class="nx-topbar">
+            <div class="nx-brand-wrap">
+                <div class="nx-logo-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L4 5v6c0 5.55 3.42 10.74 8 12 4.58-1.26 8-6.45 8-12V5l-8-3z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="nx-brand-title">NEFROAI-X</div>
+                    <div class="nx-brand-sub">Early CKD Screening, KDIGO Staging &amp; Progression Suite</div>
+                </div>
+            </div>
+            <div class="nx-pill-row">
+                <span class="nx-pill nx-pill-ver">CDSS v1.0</span>
+                <span class="nx-pill nx-pill-live"><span class="nx-dot-green"></span> E1–E3 ONLINE</span>
+                <span class="nx-pill nx-pill-muted">SURVIVAL ML: DEFERRED</span>
+                __USER_BADGE_HTML__
+            </div>
         </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div style="text-align: right; padding-top: 0.4rem;">
-            <span class="engine-badge badge-research">🔬 RESEARCH SOFTWARE v7.0.0</span>
-            <span class="engine-badge badge-online">E1: SCREENING ONLINE</span><br>
-            <span class="engine-badge badge-online" style="margin-top: 0.25rem;">E2: KDIGO STAGING ONLINE</span>
-            <span class="engine-badge badge-online" style="margin-top: 0.25rem;">E3: KFRE ONLINE</span>
-            <span class="engine-badge badge-deferred" style="margin-top: 0.25rem;">SURVIVAL ML: DEFERRED</span>
-        </div>
-        """, unsafe_allow_html=True)
 
-    # Persistent mandatory clinical safety disclaimer
-    st.markdown("""
-    <div class="persistent-disclaimer-box">
-        <span>⚠️</span>
-        <span><b>MANDATORY CLINICAL NOTICE:</b> RESEARCH SOFTWARE PROTOTYPE — NOT CLINICALLY VALIDATED FOR INDEPENDENT DIAGNOSIS. NOT INTENDED TO REPLACE PROFESSIONAL MEDICAL JUDGMENT OR PHYSICIAN CONSULTATION.</span>
-    </div>
-    """, unsafe_allow_html=True)
+        <div class="nx-disclaimer-strip">
+            <span style="font-size: 1rem;">⚠️</span>
+            <span><b>MANDATORY CLINICAL NOTICE:</b> RESEARCH SOFTWARE PROTOTYPE — NOT CLINICALLY VALIDATED FOR INDEPENDENT DIAGNOSIS. NOT INTENDED TO REPLACE PROFESSIONAL MEDICAL JUDGMENT OR PHYSICIAN CONSULTATION.</span>
+        </div>
+        """.replace("__USER_BADGE_HTML__", user_badge_html)
+    st.markdown(header_html, unsafe_allow_html=True)

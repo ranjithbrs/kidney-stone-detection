@@ -186,26 +186,26 @@ def clear_session_state() -> None:
 
 def render_preset_buttons() -> None:
     """Render clinical preset selector buttons."""
-    st.markdown("#### ⚡ Clinical Demonstration Presets")
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.8])
+    st.markdown("#### ⚡ Quick Clinical Demonstration Presets")
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        if st.button("🟢 Healthy Cohort", help="Loads normal screening biomarkers and baseline eGFR"):
+        if st.button("🟢 Healthy Cohort", use_container_width=True, help="Loads normal screening biomarkers and baseline eGFR"):
             load_preset("healthy")
             st.rerun()
     with col2:
-        if st.button("🔴 High-Risk CKD", help="Loads progressive diabetic nephropathy with severe proteinuria"):
+        if st.button("🔴 High-Risk CKD", use_container_width=True, help="Loads progressive diabetic nephropathy with severe proteinuria"):
             load_preset("high_risk_ckd")
             st.rerun()
     with col3:
-        if st.button("⚠️ Discordant Case", help="Demonstrates False Assurance Risk (Engine 1 Healthy vs Engine 2 G3b/A3)"):
+        if st.button("⚠️ Discordant Case", use_container_width=True, help="Demonstrates False Assurance Risk (Engine 1 Healthy vs Engine 2 G3b/A3)"):
             load_preset("discordant_false_assurance")
             st.rerun()
     with col4:
-        if st.button("📉 Rapid Progressor", help="Loads 5-visit 2-year longitudinal trajectory with steep eGFR decline"):
+        if st.button("📉 Rapid Progressor", use_container_width=True, help="Loads 5-visit 2-year longitudinal trajectory with steep eGFR decline"):
             load_preset("rapid_progressor")
             st.rerun()
     with col5:
-        if st.button("🔄 Reset Data", help="Clears patient inputs and cached evaluation results"):
+        if st.button("🔄 Reset Data", use_container_width=True, help="Clears patient inputs and cached evaluation results"):
             clear_session_state()
             initialize_session_state()
             st.rerun()

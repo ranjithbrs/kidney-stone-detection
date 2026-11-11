@@ -56,6 +56,16 @@ from src.clinical.survival import (
     evaluate_survival_model,
     patient_grouped_train_test_split,
 )
+from src.clinical.conformal_calibrator import (
+    ConformalCalibrationResult,
+    build_calibrated_reliability_mechanism,
+    calibrate_conformal_quantile,
+    get_calibrated_conformal_result,
+)
+from src.clinical.xai_live import (
+    LiveTreeSHAPResult,
+    compute_live_treeshap,
+)
 from src.clinical.assessment_contracts import (
     UNIFIED_ASSESSMENT_DISCLAIMER,
     ClinicalDiscrepancy,
@@ -125,4 +135,10 @@ __all__ = [
     "ProvenanceSource",
     "EngineStatus",
     "FindingSeverity",
+    "ConformalCalibrationResult",
+    "calibrate_conformal_quantile",
+    "get_calibrated_conformal_result",
+    "build_calibrated_reliability_mechanism",
+    "LiveTreeSHAPResult",
+    "compute_live_treeshap",
 ]

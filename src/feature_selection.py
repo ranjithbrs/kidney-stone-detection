@@ -17,10 +17,12 @@ import pandas as pd
 from sklearn.feature_selection import mutual_info_classif, f_classif, RFE
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+import shap
 
 
 class FeatureSelectionPipeline:
@@ -52,14 +54,24 @@ class FeatureSelectionPipeline:
         ranking_series = pd.Series(rfe.ranking_, index=X_train.columns).sort_values(ascending=True)
         return ranking_series
 
-    def run_hybrid_selection(self, X_train, y_train, top_k=10):
+    def compute_shap_importance(self, X_train, y_train):
+        """Game-Theoretic TreeSHAP Mean |phi| Ranking on Training Data Only."""
+        rf = RandomForestClassifier(n_estimators=100, random_state=self.random_state)
+        rf.fit(X_train, y_train)
+        explainer = shap.TreeExplainer(rf)
+        sv = explainer(X_train)
+        vals = sv.values[:, :, 1] if len(sv.values.shape) == 3 else sv.values
+        mean_abs_shap = np.mean(np.abs(vals), axis=0)
+        return pd.Series(mean_abs_shap, index=X_train.columns).sort_values(ascending=False)
+
+    def run_hybrid_selection(self, X_train, y_train, top_k=10, include_shap=False):
         """
         Hybrid Selection:
-        Normalizes ranks across Mutual Information, ANOVA F, Random Forest Importance, and RFE.
+        Normalizes ranks across Mutual Information, ANOVA F, Random Forest Importance,
+        RFE, and (optionally) cooperative TreeSHAP importance.
         Computes consensus Borda score and selects top-K consensus biomarkers.
         """
         features = list(X_train.columns)
-        n = len(features)
 
         # 1. Mutual Information Rank (1 = best)
         mi_s = self.compute_mutual_info(X_train, y_train)
@@ -77,24 +89,100 @@ class FeatureSelectionPipeline:
         rfe_s = self.compute_rfe_ranking(X_train, y_train, n_features_to_select=top_k)
         rfe_ranks = {feat: rank for rank, feat in enumerate(rfe_s.index, start=1)}
 
+        # 5. Optional TreeSHAP Rank (1 = best)
+        shap_s = self.compute_shap_importance(X_train, y_train) if include_shap else None
+        shap_ranks = {feat: rank for rank, feat in enumerate(shap_s.index, start=1)} if shap_s is not None else {}
+
         # Combine into consensus DataFrame
         rank_records = []
         for feat in features:
-            avg_rank = (mi_ranks[feat] + anova_ranks[feat] + rf_ranks[feat] + rfe_ranks[feat]) / 4.0
-            rank_records.append({
+            rank_sum = mi_ranks[feat] + anova_ranks[feat] + rf_ranks[feat] + rfe_ranks[feat]
+            denom = 4.0
+            if include_shap:
+                rank_sum += shap_ranks[feat]
+                denom = 5.0
+            avg_rank = rank_sum / denom
+            rec = {
                 "feature": feat,
                 "mi_score": round(float(mi_s.get(feat, 0)), 4),
                 "anova_f_score": round(float(anova_s.get(feat, 0)), 2),
                 "rf_importance": round(float(rf_s.get(feat, 0)), 4),
                 "rfe_rank": int(rfe_ranks[feat]),
                 "consensus_rank_score": round(float(avg_rank), 2)
-            })
+            }
+            if include_shap and shap_s is not None:
+                rec["shap_mean_abs"] = round(float(shap_s.get(feat, 0)), 4)
+                rec["shap_rank"] = int(shap_ranks[feat])
+            rank_records.append(rec)
 
         df_rankings = pd.DataFrame(rank_records).sort_values(by="consensus_rank_score", ascending=True)
         df_rankings["final_rank"] = range(1, len(df_rankings) + 1)
 
         selected_features = list(df_rankings.head(top_k)["feature"])
         return df_rankings, selected_features
+
+    def evaluate_cv_selection_stability(self, dataset_path="datasets/clinical/dataset_A_uci_ckd.csv", top_k=10, n_splits=5):
+        """Run 5-method (MI+ANOVA+RF+RFE+SHAP) feature selection strictly inside training folds.
+
+        Never touches the 20% held-out test set. Returns per-fold selections,
+        pairwise Jaccard similarity stability, and biomarker selection frequencies.
+        """
+        try:
+            from src.preprocessing import ClinicalDataPreprocessor
+        except ImportError:
+            from preprocessing import ClinicalDataPreprocessor
+
+        raw_df = pd.read_csv(dataset_path)
+        prep_helper = ClinicalDataPreprocessor(target_col="classification", apply_smote=True, random_state=self.random_state)
+        clean_df = prep_helper._sanitize_raw_df(raw_df)
+        y = clean_df["classification"].astype(str).str.strip().str.lower().map({"ckd": 1, "notckd": 0, "1": 1, "0": 0})
+        if y.isnull().any():
+            y = y.fillna(y.mode()[0])
+        y = y.astype(int)
+        X = clean_df.drop(columns=["classification"])
+
+        X_train_raw, _, y_train_raw, _ = train_test_split(
+            X, y, test_size=0.2, stratify=y, random_state=self.random_state
+        )
+
+        num_cols = list(X_train_raw.select_dtypes(include=[np.number]).columns)
+        cat_cols = list(X_train_raw.select_dtypes(exclude=[np.number]).columns)
+        skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=self.random_state)
+
+        fold_sets = []
+        freq_counts = {}
+        for tr_idx, _ in skf.split(X_train_raw, y_train_raw):
+            fold_prep = ClinicalDataPreprocessor(target_col="classification", apply_smote=True, random_state=self.random_state)
+            fold_prep.num_cols, fold_prep.cat_cols, fold_prep.feature_names = num_cols, cat_cols, num_cols + cat_cols
+            X_tr_arr = fold_prep._fit_transform_features(X_train_raw.iloc[tr_idx])
+            y_tr_arr = np.asarray(y_train_raw.iloc[tr_idx], dtype=int)
+            X_tr_res, y_tr_res = fold_prep.smote.fit_resample(X_tr_arr, y_tr_arr)
+            X_tr_df = pd.DataFrame(X_tr_res, columns=fold_prep.feature_names)
+            _, sel_feats = self.run_hybrid_selection(X_tr_df, y_tr_res, top_k=top_k, include_shap=True)
+            fold_sets.append(sel_feats)
+            for f in sel_feats:
+                freq_counts[f] = freq_counts.get(f, 0) + 1
+
+        jaccards = []
+        for i in range(len(fold_sets)):
+            for j in range(i + 1, len(fold_sets)):
+                s1, s2 = set(fold_sets[i]), set(fold_sets[j])
+                jaccards.append(len(s1 & s2) / len(s1 | s2))
+
+        mean_jaccard = round(float(np.mean(jaccards)), 4) if jaccards else 1.0
+        stable_features = [
+            f for f, cnt in sorted(freq_counts.items(), key=lambda x: (-x[1], x[0]))
+        ]
+        return {
+            "n_splits": n_splits,
+            "top_k": top_k,
+            "train_partition_size": len(X_train_raw),
+            "held_out_test_excluded": True,
+            "mean_pairwise_jaccard": mean_jaccard,
+            "fold_selections": fold_sets,
+            "feature_frequencies": dict(sorted(freq_counts.items(), key=lambda x: (-x[1], x[0]))),
+            "consensus_by_frequency": stable_features[:top_k],
+        }
 
     def analyze_redundancy(self, X_train, threshold=0.80):
         """Identifies highly correlated / collinear redundant feature pairs."""

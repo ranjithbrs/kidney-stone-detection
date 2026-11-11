@@ -47,6 +47,8 @@ from src.clinical.progression_features import (
     ProgressionAbstention,
     ProgressionFeatureResult,
     ProgressionFeatures,
+    backtest_egfr_trajectory,
+    evaluate_chronicity_and_aki_status,
     extract_progression_features,
 )
 from src.clinical.survival.competing_risk import (
@@ -450,7 +452,18 @@ class KidneyProgressionEngine:
             "risk_flags": [],
         }
 
-        # Trajectory Category
+        # Trajectory Category & AKI/Chronicity Disambiguation
+        if record is not None:
+            explanations["chronicity_aki_assessment"] = evaluate_chronicity_and_aki_status(
+                record, landmark_time=landmark_time
+            )
+            explanations["trajectory_backtest"] = backtest_egfr_trajectory(
+                record, landmark_time=landmark_time
+            )
+        else:
+            explanations["chronicity_aki_assessment"] = None
+            explanations["trajectory_backtest"] = None
+
         active_slope = hist_slope if hist_slope is not None else (lmm_res.patient_slope if lmm_res else None)
         if active_slope is not None:
             if active_slope < -5.0:

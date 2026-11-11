@@ -10,6 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import shap
 import streamlit as st
 
 
@@ -186,9 +187,49 @@ def render_feature_attributions_chart(
     ax.set_yticks(y_pos)
     ax.set_yticklabels(feats, fontsize=8.5, fontweight="600")
     ax.invert_yaxis()
-    ax.set_xlabel("Feature Leverage Attribution Weight", fontsize=9, fontweight="bold")
-    ax.set_title("Biomarker Risk Contribution Weights", fontsize=10, fontweight="bold", color="#0f4c81")
+    ax.set_xlabel("Global Gini / MDI Importance Weight", fontsize=9, fontweight="bold")
+    ax.set_title("Global Random Forest Feature Importance (MDI Heuristic)", fontsize=10, fontweight="bold", color="#0f4c81")
     ax.grid(True, axis="x", linestyle=":", alpha=0.5)
 
     plt.tight_layout()
     return fig
+
+
+def render_live_treeshap_waterfall(
+    shap_result: Optional[Any],
+    patient_id: str = "",
+    figsize: tuple = (8.5, 4.8),
+) -> plt.Figure:
+    """Generate a live cooperative game-theoretic TreeSHAP waterfall figure for a patient."""
+    if shap_result is None or getattr(shap_result, "explanation_object", None) is None:
+        fig, ax = plt.subplots(figsize=figsize, dpi=120)
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.5,
+            "Live TreeSHAP waterfall unavailable for this record",
+            ha="center",
+            va="center",
+            color="#64748b",
+            fontsize=10,
+        )
+        return fig
+
+    fig = plt.figure(figsize=figsize, dpi=130)
+    shap.plots.waterfall(
+        shap_result.explanation_object,
+        show=False,
+        max_display=len(shap_result.feature_names),
+    )
+    active_fig = plt.gcf()
+    active_fig.set_size_inches(*figsize)
+    title_suffix = f" ({patient_id})" if patient_id else ""
+    plt.title(
+        f"Live TreeSHAP Local Waterfall Attribution{title_suffix}",
+        fontsize=11,
+        fontweight="bold",
+        color="#0f4c81",
+        pad=12,
+    )
+    plt.tight_layout()
+    return active_fig

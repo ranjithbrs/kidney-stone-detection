@@ -37,12 +37,27 @@ from src.clinical.assessment_contracts import (
     UnifiedAssessmentResponse,
     UnifiedFinding,
 )
+from src.clinical.attestation import (
+    arbitrate_clinical_action,
+    compute_assessment_attestation,
+)
+from src.clinical.coherence_verifier import verify_cross_analyte_coherence
+from src.clinical.conformal_calibrator import (
+    ConformalCalibrationResult,
+    build_calibrated_reliability_mechanism,
+    evaluate_consensus_cirpvm,
+    evaluate_mondrian_prediction_set,
+    get_calibrated_mondrian_result,
+)
 from src.clinical.kdigo_staging import CHRONICITY_DISCLAIMER
 from src.clinical.kfre_calculator import KFRE_DISCLAIMER, KFRECalibrationProfile, KFREInput
 from src.clinical.progression_features import (
     ClinicalObservation,
     LongitudinalPatientRecord,
 )
+from src.clinical.stacking_ensemble import get_stacking_ensemble
+from src.clinical.xai_live import compute_live_treeshap
+from src.clinical_input_reliability_mechanism import ClinicalInputReliabilityMechanism
 from src.engines.kidney_progression_engine import (
     ENGINE_3_DISCLAIMER,
     KidneyProgressionEngine,
@@ -77,11 +92,17 @@ class UnifiedAssessmentEngine:
         severity_engine: Optional[KidneySeverityEngine] = None,
         progression_engine: Optional[KidneyProgressionEngine] = None,
         pipeline_path: str = "models/clinical_pipeline.joblib",
+        reliability_mechanism: Optional[ClinicalInputReliabilityMechanism] = None,
     ) -> None:
         self.pipeline_path = pipeline_path
         self._pipeline = pipeline
         self.severity_engine = severity_engine or KidneySeverityEngine()
         self.progression_engine = progression_engine or KidneyProgressionEngine()
+        if reliability_mechanism is not None:
+            self.reliability_mechanism = reliability_mechanism
+            self.conformal_calibration: Optional[ConformalCalibrationResult] = None
+        else:
+            self.reliability_mechanism, self.conformal_calibration = build_calibrated_reliability_mechanism()
 
     def get_pipeline(self) -> Optional[Any]:
         """Retrieve or lazily load the production diagnostic pipeline."""
@@ -235,11 +256,23 @@ class UnifiedAssessmentEngine:
         else:
             engines_skipped["engine3"] = self._explain_skip_reason("engine3", norm_req)
 
+        # 5b. Cross-Engine Analyte Coherence Check (Dipstick al vs Quantitative uACR)
+        if e1_result is not None and e2_result is not None and e2_result.uacr is not None and e1_result.sanitized_inputs:
+            full_coh = verify_cross_analyte_coherence(e1_result.sanitized_inputs, uacr_mg_g=e2_result.uacr)
+            e1_result.coherence_audit = full_coh.to_dict()
+            if not full_coh.is_coherent and e1_result.clinical_reliability_index is not None:
+                e1_result.clinical_reliability_index = max(
+                    0.0, round(e1_result.clinical_reliability_index - full_coh.total_cri_penalty, 2)
+                )
+
         # 6. Evaluate Cross-Engine Consistency & Discrepancies
         discrepancies, disc_warnings = self._evaluate_cross_engine_discrepancies(
             e1_result, e2_result, e3_result, norm_req
         )
         safety_warnings.extend(disc_warnings)
+
+        # 6b. Safety-Max Clinical Arbitration State Machine
+        arbitration = arbitrate_clinical_action(e1_result, e2_result, e3_result, discrepancies)
 
         # 7. Compute Assessment Completeness
         all_possible = ["engine1", "engine2", "engine3"]
@@ -250,6 +283,8 @@ class UnifiedAssessmentEngine:
             "completeness_ratio": round(len(engines_executed) / len(all_possible), 2),
             "has_critical_discrepancies": any(d["severity"] == FindingSeverity.CRITICAL.value for d in discrepancies),
             "status": "COMPLETE" if len(engines_executed) == len(all_possible) else ("PARTIAL" if engines_executed else "INSUFFICIENT"),
+            "arbitration_tier": arbitration["tier"],
+            "arbitration_detail": arbitration,
         }
 
         # 8. Record Engine Versions
@@ -262,7 +297,7 @@ class UnifiedAssessmentEngine:
             "engine3_progression": getattr(self.progression_engine, "version", "3.0.0"),
         }
 
-        return UnifiedAssessmentResponse(
+        response = UnifiedAssessmentResponse(
             assessment_id=norm_req.request_id,
             patient_id=norm_req.patient_id,
             assessment_timestamp=norm_req.assessment_timestamp.isoformat(),
@@ -283,6 +318,9 @@ class UnifiedAssessmentEngine:
             safety_warnings=safety_warnings,
             disclaimer=self.disclaimer,
         )
+        attest = compute_assessment_attestation(response.to_dict())
+        response.provenance.update(attest)
+        return response
 
     # -----------------------------------------------------------------------
     # Request Normalization
@@ -538,6 +576,16 @@ class UnifiedAssessmentEngine:
             if anom.get("status") == "OUT_OF_DOMAIN":
                 warnings.append(f"Engine 1 Out-of-Domain Feature [{feat}]: {anom.get('reason')}")
 
+        # Execute CD-CIRPVM reliability scoring, MIDR unit audit, and conformal prediction set gate
+        rel_info = self._evaluate_engine1_reliability(raw_biomarkers, pred_dict, pipeline_obj)
+        if rel_info["conformal_gate_decision"] == "ABSTAIN" and risk_prob is not None:
+            warnings.append(
+                f"CD-CIRPVM Conformal Gate Abstention ({rel_info['conformal_gate_status']}): "
+                f"CRI={rel_info['clinical_reliability_index']:.2f}, "
+                f"Conformal Set={rel_info['conformal_set']}, "
+                f"q_95={rel_info['conformal_quantile']:.3f}."
+            )
+
         result = Engine1Result(
             status=status_str,
             diagnostic_class=diag_class,
@@ -556,8 +604,106 @@ class UnifiedAssessmentEngine:
             model_version=getattr(pipeline_obj, "version", "1.0.0-champion-rf"),
             provenance=getattr(e1_in, "provenance", request.provenance),
             warnings=warnings,
+            clinical_reliability_index=rel_info["clinical_reliability_index"],
+            conformal_set=rel_info["conformal_set"],
+            conformal_gate_decision=rel_info["conformal_gate_decision"],
+            conformal_gate_status=rel_info["conformal_gate_status"],
+            conformal_quantile=rel_info["conformal_quantile"],
+            conformal_coverage_target=rel_info["conformal_coverage_target"],
+            conformal_calibration_method=rel_info["conformal_calibration_method"],
+            unit_reconciliation_audit=rel_info["unit_reconciliation_audit"],
+            bounds_clamping_audit=rel_info["bounds_clamping_audit"],
+            live_shap_attributions=rel_info["live_shap_attributions"],
+            mondrian_conformal_set=rel_info["mondrian_conformal_set"],
+            mondrian_quantiles=rel_info["mondrian_quantiles"],
+            stacking_probability=rel_info["stacking_probability"],
+            stacking_base_probabilities=rel_info["stacking_base_probabilities"],
+            ensemble_disagreement_spread=rel_info["ensemble_disagreement_spread"],
+            has_architecture_disagreement=rel_info["has_architecture_disagreement"],
+            coherence_audit=rel_info["coherence_audit"],
         )
         return result, warnings
+
+    def _evaluate_engine1_reliability(
+        self,
+        raw_biomarkers: Dict[str, Any],
+        pred_dict: Dict[str, Any],
+        pipeline_obj: Any,
+    ) -> Dict[str, Any]:
+        """Compute CD-CIRPVM CRI, Mondrian set, Stacking disagreement, Coherence & live TreeSHAP."""
+        selected_feats = list(getattr(pipeline_obj, "selected_features", [
+            "hemo", "sg", "pcv", "rc", "al", "htn", "sc", "bu", "dm", "bgr"
+        ]))
+        risk_prob = pred_dict.get("risk_probability")
+        cal_method = (
+            self.conformal_calibration.calibration_method
+            if self.conformal_calibration is not None
+            else "configured_quantile"
+        )
+
+        rel = evaluate_consensus_cirpvm(
+            raw_biomarkers=raw_biomarkers,
+            reliability_mechanism=self.reliability_mechanism,
+            selected_features=selected_feats,
+            risk_probability=risk_prob,
+            prediction_status=pred_dict.get("prediction_status", "PREDICTION_AVAILABLE"),
+            sanitized_from_pipe=pred_dict.get("sanitized_inputs", {}),
+            feature_anomalies=pred_dict.get("feature_anomalies", {}),
+            calibration_method=cal_method,
+        )
+
+        # Cross-analyte physiological coherence verification on sanitized inputs
+        sanitized_inputs = pred_dict.get("sanitized_inputs", {})
+        coh_res = verify_cross_analyte_coherence(sanitized_inputs if sanitized_inputs else raw_biomarkers)
+        rel["coherence_audit"] = coh_res.to_dict()
+        if not coh_res.is_coherent:
+            rel["clinical_reliability_index"] = max(
+                0.0, round(rel["clinical_reliability_index"] - coh_res.total_cri_penalty, 2)
+            )
+
+        # Mondrian Class-Conditional Conformal Set
+        try:
+            mondrian_cal = get_calibrated_mondrian_result()
+            rel["mondrian_conformal_set"] = evaluate_mondrian_prediction_set(risk_prob, mondrian_cal)
+            rel["mondrian_quantiles"] = {
+                "q_healthy": mondrian_cal.q_healthy,
+                "q_ckd": mondrian_cal.q_ckd,
+            }
+        except Exception as ex:
+            logger.warning("Mondrian conformal evaluation skipped: %s", ex)
+            rel["mondrian_conformal_set"] = None
+            rel["mondrian_quantiles"] = None
+
+        # 4-Family Stacking Ensemble Cross-Architecture Disagreement (for real pipeline predictions)
+        rel["stacking_probability"] = None
+        rel["stacking_base_probabilities"] = None
+        rel["ensemble_disagreement_spread"] = None
+        rel["has_architecture_disagreement"] = None
+        if risk_prob is not None and hasattr(pipeline_obj, "model") and hasattr(pipeline_obj, "preprocessor"):
+            try:
+                stack_ens = get_stacking_ensemble()
+                merged_for_stack = dict(raw_biomarkers)
+                merged_for_stack.update(sanitized_inputs)
+                stack_out = stack_ens.predict_with_disagreement(merged_for_stack)
+                rel["stacking_probability"] = stack_out["stacking_probability"]
+                rel["stacking_base_probabilities"] = stack_out["base_probabilities"]
+                rel["ensemble_disagreement_spread"] = stack_out["disagreement_spread"]
+                rel["has_architecture_disagreement"] = stack_out["has_architecture_disagreement"]
+            except Exception as ex:
+                logger.warning("Stacking disagreement evaluation skipped: %s", ex)
+
+        # Compute exact game-theoretic TreeSHAP attributions if prediction is available
+        live_shap = None
+        if risk_prob is not None:
+            try:
+                shap_res = compute_live_treeshap(pipeline_obj, raw_biomarkers)
+                if shap_res is not None:
+                    live_shap = shap_res.to_dict()
+            except Exception as ex:
+                logger.warning("Live TreeSHAP computation skipped: %s", ex)
+
+        rel["live_shap_attributions"] = live_shap
+        return rel
 
     # -----------------------------------------------------------------------
     # Engine 2 Execution
@@ -795,6 +941,8 @@ class UnifiedAssessmentEngine:
             clinical_reliability=dict(raw_res.clinical_reliability),
             warnings=warnings,
             provenance=raw_res.provenance,
+            chronicity_aki_assessment=raw_res.progression_explanations.get("chronicity_aki_assessment"),
+            trajectory_backtest=raw_res.progression_explanations.get("trajectory_backtest"),
         )
         return result, warnings
 
@@ -954,5 +1102,65 @@ class UnifiedAssessmentEngine:
                         discrepancies.append(d)
                 except (ValueError, TypeError):
                     pass
+
+        # DISCREPANCY 8: CD-CIRPVM Conformal Reliability Gate Abstention
+        if e1 is not None and e1.risk_probability is not None and e1.conformal_gate_decision == "ABSTAIN":
+            d = ClinicalDiscrepancy(
+                discrepancy_id="DISC-08-CONFORMAL-RELIABILITY-GATE",
+                title="CD-CIRPVM Conformal Reliability Gate Advises Abstention",
+                involved_engines=["Engine 1 (Screening)", "CD-CIRPVM Safety Gate"],
+                severity=FindingSeverity.WARNING.value,
+                description=(
+                    f"Engine 1 produced a point risk estimate ({e1.risk_probability:.1%}), but the CD-CIRPVM "
+                    f"verification gate triggered '{e1.conformal_gate_status}' "
+                    f"(CRI={e1.clinical_reliability_index:.2f}, Conformal Set C_95={e1.conformal_set})."
+                ),
+                clinical_action=(
+                    "Treat the binary screening point estimate as uncertain/inconclusive. "
+                    "Verify missing or boundary laboratory measurements and rely on KDIGO staging and physician review."
+                ),
+            )
+            discrepancies.append(d)
+            warnings.append(f"CD-CIRPVM Safety Gate Alert: {d.description}")
+
+        # DISCREPANCY 9: Cross-Analyte Physiological Coherence Alert
+        if e1 is not None and e1.coherence_audit and not e1.coherence_audit.get("is_coherent", True):
+            coh_findings = e1.coherence_audit.get("findings", [])
+            titles = "; ".join(f.get("title", "Coherence anomaly") for f in coh_findings)
+            has_crit = any(f.get("severity") == "CRITICAL" for f in coh_findings)
+            d = ClinicalDiscrepancy(
+                discrepancy_id="DISC-09-CROSS-ANALYTE-COHERENCE-ALERT",
+                title="Cross-Analyte Physiological Invariant Contradiction",
+                involved_engines=["Engine 1 (Screening)", "Cross-Analyte Coherence Verifier"],
+                severity=FindingSeverity.CRITICAL.value if has_crit else FindingSeverity.WARNING.value,
+                description=f"Multi-biomarker physiological consistency check flagged anomalies: {titles}",
+                clinical_action=(
+                    "Verify specimen integrity, rule out hemolysis/clerical transcription error, "
+                    "and repeat confirmatory lab draw before clinical action."
+                ),
+            )
+            discrepancies.append(d)
+            warnings.append(f"Cross-Analyte Coherence Alert: {titles}")
+
+        # DISCREPANCY 10: Ensemble Architecture Disagreement or Acute Creatinine Velocity Spike
+        disagree_reasons = []
+        if e1 is not None and e1.has_architecture_disagreement:
+            disagree_reasons.append(
+                f"Stacking base learners (RF/XGB/SVM/MLP) diverged (spread={e1.ensemble_disagreement_spread:.2f})"
+            )
+        if e3 is not None and e3.chronicity_aki_assessment and e3.chronicity_aki_assessment.get("acute_spike_detected"):
+            disagree_reasons.append(e3.chronicity_aki_assessment.get("summary", "Acute creatinine spike detected"))
+
+        if disagree_reasons:
+            d = ClinicalDiscrepancy(
+                discrepancy_id="DISC-10-ENSEMBLE-DISAGREEMENT-OR-ACUTE-SPIKE",
+                title="Cross-Architecture Disagreement or Acute Velocity Alert",
+                involved_engines=["Stacking Ensemble", "Engine 3 (Temporal Velocity)"],
+                severity=FindingSeverity.WARNING.value,
+                description=" | ".join(disagree_reasons),
+                clinical_action="Review individual model probabilities and rule out acute transient kidney injury (AKI).",
+            )
+            discrepancies.append(d)
+            warnings.append(f"DISC-10 Alert: {d.description}")
 
         return [d.to_dict() for d in discrepancies], warnings

@@ -1,7 +1,7 @@
 # NEFROAI-X: Multimodal Kidney Disease Clinical Decision Support System
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
-[![Tests](https://img.shields.io/badge/tests-349%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-364%20tests%20(20%20modules)-brightgreen.svg)]()
 [![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)]()
 [![Regulatory Status](https://img.shields.io/badge/status-investigational%20software-orange.svg)]()
 [![License](https://img.shields.io/badge/license-Research%20Only-lightgrey.svg)]()
@@ -21,9 +21,9 @@ Chronic Kidney Disease (CKD) affects over 850 million individuals worldwide (ove
 - **Zero Data Leakage:** Eliminates global pre-split imputation and scaling; all imputers, scalers, and SMOTE rebalancers are fitted strictly on cross-validation training partitions.
 - **60% Laboratory Workload Reduction:** Compresses an exhaustive 24-test panel down to **10 consensus biomarkers** (`hemo, sg, pcv, rc, al, htn, sc, bu, dm, bgr`) via multi-method hybrid ranking (Mutual Information, ANOVA F, Gini Impurity, RFE).
 - **Three Unified Clinical Engines:** Synthesizes point-of-care screening risk, international guideline staging, and longitudinal progression velocity under an overarching clinical orchestrator.
-- **Clinical Data Quality Safety Gate (CD-CIRPVM):** Prevents silent coercion of missing tests, reconciles international measurement units, calculates a continuous Clinical Reliability Index (CRI), and automatically executes safe abstentions on low-quality data.
-- **Dual-Layer Explainable AI:** Real-time cooperative game-theoretic **SHAP** (`TreeExplainer`) waterfall attributions paired with **LIME** local decision boundaries.
-- **100% Quality Assurance:** Comprehensive 19-module automated test suite with **349 passing unit, clinical, and integration tests** (0 failures).
+- **Clinical Data Quality Safety Gate (CD-CIRPVM):** Dynamically calibrated (`oof_stratified_5fold`, training-only) split/cross-conformal prediction sets, Magnitude-Inferred Unit Reconciliation (MIDR), continuous Clinical Reliability Index (CRI), and safe abstention gates (`DISC-08`) integrated directly into Engine 1, batch CSV screening, and the Streamlit UI.
+- **Dual-Layer Explainable AI:** Real-time cooperative game-theoretic **SHAP** (`shap.TreeExplainer`) live patient waterfall attributions paired with global **SHAP**/**LIME** diagnostics.
+- **Automated Quality Assurance:** Comprehensive 20-module automated test suite (**364 test cases**, covering all clinical engines, CD-CIRPVM conformal calibration, live TreeSHAP, batch CSV screening, and headless UI verification).
 
 ---
 
@@ -75,8 +75,14 @@ flowchart TD
 ### Engine 3: Longitudinal Progression & Survival Architecture
 - **Tangri 4-Variable KFRE:** Computes 2-year and 5-year kidney failure risk (%) using age, sex, eGFR, and log(UACR).
 - **Eligibility Guard (DISC-05):** Strictly withholds KFRE calculation when $eGFR \ge 60\text{ mL/min/1.73m}^2$.
-- **Filtration Trajectory Modeling:** Computes annualized decline via Ordinary Least Squares (OLS) and Linear Mixed-Effects Models (LMM) with BLUP shrinkage.
+- **Filtration Trajectory Modeling:** Computes annualized decline via Ordinary Least Squares (OLS), Linear Mixed-Effects Models (LMM) with BLUP shrinkage, AKI-vs-CKD velocity disambiguation, and expanding-window walk-forward backtests (`MAE`, `RMSE`, `R²`).
 - **Survival Modeling Status:** Competing-risk architecture (Cox PH, RSF, Aalen–Johansen) is mathematically verified but formally deferred (`DEFERRED_PENDING_APPROVED_COHORT`) pending approved real longitudinal cohort access (CRIC).
+
+### Multimodal Safety, Reliability & Governance Extensions (8 Streamlit Views)
+- **4-Family Stacking Ensemble & Calibration View:** Leak-free `Random Forest` + `XGBoost` + `SVM-RBF` + `MLP` stacking with `LogisticRegression` meta-learner, cross-architecture disagreement metrics, PR-AUC, Calibration reliability diagrams, 95% bootstrap CIs, clinical subgroup breakdowns, and 5-method inner-CV feature selection stability (`MI + ANOVA + RF + RFE + TreeSHAP`).
+- **Mondrian Conformal Gating & Coherence Auditor:** Separate class-conditional (`q_healthy`, `q_ckd`) conformal prediction sets (`evaluate_mondrian_prediction_set`) plus pre-inference Cross-Analyte Physiological Coherence checks (`COH-01`–`04`) raising `DISC-09`.
+- **Explainability & Constrained Recourse:** Live cached `TreeExplainer` SHAP waterfall, live LIME surrogate linear rules, Cross-XAI Concordance (`SHAP` vs `LIME` vs `KDIGO`), and physiologically constrained counterfactual simulation.
+- **Batch Drift Monitoring, Arbitration & Audit Vault:** Training-anchored PSI, two-sample KS, and Mahalanobis OOD monitoring (`drift_monitor.py`); Safety-Max escalation arbitration (`DISC-01`–`10`); tamper-evident SHA-256 inference attestation (`attestation.py`); and an authenticated SQLite/PBKDF2 longitudinal history store (`patient_store.py`).
 
 ---
 
@@ -132,7 +138,7 @@ cd kidney-stone-detection
 # 3. Install pinned dependencies
 python -m pip install -r requirements.docker.txt
 
-# 4. Run automated test suite (349 tests)
+# 4. Run full automated test suite
 python -m pytest tests/ -q
 
 # 5. Launch the Streamlit application
@@ -186,7 +192,7 @@ The following 4 serialized assets represent core research deliverables and must 
 ### Run Full Test Suite
 ```powershell
 python -m pytest tests/ -q
-# Output: 349 passed, 3 warnings in 22.90s
+# Note: test_19_raw_nhanes_files_remain_unchanged_after_processing skips cleanly when gitignored NHANES .xpt files are absent locally.
 ```
 
 ### Run In-Container Health Check
