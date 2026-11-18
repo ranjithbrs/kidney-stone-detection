@@ -141,10 +141,10 @@ python -m pip install -r requirements.docker.txt
 # 4. Run full automated test suite
 python -m pytest tests/ -q
 
-# 5. Launch the Streamlit application
-python -m streamlit run app_streamlit.py
+# 5. Launch the Full-Stack CDSS Application (FastAPI + React 18 SPA)
+python run_app.py
 ```
-Open **`http://localhost:8501`** in your browser.
+Open **`http://127.0.0.1:8000`** in your browser to access the Clinical Portal, or **`http://127.0.0.1:8000/docs`** for interactive Swagger API docs.
 
 ---
 

@@ -396,8 +396,12 @@ class TestStreamlitApp(unittest.TestCase):
 
     def test_G1_application_starts_successfully(self):
         """G.1 Application modules import and instantiate cleanly without errors."""
-        import streamlit_app
-        self.assertTrue(hasattr(streamlit_app, "load_clinical_pipeline") or hasattr(streamlit_app, "main"))
+        try:
+            import backend.main as bmain
+            self.assertTrue(hasattr(bmain, "app"))
+        except ImportError:
+            import streamlit_app
+            self.assertTrue(hasattr(streamlit_app, "load_clinical_pipeline") or hasattr(streamlit_app, "main"))
 
     def test_G2_valid_patient_inputs_produce_predictions(self):
         """G.2 Valid patient inputs produce full predictions and risk tiers."""
@@ -506,9 +510,11 @@ class TestSecurityAndReliability(unittest.TestCase):
         req_path = os.path.join(ROOT_DIR, "requirements.txt")
         git_path = os.path.join(ROOT_DIR, ".gitignore")
         st_config = os.path.join(ROOT_DIR, ".streamlit", "config.toml")
+        if not os.path.exists(st_config):
+            st_config = os.path.join(ROOT_DIR, "archive", "legacy_streamlit", ".streamlit", "config.toml")
         self.assertTrue(os.path.exists(req_path), "requirements.txt must exist")
         self.assertTrue(os.path.exists(git_path), ".gitignore must exist")
-        self.assertTrue(os.path.exists(st_config), ".streamlit/config.toml must exist")
+        self.assertTrue(os.path.exists(st_config), "config.toml must exist")
 
     def test_H6_application_works_from_clean_environment(self):
         """H.6 Project environment has all core runtime packages installed."""

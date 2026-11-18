@@ -247,12 +247,18 @@ class TestBatchScreeningCSV(unittest.TestCase):
         self.assertIn("sc", unit_row["unit_conversions_detected"])
 
     def test_02_reject_incompatible_kidney_stone_datasets(self):
-        stone_df = pd.read_csv(os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_B_kidney_stone.csv"))
+        stone_path = os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_B_kidney_stone.csv")
+        if not os.path.exists(stone_path):
+            stone_path = os.path.join(ROOT_DIR, "archive", "legacy_yolo_kidney_stone", "dataset_B_kidney_stone.csv")
+        stone_df = pd.read_csv(stone_path)
         res_stone = run_batch_clinical_screening(stone_df, self.pipeline, self.mech)
         self.assertFalse(res_stone.schema_valid)
         self.assertIn("Incompatible", res_stone.schema_message)
 
-        simpson_df = pd.read_csv(os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_C_simpson_kidney.csv"))
+        simpson_path = os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_C_simpson_kidney.csv")
+        if not os.path.exists(simpson_path):
+            simpson_path = os.path.join(ROOT_DIR, "archive", "legacy_yolo_kidney_stone", "dataset_C_simpson_kidney.csv")
+        simpson_df = pd.read_csv(simpson_path)
         res_simpson = run_batch_clinical_screening(simpson_df, self.pipeline, self.mech)
         self.assertFalse(res_simpson.schema_valid)
 
@@ -277,6 +283,10 @@ class TestBatchScreeningCSV(unittest.TestCase):
 class TestStreamlitHeadlessAppTest(unittest.TestCase):
     """5. Verify end-to-end Streamlit UI rendering via AppTest without runtime errors."""
 
+    @unittest.skipIf(
+        not os.path.isfile(os.path.join(ROOT_DIR, "src", "streamlit_app.py")),
+        "Streamlit app retired to archive in favor of FastAPI + React full-stack CDSS",
+    )
     def test_01_app_boots_and_navigates_cleanly(self):
         from streamlit.testing.v1 import AppTest
 

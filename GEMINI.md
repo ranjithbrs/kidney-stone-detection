@@ -8,11 +8,12 @@ Refer to [AGENTS.md](AGENTS.md) for full project standards, clinical feature spe
    .venv\Scripts\python.exe
    ```
 2. **Primary Application Entry Point**:
-   - The primary clinical application is built on Streamlit:
+   - The primary clinical application is a full-stack FastAPI + React CDSS:
      ```powershell
-     .venv\Scripts\streamlit.exe run app_streamlit.py
+     .venv\Scripts\python.exe run_app.py
      ```
-   - Primary model artifact: `models/clinical_pipeline.joblib` (Random Forest champion model with Top-10 consensus biomarkers).
+     Serves the React SPA and REST APIs directly at `http://127.0.0.1:8000/`.
+   - Primary model artifact: `models/clinical_pipeline.joblib` (Random Forest champion model with Top-10 consensus biomarkers) and `models/stacking_ensemble.joblib` (4-Family Stacking Ensemble).
 3. **Data Integrity & Leakage Prevention**:
    - Primary ground-truth dataset is `datasets/clinical/dataset_A_uci_ckd.csv` (UCI CKD, 400 patients, 24 features). Note that `dataset_C_kaggle_ckd.csv` is an exact duplicate mirror.
    - All preprocessing (imputation, scaling, SMOTE) must be fitted strictly on training data (`X_train`), never on test partitions.

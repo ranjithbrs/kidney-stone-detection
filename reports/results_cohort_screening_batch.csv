@@ -1,0 +1,11 @@
+patient_id,name,age,sex,risk_score_pct,risk_tier,egfr,kdigo_stage,chronicity
+PT-001,Healthy Wellness Checkup,32.0,Female,22.3%,Low Risk,108.4,Stage G1 (Normal or high filtration >= 90 mL/min) · A1 (Normal to mildly increased < 30 mg/g),CONFIRMED CKD (>=90d)
+PT-002,Elderly Normal,72.0,Male,74.1%,High Risk,75.4,Stage G2 (Mildly decreased 60-89 mL/min) · A1 (Normal to mildly increased < 30 mg/g),CONFIRMED CKD (>=90d)
+PT-003,Borderline Pre-Diabetic,54.0,Male,61.6%,High Risk,73.3,Stage G2 (Mildly decreased 60-89 mL/min) · A1 (Normal to mildly increased < 30 mg/g),CONFIRMED CKD (>=90d)
+PT-004,Hypertensive Mild Renal Impairment,58.0,Female,87.0%,High Risk,43.6,Stage G3b (Moderate-to-severe decrease 30-44 mL/min) · A2 (Moderately increased 30-300 mg/g),CONFIRMED CKD (>=90d)
+PT-005,Diabetic Nephropathy Stage G3b,64.0,Male,89.1%,High Risk,38.9,Stage G3b (Moderate-to-severe decrease 30-44 mL/min) · A2 (Moderately increased 30-300 mg/g),CONFIRMED CKD (>=90d)
+PT-006,Severe Renal Failure Stage G4,70.0,Female,92.1%,High Risk,16.9,Stage G4 (Severely decreased 15-29 mL/min) · A3 (Severely increased > 300 mg/g),CONFIRMED CKD (>=90d)
+PT-007,Young Athlete Dehydration (Suspected AKI),28.0,Male,48.5%,Moderate Risk,43.2,Stage G3b (Moderate-to-severe decrease 30-44 mL/min) · A1 (Normal to mildly increased < 30 mg/g),SUSPECTED AKI
+PT-008,UK SI Unit Format Patient,49.0,Male,36.0%,Moderate Risk,92.3,Stage G1 (Normal or high filtration >= 90 mL/min) · A1 (Normal to mildly increased < 30 mg/g),CONFIRMED CKD (>=90d)
+PT-009,Microalbuminuria Screening,50.0,Female,40.7%,Moderate Risk,61.2,Stage G2 (Mildly decreased 60-89 mL/min) · A2 (Moderately increased 30-300 mg/g),CONFIRMED CKD (>=90d)
+PT-010,Advanced Uremic Syndrome,66.0,Male,93.3%,High Risk,14.8,Stage G5 (Kidney Failure < 15 mL/min) · A3 (Severely increased > 300 mg/g),CONFIRMED CKD (>=90d)

@@ -1,0 +1,9 @@
+Component,Phenotype,True_Biological_Slope,Estimated_Mean_Slope,MAE_Slope,RMSE_Slope,Slope_R2,Description
+eGFR_Longitudinal_Trajectory_Engine3,Stable_NonProgressor,-0.5,-0.4313,0.5183,0.6624,-0.0109,OLS decline slope estimation over 3-year serial observations with +/- 2.0 mL/min noise.
+eGFR_Longitudinal_Trajectory_Engine3,Moderate_Progressor,-2.5,-2.5951,0.6278,0.7878,-0.0148,OLS decline slope estimation over 3-year serial observations with +/- 2.0 mL/min noise.
+eGFR_Longitudinal_Trajectory_Engine3,Rapid_Progressor,-5.0,-4.9091,0.553,0.7265,-0.0159,OLS decline slope estimation over 3-year serial observations with +/- 2.0 mL/min noise.
+eGFR_Longitudinal_Trajectory_Engine3,Malignant_Progressor,-12.0,-10.6867,1.3133,1.4432,-4.8186,OLS decline slope estimation over 3-year serial observations with +/- 2.0 mL/min noise.
+Tangri_4Var_KFRE_Progression,KFRE_Case_1_Low,N/A,N/A,0.0045,0.0139,0.0186,"Inputs: Age=65, Sex=M, eGFR=45.0, UACR=20.0. 2-Yr Risk=0.45%, 5-Yr Risk=1.39%, Recalibrated NA 5-Yr=1.86%."
+Tangri_4Var_KFRE_Progression,KFRE_Case_2_Mod,N/A,N/A,0.0503,0.1488,0.194,"Inputs: Age=60, Sex=F, eGFR=30.0, UACR=150.0. 2-Yr Risk=5.03%, 5-Yr Risk=14.88%, Recalibrated NA 5-Yr=19.40%."
+Tangri_4Var_KFRE_Progression,KFRE_Case_3_High,N/A,N/A,0.3797,0.7749,0.8641,"Inputs: Age=55, Sex=M, eGFR=20.0, UACR=800.0. 2-Yr Risk=37.97%, 5-Yr Risk=77.49%, Recalibrated NA 5-Yr=86.41%."
+Tangri_4Var_KFRE_Progression,KFRE_Case_4_Critical,N/A,N/A,0.8496,0.9973,0.9996,"Inputs: Age=45, Sex=F, eGFR=12.0, UACR=2500.0. 2-Yr Risk=84.96%, 5-Yr Risk=99.73%, Recalibrated NA 5-Yr=99.96%."

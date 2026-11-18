@@ -193,6 +193,8 @@ class TestClinicalInputSafetyAndSchemaValidation(unittest.TestCase):
     def test_scenario_09_kidney_stone_dataset_rejection(self):
         """Scenario 9: Kidney stone urinalysis dataset (Dataset B) is rejected immediately."""
         path_b = os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_B_kidney_stone.csv")
+        if not os.path.exists(path_b):
+            path_b = os.path.join(ROOT_DIR, "archive", "legacy_yolo_kidney_stone", "dataset_B_kidney_stone.csv")
         self.assertTrue(os.path.exists(path_b))
         df_b = pd.read_csv(path_b)
 
@@ -210,6 +212,8 @@ class TestClinicalInputSafetyAndSchemaValidation(unittest.TestCase):
     def test_scenario_10_simpson_kidney_stone_rejection(self):
         """Scenario 10: Simpson stone removal surgical cohort (Dataset C) is rejected immediately."""
         path_c = os.path.join(ROOT_DIR, "datasets", "clinical", "dataset_C_simpson_kidney.csv")
+        if not os.path.exists(path_c):
+            path_c = os.path.join(ROOT_DIR, "archive", "legacy_yolo_kidney_stone", "dataset_C_simpson_kidney.csv")
         self.assertTrue(os.path.exists(path_c))
         df_c = pd.read_csv(path_c)
 

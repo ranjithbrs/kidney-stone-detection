@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ShieldCheck, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { api, setStoredToken } from '../api'
 
 export default function AuthModal({ initialMode = 'signin', storageBackend, onClose, onSuccess }) {
@@ -27,7 +27,7 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
         })
       } else {
         if (password.length < 6) {
-          throw new Error('Password must be at least 6 characters long.')
+          throw new Error('Password must be at least 6 characters.')
         }
         if (password !== confirmPassword) {
           throw new Error('Password confirmation does not match.')
@@ -52,46 +52,42 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Clinician Authentication">
       <div className="modal-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ShieldCheck size={22} color="#0f4c81" />
-            <h3 style={{ margin: 0 }}>
-              {mode === 'signin' ? 'Sign In to NEFROAI-X' : 'Create Clinician Account'}
-            </h3>
-          </div>
-          <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close authentication modal">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+          <h2 style={{ fontSize: '1.08rem' }}>
+            {mode === 'signin' ? 'Sign in to NEFROAI-X' : 'Create clinician account'}
+          </h2>
+          <button type="button" className="btn btn-sm btn-ghost" onClick={onClose} aria-label="Close">
             <X size={16} />
           </button>
         </div>
 
-        <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginBottom: '0.9rem' }}>
-          Storage Engine: <strong>{storageBackend === 'postgresql' ? 'Cloud PostgreSQL (Supabase)' : 'Local SQLite Vault (Cloud Ready)'}</strong>.
-          Signed-in accounts save CKD evaluations permanently and unlock the audit vault.
+        <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '0.9rem' }}>
+          Access saved patient charts, visit history, and signed clinical reports.
         </p>
 
-        <div className="tabs" style={{ marginBottom: '0.9rem' }}>
+        <div className="segmented" style={{ marginBottom: '0.9rem', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <button
             type="button"
-            className={`tab-btn ${mode === 'signin' ? 'active' : ''}`}
+            className={`seg-btn ${mode === 'signin' ? 'active' : ''}`}
             onClick={() => { setMode('signin'); setError('') }}
           >
-            Sign In
+            Sign in
           </button>
           <button
             type="button"
-            className={`tab-btn ${mode === 'signup' ? 'active' : ''}`}
+            className={`seg-btn ${mode === 'signup' ? 'active' : ''}`}
             onClick={() => { setMode('signup'); setError('') }}
           >
-            Create Account
+            Create account
           </button>
         </div>
 
-        {error && <div className="alert alert-danger" style={{ padding: '0.65rem 0.85rem' }}>{error}</div>}
+        {error && <div className="notice notice-danger">{error}</div>}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
           {mode === 'signin' ? (
             <div className="field">
-              <label htmlFor="auth-user-email">Username or Email</label>
+              <label htmlFor="auth-user-email">Username or email</label>
               <input
                 id="auth-user-email"
                 type="text"
@@ -111,23 +107,23 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
                     type="text"
                     required
                     minLength={3}
-                    placeholder="dr_nephro"
+                    placeholder="dr_sharma"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
                 <div className="field">
-                  <label htmlFor="auth-role">Clinical Role</label>
+                  <label htmlFor="auth-role">Role</label>
                   <select id="auth-role" value={role} onChange={(e) => setRole(e.target.value)}>
                     <option value="Nephrologist">Nephrologist</option>
                     <option value="Physician">Primary Care Physician</option>
-                    <option value="Clinical Researcher">Clinical Researcher</option>
                     <option value="Lab Coordinator">Lab Coordinator</option>
+                    <option value="Clinical Researcher">Clinical Researcher</option>
                   </select>
                 </div>
               </div>
               <div className="field">
-                <label htmlFor="auth-fullname">Full Name</label>
+                <label htmlFor="auth-fullname">Full name</label>
                 <input
                   id="auth-fullname"
                   type="text"
@@ -138,7 +134,7 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
                 />
               </div>
               <div className="field">
-                <label htmlFor="auth-email">Work / Clinical Email</label>
+                <label htmlFor="auth-email">Work email</label>
                 <input
                   id="auth-email"
                   type="email"
@@ -165,7 +161,7 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
 
           {mode === 'signup' && (
             <div className="field">
-              <label htmlFor="auth-confirm">Confirm Password</label>
+              <label htmlFor="auth-confirm">Confirm password</label>
               <input
                 id="auth-confirm"
                 type="password"
@@ -178,12 +174,11 @@ export default function AuthModal({ initialMode = 'signin', storageBackend, onCl
             </div>
           )}
 
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: '0.35rem' }}>
-            {loading ? 'Authenticating...' : mode === 'signin' ? 'Sign In & Unlock Cloud Vault' : 'Create Account & Sign In'}
+          <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: '0.3rem', width: '100%' }}>
+            {loading ? 'Signing in...' : mode === 'signin' ? 'Sign in' : 'Create account'}
           </button>
         </form>
       </div>
     </div>
   )
 }
-

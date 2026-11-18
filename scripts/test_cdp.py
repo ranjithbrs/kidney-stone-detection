@@ -1,0 +1,104 @@
+import asyncio
+import json
+import base64
+import time
+import os
+import urllib.request
+import subprocess
+import websockets
+
+ROOT = r"c:\Users\B Ranjith\Downloads\project"
+EDGE_EXE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+if not os.path.exists(EDGE_EXE):
+    EDGE_EXE = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+
+profile_dir = os.path.join(ROOT, ".edge_cdp_profile")
+os.makedirs(profile_dir, exist_ok=True)
+
+# 1. Start Streamlit
+st_proc = subprocess.Popen(
+    [
+        os.path.join(ROOT, ".venv", "Scripts", "streamlit.exe"), "run", "app_streamlit.py",
+        "--server.headless=true", "--server.port=8501", "--server.address=127.0.0.1", "--browser.gatherUsageStats=false"
+    ],
+    cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+)
+
+# 2. Wait for health
+print("Waiting for Streamlit...", flush=True)
+for i in range(25):
+    time.sleep(1)
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8501/_stcore/health", timeout=2) as r:
+            if r.status == 200:
+                print(f"Streamlit healthy in {i+1}s", flush=True)
+                break
+    except Exception:
+        pass
+
+# 3. Start Edge
+browser_proc = subprocess.Popen(
+    [
+        EDGE_EXE, "--headless=new", "--remote-debugging-port=9222",
+        f"--user-data-dir={profile_dir}", "--window-size=1400,1050", "--disable-gpu"
+    ],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+)
+
+time.sleep(2)
+req = urllib.request.urlopen("http://127.0.0.1:9222/json")
+tabs = json.loads(req.read().decode("utf-8"))
+ws_url = None
+for tab in tabs:
+    if tab.get("type") == "page" and "webSocketDebuggerUrl" in tab:
+        ws_url = tab["webSocketDebuggerUrl"]
+        break
+
+print(f"WS URL: {ws_url}", flush=True)
+
+msg_id = 0
+
+async def send_cmd(ws, method, params=None, timeout=15):
+    global msg_id
+    msg_id += 1
+    req_id = msg_id
+    payload = {"id": req_id, "method": method}
+    if params:
+        payload["params"] = params
+    await ws.send(json.dumps(payload))
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        try:
+            raw = await asyncio.wait_for(ws.recv(), timeout=2.0)
+            data = json.loads(raw)
+            if data.get("id") == req_id:
+                return data.get("result", {})
+        except asyncio.TimeoutError:
+            pass
+    raise TimeoutError(f"Timeout waiting for response to {method}")
+
+async def main():
+    try:
+        async with websockets.connect(ws_url, max_size=50 * 1024 * 1024) as ws:
+            pages = [
+                ("ui_assessment.png", "http://127.0.0.1:8501/?view=assessment"),
+                ("ui_explainability.png", "http://127.0.0.1:8501/?view=explainability"),
+                ("ui_longitudinal.png", "http://127.0.0.1:8501/?view=longitudinal"),
+            ]
+            for filename, url in pages:
+                print(f"Navigating to {url}...", flush=True)
+                await send_cmd(ws, "Page.navigate", {"url": url})
+                print("Waiting 8s for Streamlit React rendering...", flush=True)
+                await asyncio.sleep(8)
+                print(f"Capturing screenshot: {filename}...", flush=True)
+                res = await send_cmd(ws, "Page.captureScreenshot", {"format": "png"})
+                img_bytes = base64.b64decode(res["data"])
+                out_path = os.path.join(ROOT, "docs", "images", filename)
+                with open(out_path, "wb") as f:
+                    f.write(img_bytes)
+                print(f"Saved {out_path} ({len(img_bytes)/1024:.1f} KB)", flush=True)
+    finally:
+        browser_proc.terminate()
+        st_proc.terminate()
+
+asyncio.run(main())

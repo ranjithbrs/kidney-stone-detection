@@ -53,7 +53,7 @@ class ClinicalDataPreprocessor:
             if data[col].dtype == object:
                 data[col] = data[col].astype(str).str.strip().str.replace('\t', '')
                 # Replace '?' or empty strings with NaN
-                data[col] = data[col].replace(['?', '', 'nan', 'None'], np.nan)
+                data[col] = data[col].replace(['?', '', 'nan', 'None'], np.nan).infer_objects(copy=False)
 
         # Certain columns in CKD datasets should be numeric but often contain string artifacts
         potential_num = ['age', 'bp', 'sg', 'al', 'su', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc', 'rc',

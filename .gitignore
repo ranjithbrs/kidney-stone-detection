@@ -29,6 +29,7 @@ wheels/
 # Installer archives & temporary raw bundles
 pyfilenew/
 KidneyStoneYPY/
+archive/
 *.exe
 *.rar
 *.zip

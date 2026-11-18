@@ -1,293 +1,229 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  BookOpen,
-  BrainCircuit,
-  Database,
-  Home,
-  LogIn,
-  LogOut,
-  ShieldCheck,
-  Stethoscope,
-  TrendingUp,
-  UserPlus,
-} from 'lucide-react'
 import { api, getStoredToken, setStoredToken } from './api'
-import AuthModal from './components/AuthModal'
+import SidebarNav from './components/SidebarNav'
+import PatientsPage from './components/PatientsPage'
 import AssessmentPage from './components/AssessmentPage'
-import ExplainabilityPage from './components/ExplainabilityPage'
-import OverviewPage from './components/OverviewPage'
-import PerformancePage from './components/PerformancePage'
-import { GovernanceGuidePage, ProgressionGuidePage, VaultPage } from './components/VaultAndGuidesPage'
+import PatientChartPage from './components/PatientChartPage'
+import BatchPage from './components/BatchPage'
+import ModelAuditPage from './components/ModelAuditPage'
+import AuthModal from './components/AuthModal'
 
-const DEFAULT_TODAY = new Date().toISOString().slice(0, 10)
-
-const INITIAL_FORM = {
-  patient_id: 'PT-HIGH-RISK-CKD',
-  age: 64,
-  sex: 'male',
-  biomarkers: {
-    hemo: 9.8,
-    sg: 1.01,
-    pcv: 30,
-    sc: 2.4,
-    rc: 3.3,
-    al: 3,
-    bu: 72,
-    bgr: 185,
-    htn: 'yes',
-    dm: 'yes',
-  },
-  serum_creatinine: 2.4,
-  serum_creatinine_unit: 'mg/dL',
-  uacr: 380,
-  uacr_unit: 'mg/g',
-  observation_date_scr: DEFAULT_TODAY,
-  observation_date_uacr: DEFAULT_TODAY,
-  kfre_calibration: 'NON_NORTH_AMERICA',
-  visits: [],
-  auto_save: true,
+function createEmptyFormState() {
+  return {
+    patient_id: '',
+    age: '',
+    sex: 'male',
+    observation_date: new Date().toISOString().slice(0, 10),
+    serum_creatinine: '',
+    serum_creatinine_unit: 'mg/dL',
+    uacr: '',
+    uacr_unit: 'mg/g',
+    biomarkers: {
+      hemo: '',
+      sg: '',
+      pcv: '',
+      rc: '',
+      al: '',
+      sc: '',
+      bu: '',
+      bgr: '',
+      htn: 'no',
+      dm: 'no',
+    },
+    visits: [],
+  }
 }
 
-const NAV_ITEMS = [
-  { id: 'overview', label: 'System Overview', icon: Home },
-  { id: 'assessment', label: 'CKD Screening & Labs', icon: Stethoscope },
-  { id: 'explainability', label: 'Live XAI & What-If', icon: BrainCircuit },
-  { id: 'performance', label: 'Benchmark & Calibration', icon: BarChart3 },
-  { id: 'vault', label: 'Cloud Vault & Audit', icon: Database },
-  { id: 'progression', label: 'Progression Methodology', icon: TrendingUp },
-  { id: 'governance', label: 'Clinical Governance', icon: BookOpen },
-]
-
 export default function App() {
-  const [page, setPage] = useState('overview')
+  const [activePage, setActivePage] = useState('patients')
   const [health, setHealth] = useState(null)
-  const [presets, setPresets] = useState({})
   const [user, setUser] = useState(null)
   const [authModalMode, setAuthModalMode] = useState(null)
-  const [formState, setFormState] = useState(INITIAL_FORM)
+  const [formState, setFormState] = useState(createEmptyFormState)
   const [assessment, setAssessment] = useState(null)
   const [vaultRefreshKey, setVaultRefreshKey] = useState(0)
+  const [globalError, setGlobalError] = useState('')
 
   useEffect(() => {
-    api.health().then(setHealth).catch(() => {})
-    api
-      .presets()
-      .then((d) => {
-        if (d?.presets) {
-          setPresets(d.presets)
-          const p = d.presets.high_risk_ckd
-          if (p) {
-            setFormState((prev) => ({
-              ...prev,
-              patient_id: p.patient_id,
-              age: p.age,
-              sex: p.sex,
-              biomarkers: { ...p.biomarkers },
-              serum_creatinine: p.serum_creatinine,
-              serum_creatinine_unit: p.serum_creatinine_unit || 'mg/dL',
-              uacr: p.uacr,
-              uacr_unit: p.uacr_unit || 'mg/g',
-              visits: (p.visits || []).map((v) => ({ ...v })),
-            }))
-          }
-        }
-      })
-      .catch(() => {})
+    let mounted = true
+    async function init() {
+      try {
+        const h = await api.health()
+        if (!mounted) return
+        setHealth(h)
+      } catch (err) {
+        if (mounted) setGlobalError(err.message || 'Unable to connect to clinical backend.')
+      }
 
-    if (getStoredToken()) {
-      api
-        .me()
-        .then((res) => {
-          if (res?.user) setUser(res.user)
-        })
-        .catch(() => setStoredToken(''))
+      if (getStoredToken()) {
+        try {
+          const me = await api.me()
+          if (mounted && me?.user) setUser(me.user)
+        } catch {
+          setStoredToken('')
+        }
+      }
+    }
+    init()
+    return () => {
+      mounted = false
     }
   }, [])
+
+  function handleSignedIn(nextUser, storageBackend) {
+    setUser(nextUser)
+    if (storageBackend) {
+      setHealth((prev) => (prev ? { ...prev, storage_backend: storageBackend } : prev))
+    }
+    setVaultRefreshKey((k) => k + 1)
+  }
+
+  async function handleOpenVaultPatient(patientId, assessmentId) {
+    setGlobalError('')
+    try {
+      const [detail, visitRes] = await Promise.all([
+        api.historyDetail(assessmentId),
+        api.patientVisits(patientId).catch(() => ({ visits: [] })),
+      ])
+      const payload = detail?.payload
+      if (!payload) {
+        throw new Error('Saved assessment payload was empty.')
+      }
+
+      const rawBiomarkers = payload.biomarkers || payload.input_biomarkers || {}
+      const e2 = payload.engine2_result || {}
+      const restoredForm = {
+        patient_id: payload.patient_id || patientId,
+        age: payload.age ?? '',
+        sex: payload.sex || 'male',
+        observation_date: String(payload.observation_date || new Date().toISOString().slice(0, 10)).slice(0, 10),
+        serum_creatinine: rawBiomarkers.sc ?? '',
+        serum_creatinine_unit: 'mg/dL',
+        uacr: e2.uacr ?? '',
+        uacr_unit: 'mg/g',
+        biomarkers: {
+          hemo: rawBiomarkers.hemo ?? '',
+          sg: rawBiomarkers.sg ?? '',
+          pcv: rawBiomarkers.pcv ?? '',
+          rc: rawBiomarkers.rc ?? '',
+          al: rawBiomarkers.al ?? '',
+          sc: rawBiomarkers.sc ?? '',
+          bu: rawBiomarkers.bu ?? '',
+          bgr: rawBiomarkers.bgr ?? '',
+          htn: rawBiomarkers.htn || 'no',
+          dm: rawBiomarkers.dm || 'no',
+        },
+        visits: Array.isArray(visitRes?.visits) ? visitRes.visits : [],
+      }
+
+      setFormState(restoredForm)
+      setAssessment(payload)
+      setActivePage('chart')
+    } catch (err) {
+      setGlobalError(err.message || 'Could not load saved patient record.')
+    }
+  }
 
   function handleSignOut() {
     setStoredToken('')
     setUser(null)
   }
 
-  function handleLoadPatientVisits(patientId, visits) {
-    setFormState((prev) => ({
-      ...prev,
-      patient_id: patientId,
-      visits: visits || [],
-    }))
-    setPage('assessment')
-  }
-
-  const storageLabel = health?.cloud_postgres_connected ? 'CLOUD POSTGRES (SUPABASE)' : 'SQLITE VAULT (CLOUD READY)'
-
   return (
-    <div className="app-shell">
-      {/* Executive Dark-Navy Sidebar */}
-      <aside className="sidebar">
-        <div className="brand-block">
-          <div className="brand-title">
-            <Activity size={22} color="#38bdf8" />
-            <span>NEFROAI-X</span>
-          </div>
-          <div className="brand-sub">Explainable Renal CDSS &bull; Research SaaS</div>
-        </div>
+    <div className="shell-layout">
+      <SidebarNav
+        activePage={activePage}
+        hasActivePatient={Boolean(assessment)}
+        onNavigate={setActivePage}
+        user={user}
+        onOpenAuth={(mode) => setAuthModalMode(mode)}
+        onSignOut={handleSignOut}
+      />
 
-        {/* Account Auth Widget */}
-        <div className="sidebar-section-label">Clinician Session</div>
-        <div className="auth-sidebar-box">
-          {user ? (
-            <div>
-              <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>{user.full_name}</div>
-              <div style={{ fontSize: '0.75rem', color: '#93c5fd', marginBottom: '0.55rem' }}>
-                @{user.username} &bull; {user.role}
-              </div>
-              <button type="button" className="btn btn-sidebar" onClick={handleSignOut}>
-                <LogOut size={14} /> Sign Out
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <div style={{ fontSize: '0.77rem', color: '#cbd5e1', marginBottom: '0.15rem' }}>
-                Guest Mode — screening active; sign in to save records permanently.
-              </div>
-              <button type="button" className="btn btn-sidebar" onClick={() => setAuthModalMode('signin')}>
-                <LogIn size={14} /> Sign In
-              </button>
-              <button type="button" className="btn btn-sidebar" onClick={() => setAuthModalMode('signup')}>
-                <UserPlus size={14} /> Create Account
+      <div className="main-col">
+        <main className="page-main">
+          {globalError && (
+            <div className="notice notice-danger" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>{globalError}</span>
+              <button type="button" className="btn btn-sm" onClick={() => setGlobalError('')}>
+                Dismiss
               </button>
             </div>
           )}
-        </div>
 
-        {/* Navigation Links */}
-        <div className="sidebar-section-label">Clinical Workspace</div>
-        <nav className="nav-list" aria-label="Primary clinical navigation">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon
-            const active = page === item.id
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={`nav-btn ${active ? 'active' : ''}`}
-                onClick={() => setPage(item.id)}
-              >
-                <Icon size={16} />
-                <span>{item.label}</span>
-              </button>
-            )
-          })}
-        </nav>
+          {activePage === 'patients' && (
+            <PatientsPage
+              user={user}
+              vaultRefreshKey={vaultRefreshKey}
+              onNewScreening={() => setActivePage('screening')}
+              onOpenBatchScreening={() => setActivePage('batch')}
+              onOpenVaultPatient={handleOpenVaultPatient}
+              onOpenAuth={(mode) => setAuthModalMode(mode)}
+              onSignedIn={handleSignedIn}
+            />
+          )}
 
-        {/* Live Engine Status */}
-        <div className="engine-status-card">
-          <div style={{ fontWeight: 700, color: '#93c5fd', marginBottom: '0.35rem', fontSize: '0.72rem' }}>
-            SYSTEM TELEMETRY
-          </div>
-          <div className="status-row">
-            <span><span className="dot dot-green" /> E1 Screening RF+Stack</span>
-            <span>ONLINE</span>
-          </div>
-          <div className="status-row">
-            <span><span className="dot dot-green" /> E2 KDIGO 2024 Staging</span>
-            <span>ONLINE</span>
-          </div>
-          <div className="status-row">
-            <span><span className="dot dot-green" /> E3 KFRE &amp; Trajectory</span>
-            <span>ONLINE</span>
-          </div>
-          <div className="status-row">
-            <span><span className="dot dot-amber" /> Survival ML</span>
-            <span>DEFERRED</span>
-          </div>
-        </div>
-      </aside>
+          {activePage === 'screening' && (
+            <AssessmentPage
+              formState={formState}
+              setFormState={setFormState}
+              assessment={assessment}
+              setAssessment={setAssessment}
+              user={user}
+              onOpenChart={() => setActivePage('chart')}
+              onVaultUpdated={() => setVaultRefreshKey((k) => k + 1)}
+            />
+          )}
 
-      {/* Main Pane */}
-      <main className="main-pane">
-        <header className="topbar">
-          <div>
-            <h1>NEFROAI-X &mdash; Chronic Kidney Disease Screening &amp; XAI</h1>
-            <div className="topbar-sub">
-              Full-Stack FastAPI + React Clinical Decision Support Platform (Screening, KDIGO Staging, Longitudinal Trajectory)
-            </div>
-          </div>
-          <div className="pill-bar">
-            <span className="pill pill-navy">RESEARCH PROTOTYPE</span>
-            <span className={`pill ${health?.cloud_postgres_connected ? 'pill-green' : 'pill-blue'}`}>
-              <ShieldCheck size={13} /> {storageLabel}
+          {activePage === 'chart' && (
+            <PatientChartPage
+              patientId={formState.patient_id}
+              formState={formState}
+              setFormState={setFormState}
+              assessment={assessment}
+              setAssessment={setAssessment}
+              user={user}
+              onNavigateToScreening={() => setActivePage('screening')}
+              onVaultUpdated={() => setVaultRefreshKey((k) => k + 1)}
+            />
+          )}
+
+          {activePage === 'batch' && <BatchPage />}
+
+          {activePage === 'audit' && (
+            <ModelAuditPage
+              user={user}
+              health={health}
+              formState={formState}
+              onOpenAuth={(mode) => setAuthModalMode(mode)}
+            />
+          )}
+        </main>
+
+        <footer className="app-footer">
+          <div className="app-footer-inner">
+            <span>
+              NEFROAI-X Clinical Decision Support · Screening aid only; confirm all clinical decisions with a nephrologist.
             </span>
-            <span className="pill pill-amber">SURVIVAL ML: DEFERRED</span>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              style={{ padding: '0.1rem 0.4rem', fontSize: '0.76rem' }}
+              onClick={() => setActivePage('audit')}
+            >
+              Validation &amp; Audit
+            </button>
           </div>
-        </header>
-
-        <div className="disclaimer-banner" role="note">
-          <AlertTriangle size={17} style={{ flexShrink: 0 }} />
-          <span>
-            MANDATORY CLINICAL NOTICE: Research Decision Support Prototype — Not clinically validated for standalone medical diagnosis.
-            All automated CKD estimates require board-certified physician adjudication.
-          </span>
-        </div>
-
-        {page === 'overview' && (
-          <OverviewPage
-            health={health}
-            user={user}
-            onNavigate={setPage}
-            onOpenAuth={setAuthModalMode}
-          />
-        )}
-
-        {page === 'assessment' && (
-          <AssessmentPage
-            presets={presets}
-            formState={formState}
-            setFormState={setFormState}
-            assessment={assessment}
-            setAssessment={setAssessment}
-            user={user}
-            onNavigate={setPage}
-            onVaultUpdated={() => setVaultRefreshKey((k) => k + 1)}
-          />
-        )}
-
-        {page === 'explainability' && (
-          <ExplainabilityPage formState={formState} onNavigate={setPage} />
-        )}
-
-        {page === 'performance' && <PerformancePage />}
-
-        {page === 'vault' && (
-          <VaultPage
-            user={user}
-            storageBackend={health?.storage_backend}
-            activeAssessment={assessment}
-            onOpenAuth={setAuthModalMode}
-            onLoadPatientVisits={handleLoadPatientVisits}
-            vaultRefreshKey={vaultRefreshKey}
-          />
-        )}
-
-        {page === 'progression' && <ProgressionGuidePage onNavigate={setPage} />}
-
-        {page === 'governance' && <GovernanceGuidePage health={health} />}
-      </main>
+        </footer>
+      </div>
 
       {authModalMode && (
         <AuthModal
           initialMode={authModalMode}
           storageBackend={health?.storage_backend}
           onClose={() => setAuthModalMode(null)}
-          onSuccess={(loggedUser, backendName) => {
-            setUser(loggedUser)
-            if (backendName) {
-              setHealth((h) => (h ? { ...h, storage_backend: backendName, cloud_postgres_connected: backendName === 'postgresql' } : h))
-            }
-            setVaultRefreshKey((k) => k + 1)
+          onSuccess={(nextUser, storageBackend) => {
+            handleSignedIn(nextUser, storageBackend)
             setAuthModalMode(null)
           }}
         />
@@ -295,4 +231,3 @@ export default function App() {
     </div>
   )
 }
-

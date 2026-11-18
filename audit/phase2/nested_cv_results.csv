@@ -1,0 +1,8 @@
+Experiment,Fold,Accuracy,Sensitivity,Specificity,F1_Score,ROC_AUC,Brier_Score,Selected_Features
+Nested_CV_Fold_1,1,0.9875,1.0,0.9666666666666667,0.9900990099009901,0.9993333333333334,0.010355,hemo|pcv|sc|rc|sg|al|htn|sod|dm|pot
+Nested_CV_Fold_2,2,1.0,1.0,1.0,1.0,1.0,0.0016850000000000003,hemo|sc|pcv|rc|sg|dm|sod|htn|al|pot
+Nested_CV_Fold_3,3,0.9875,0.98,1.0,0.98989898989899,0.9993333333333334,0.01258,hemo|pcv|rc|sc|sg|al|htn|sod|pot|dm
+Nested_CV_Fold_4,4,0.975,1.0,0.9333333333333333,0.9803921568627451,0.9989999999999999,0.015985,hemo|pcv|rc|sc|sg|al|htn|sod|bgr|dm
+Nested_CV_Fold_5,5,1.0,1.0,1.0,1.0,0.9999999999999999,0.00393,hemo|pcv|sc|rc|sg|al|sod|htn|bu|pot
+Top10_Consensus_Model_HeldOut,HeldOut_80,1.0,1.0,1.0,1.0,1.0,0.010085,hemo|sg|pcv|rc|al|htn|sc|bu|dm|bgr
+Full_24_Feature_Model_HeldOut,HeldOut_80,1.0,1.0,1.0,1.0,1.0,0.009465,ALL_24_FEATURES

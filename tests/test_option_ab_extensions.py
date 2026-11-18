@@ -358,6 +358,10 @@ class TestProtectedAssetsAndFullAppTestNavigation(unittest.TestCase):
                 actual = hashlib.sha256(f.read()).hexdigest()
             self.assertEqual(actual, expected, f"Protected baseline asset modified: {path}")
 
+    @unittest.skipIf(
+        not os.path.isfile(os.path.join(ROOT_DIR, "src", "streamlit_app.py")),
+        "Streamlit retired to archive in favor of FastAPI + React full-stack CDSS",
+    )
     def test_02_streamlit_all_8_views_render_without_exceptions(self):
         from streamlit.testing.v1 import AppTest
 
@@ -386,6 +390,10 @@ class TestProtectedAssetsAndFullAppTestNavigation(unittest.TestCase):
             at.sidebar.radio[0].set_value(label).run()
             self.assertFalse(at.exception, f"Navigation exception on view '{label}': {at.exception}")
 
+    @unittest.skipIf(
+        not os.path.isfile(os.path.join(ROOT_DIR, "src", "streamlit_app.py")),
+        "Streamlit retired to archive in favor of FastAPI + React full-stack CDSS",
+    )
     def test_03_streamlit_signup_signin_signout_flow(self):
         from unittest.mock import patch
         from streamlit.testing.v1 import AppTest

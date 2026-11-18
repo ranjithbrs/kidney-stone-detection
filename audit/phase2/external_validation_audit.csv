@@ -1,0 +1,5 @@
+Dataset_Name,Role_Claimed,True_Nature,Total_Records,Independent_Validation_Valid,Audit_Verdict
+Dataset_C_Kaggle_CKD,Reported in Literature as External Cohort,Byte-level Duplicate Mirror of Dataset A,400,False,REJECTED AS EXTERNAL COHORT: Exact duplicate of UCI CKD (0 mismatches). Cannot claim cross-dataset generalization.
+Dataset_B_Kidney_Stone,Clinical Comparison,Urinalysis for Calcium Oxalate Nephrolithiasis Crystals,79,False,INCOMPATIBLE CLINICAL ETIOLOGY: Non-renal stone risk. Incompatible feature space.
+Dataset_C_Simpson_Kidney,Surgical Kidney Benchmark,Surgical Percutaneous Nephrolithotomy Outcomes,80,False,"INCOMPATIBLE CLINICAL ETIOLOGY: Surgical stones outcome, not medical nephrology CKD screening."
+NHANES_2017_2018_Adult_MEC,Epidemiological External Validation for Engine 2 (KDIGO CGA Staging),CDC National Health and Nutrition Examination Survey,5533,True,VALID EXTERNAL EPIDEMIOLOGICAL BENCHMARK: Evaluated N=5154 adults with complete biochemistry. Mean eGFR: 94.5 mL/min/1.73m2. eGFR < 60 prevalence: 8.60% (consistent with CDC US national CKD prevalence ~14-15%).

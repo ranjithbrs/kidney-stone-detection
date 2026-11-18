@@ -83,7 +83,7 @@ from src.clinical.xai_live import (
 )
 from src.engines.unified_assessment_engine import UnifiedAssessmentEngine
 from src.feature_selection import FeatureSelectionPipeline
-from src.ui.components.report_export import (
+from src.clinical.reporting.report_export import (
     generate_csv_export,
     generate_pdf_report,
     generate_text_report,

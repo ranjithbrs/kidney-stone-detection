@@ -19,7 +19,7 @@ from src.clinical.conformal_calibrator import (
 from src.clinical.drift_monitor import BatchDriftReport, evaluate_batch_covariate_drift
 from src.clinical_input_reliability_mechanism import ClinicalInputReliabilityMechanism
 from src.pipeline import TOP_10_CONSENSUS_FEATURES
-from src.ui.components.report_export import sanitize_csv_cell
+from src.clinical.reporting.report_export import sanitize_csv_cell
 
 MAX_BATCH_FILE_BYTES = 5 * 1024 * 1024  # 5 MB
 MAX_BATCH_ROWS = 500

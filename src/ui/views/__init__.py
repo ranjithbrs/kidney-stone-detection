@@ -1,1 +1,0 @@
-"""NEFROAI-X Application Views."""

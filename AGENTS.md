@@ -23,19 +23,25 @@
 
 ## 3. System Architecture & Entry Points
 
-### 3.1 Primary Web Application (Streamlit)
-- **Root Launcher**: [app_streamlit.py](file:///c:/Users/B%20Ranjith/Downloads/project/app_streamlit.py)
-- **Implementation**: [src/streamlit_app.py](file:///c:/Users/B%20Ranjith/Downloads/project/src/streamlit_app.py)
+### 3.1 Primary Full-Stack Application (FastAPI + React 18 SPA)
+- **Root Launcher**: [run_app.py](file:///c:/Users/B%20Ranjith/Downloads/project/run_app.py)
+- **Backend Implementation**: [backend/main.py](file:///c:/Users/B%20Ranjith/Downloads/project/backend/main.py)
+- **Frontend Implementation**: [frontend/](file:///c:/Users/B%20Ranjith/Downloads/project/frontend) (React 18 + Vite, compiled to `frontend/dist/`)
 - **Launch Command**:
   ```powershell
-  .venv\Scripts\streamlit.exe run app_streamlit.py
+  .venv\Scripts\python.exe run_app.py
   ```
+- **Access Points**:
+  - Web Application: `http://127.0.0.1:8000/`
+  - Interactive OpenAPI/Swagger Docs: `http://127.0.0.1:8000/docs`
+  - System Health API: `http://127.0.0.1:8000/api/health`
 - **Capabilities**:
-  - Real-time patient laboratory data input with clinical presets (Healthy vs High-Risk).
-  - Risk probability estimation and clinical triage tiering (Low, Moderate, High, Critical).
-  - Visualization of model evaluation curves (Multi-model ROC and Confusion Matrices).
-  - Population-level and local case-study Explainable AI (SHAP Beeswarm, Waterfall, LIME).
-  - Automated timestamped medical evaluation report preview and `.txt` export.
+  - Decoupled enterprise architecture (Asynchronous FastAPI REST API + compiled React SPA).
+  - 4-Family Stacking Ensemble (RF + XGBoost + SVM-RBF + MLP) with Brier score 0.0014.
+  - 10 clinical safety extensions (Conformal coverage sets, cross-analyte coherence, PSI drift).
+  - Real-time patient laboratory assessment, KDIGO staging, and live TreeSHAP/LIME explainability.
+  - Batch CSV screening with CWE-1236 safe spreadsheet sanitization and SHA-256 attestation.
+  - Multi-format medical report generation (PDF, JSON, CSV, TXT) via `src/clinical/reporting/`.
 
 ### 3.2 Legacy Web Portal (Flask)
 - **Entry Point**: [App.py](file:///c:/Users/B%20Ranjith/Downloads/project/App.py)

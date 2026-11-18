@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEFROAI-CLEAN | Clinical Decision Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    h1 { font-size: 1.45rem; font-weight: 700; color: #0f766e; }
+    p.desc { font-size: 0.86rem; color: #64748b; margin-top: 0.25rem; margin-bottom: 1.2rem; }
+    
+    .limitations-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 0.85rem;
+    }
+    .limitation-item {
+      font-size: 0.74rem;
+      color: #166534;
+      line-height: 1.4;
+    }
+    .limitation-item strong {
+      display: block;
+      color: #14532d;
+      font-weight: 700;
+    }
+
+    .preset-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.3rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .preset-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+    }
+    .preset-btn {
+      width: auto;
+      margin-top: 0;
+      padding: 0.38rem 0.75rem;
+      font-size: 0.78rem;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .preset-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .section-title {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: #475569;
+      margin-top: 1.25rem;
+      margin-bottom: 0.65rem;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 0.3rem;
+    }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-bottom: 0.8rem; }
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    label { font-size: 0.8rem; font-weight: 600; color: #334155; }
+    span.hint { font-size: 0.72rem; font-weight: 400; color: #94a3b8; }
+    input, select {
+      padding: 0.52rem 0.7rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-family: inherit;
+    }
+    input:focus, select:focus { outline: none; border-color: #0f766e; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #0f766e;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.92rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.15s ease;
+    }
+    .submit-btn:hover { background: #115e59; }
+
+    .result-card {
+      margin-top: 1.5rem;
+      padding: 1.4rem;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      display: none;
+      background: #ffffff;
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem;
+    }
+    .score-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #64748b; }
+    .score-val { font-size: 1.8rem; font-weight: 700; color: #0f766e; }
+
+    .result-row { margin-bottom: 0.75rem; font-size: 0.86rem; line-height: 1.5; }
+    .result-row strong { color: #1e293b; }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+    .badge-high { background: #fee2e2; color: #991b1b; }
+    .badge-mod { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #dcfce7; color: #166534; }
+
+    .target-goals {
+      margin-top: 0.9rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 0.9rem;
+    }
+    .target-goals h4 { font-size: 0.82rem; color: #0f766e; margin-bottom: 0.4rem; }
+    .target-goals ul { padding-left: 1.2rem; font-size: 0.82rem; color: #475569; }
+    .target-goals li { margin-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>NEFROAI-CLEAN Clinical Decision Support</h1>
+  <p class="desc">Non-leaky screening, official KDIGO 2024 staging, chronicity verification, and target lab recourse.</p>
+
+  <!-- 5 BASE PAPER LIMITATIONS OVERCOME -->
+  <div class="limitations-badge-grid">
+    <div class="limitation-item">
+      <strong>1. Zero Data Leakage</strong>
+      Screens using routine checkup labs only. No circular creatinine cheating.
+    </div>
+    <div class="limitation-item">
+      <strong>2. CDC NHANES (N=5,063)</strong>
+      Trained on 5,063 real-world patients. No 400-patient toy dataset.
+    </div>
+    <div class="limitation-item">
+      <strong>3. KDIGO 2024 CGA Staging</strong>
+      Provides 2D staging (eGFR G1-G5 &times; uACR A1-A3), not useless binary Yes/No.
+    </div>
+    <div class="limitation-item">
+      <strong>4. 90-Day Chronicity Guard</strong>
+      Requires &ge;90d damage persistence. Avoids misdiagnosing temporary AKI as CKD.
+    </div>
+    <div class="limitation-item">
+      <strong>5. Actionable Target Goals</strong>
+      Gives doctors exact target lab numbers to bring risk down below 50%.
+    </div>
+  </div>
+
+  <!-- CLINICAL PRESETS -->
+  <div class="preset-bar">
+    <span class="preset-label">Test Presets:</span>
+    <button type="button" class="preset-btn" onclick="loadPreset('healthy')">&#128994; Healthy Patient</button>
+    <button type="button" class="preset-btn" onclick="loadPreset('high_risk')">&#128308; High Risk CKD</button>
+    <button type="button" class="preset-btn" onclick="loadPreset('aki')">&#128993; Suspected AKI (Single Visit)</button>
+  </div>
+
+  <!-- FILE UPLOAD BAR -->
+  <div class="preset-bar" style="background: #f0fdf4; border: 1px dashed #16a34a; padding: 0.65rem 0.85rem; border-radius: 8px; margin-bottom: 1.4rem;">
+    <span class="preset-label" style="color: #15803d;">📂 Load Input File:</span>
+    <input type="file" id="fileInput" accept=".json,.csv" style="display: none;" onchange="handleFileUpload(event)">
+    <button type="button" class="preset-btn" style="background: #16a34a; color: white; border: none;" onclick="document.getElementById('fileInput').click()">
+      Choose .JSON or .CSV File
+    </button>
+    <span id="fileNameDisplay" style="font-size: 0.76rem; color: #166534; font-weight: 500;">
+      Upload patient file from <code>sample_inputs/</code> or your own dataset
+    </span>
+  </div>
+
+  <form id="evalForm">
+    <div class="section-title">1. Routine Clinical Checkup Panel (Non-Leaky Screening)</div>
+    <div class="grid">
+      <div class="field">
+        <label>Age <span class="hint">(years)</span></label>
+        <input type="number" id="age" required value="62" min="18" max="100">
+      </div>
+      <div class="field">
+        <label>Biological Sex</label>
+        <select id="sex">
+          <option value="1">Male</option>
+          <option value="2">Female</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Blood Sugar (Glucose) <span class="hint">mg/dL</span></label>
+        <input type="number" id="glucose" required value="165" step="1">
+      </div>
+      <div class="field">
+        <label>Blood Urea Nitrogen (BUN) <span class="hint">mg/dL</span></label>
+        <input type="number" id="bun" required value="32" step="0.5">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Serum Sodium <span class="hint">mmol/L</span></label>
+        <input type="number" id="sodium" required value="139" step="0.5">
+      </div>
+      <div class="field">
+        <label>Serum Potassium <span class="hint">mmol/L</span></label>
+        <input type="number" id="potassium" required value="4.6" step="0.1">
+      </div>
+    </div>
+
+    <div class="section-title">2. Specialized Renal Panel &amp; History (For KDIGO Staging &amp; Chronicity)</div>
+    <div class="grid">
+      <div class="field">
+        <label>Serum Creatinine <span class="hint">(optional, mg/dL)</span></label>
+        <input type="number" id="creatinine" value="1.8" step="0.01">
+      </div>
+      <div class="field">
+        <label>Urine Albumin-Creatinine Ratio (uACR) <span class="hint">(optional, mg/g)</span></label>
+        <input type="number" id="uacr" value="210" step="1">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Documented Visit History <span class="hint">(days between visits)</span></label>
+        <input type="number" id="historyDays" value="120" min="0" placeholder="e.g. 90 or 120">
+      </div>
+      <div class="field" style="justify-content: flex-end;">
+        <span class="hint" style="font-size: 0.78rem;">Checks KDIGO 90-day persistence to rule out temporary Acute Kidney Injury (AKI).</span>
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn" class="submit-btn">Run Complete Clinical Evaluation</button>
+  </form>
+
+  <div id="resultCard" class="result-card">
+    <div class="result-header">
+      <div>
+        <div class="score-title">Screening Risk Score (CDC NHANES Model)</div>
+        <div class="score-val" id="scoreVal">0.0%</div>
+      </div>
+      <div>
+        <span id="tierBadge" class="badge"></span>
+      </div>
+    </div>
+
+    <div class="result-row">
+      <strong>Clinical Recommendation:</strong> <span id="recText"></span>
+    </div>
+
+    <div class="result-row">
+      <strong>KDIGO 2024 Staging:</strong> 
+      <span id="kdigoText"></span> (eGFR: <span id="egfrText"></span> mL/min/1.73m²)
+    </div>
+
+    <div class="result-row">
+      <strong>Chronicity &amp; AKI Guard:</strong> <span id="chronicityText"></span>
+    </div>
+
+    <div class="target-goals" id="goalsBox">
+      <h4>Actionable Target Lab Goals (Counterfactual Recourse):</h4>
+      <ul id="goalsList"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleFileUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('fileNameDisplay').textContent = 'Loaded: ' + file.name;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const content = evt.target.result;
+      try {
+        if (file.name.endsWith('.json')) {
+          const data = JSON.parse(content);
+          const p = Array.isArray(data) ? data[0] : data;
+          if (p.age_years || p.age) document.getElementById('age').value = p.age_years || p.age;
+          if (p.sex || p.sex_code) document.getElementById('sex').value = (String(p.sex).toLowerCase().startsWith('f') || p.sex_code == 2) ? 2 : 1;
+          if (p.serum_glucose || p.bgr) document.getElementById('glucose').value = p.serum_glucose || p.bgr;
+          if (p.blood_urea_nitrogen || p.bu) document.getElementById('bun').value = p.blood_urea_nitrogen || p.bu;
+          if (p.sodium || p.sod) document.getElementById('sodium').value = p.sodium || p.sod;
+          if (p.potassium || p.pot) document.getElementById('potassium').value = p.potassium || p.pot;
+          if (p.serum_creatinine || p.sc) document.getElementById('creatinine').value = p.serum_creatinine || p.sc;
+          if (p.uacr) document.getElementById('uacr').value = p.uacr;
+          if (p.days_of_history) document.getElementById('historyDays').value = p.days_of_history;
+          setTimeout(() => document.getElementById('submitBtn').click(), 100);
+        } else if (file.name.endsWith('.csv')) {
+          const lines = content.split(/\r?\n/).filter(l => l.trim().length > 0);
+          if (lines.length > 1) {
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            const vals = lines[1].split(',').map(v => v.trim());
+            const row = {};
+            headers.forEach((h, i) => { row[h] = vals[i]; });
+            if (row.age) document.getElementById('age').value = parseFloat(row.age);
+            if (row.sex) document.getElementById('sex').value = (row.sex.toLowerCase().startsWith('f') || row.sex === '2') ? 2 : 1;
+            if (row.bgr || row.serum_glucose) document.getElementById('glucose').value = parseFloat(row.bgr || row.serum_glucose);
+            if (row.bu || row.blood_urea_nitrogen) document.getElementById('bun').value = parseFloat(row.bu || row.blood_urea_nitrogen);
+            if (row.sod || row.sodium) document.getElementById('sodium').value = parseFloat(row.sod || row.sodium);
+            if (row.pot || row.potassium) document.getElementById('potassium').value = parseFloat(row.pot || row.potassium);
+            if (row.sc || row.serum_creatinine) document.getElementById('creatinine').value = parseFloat(row.sc || row.serum_creatinine);
+            if (row.uacr) document.getElementById('uacr').value = parseFloat(row.uacr);
+            if (row.days_of_history) document.getElementById('historyDays').value = parseInt(row.days_of_history);
+            setTimeout(() => document.getElementById('submitBtn').click(), 100);
+          }
+        }
+      } catch (err) {
+        alert('Could not parse input file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function loadPreset(type) {
+    if (type === 'healthy') {
+      document.getElementById('age').value = 35;
+      document.getElementById('sex').value = 2; // Female
+      document.getElementById('glucose').value = 92;
+      document.getElementById('bun').value = 13;
+      document.getElementById('sodium').value = 140;
+      document.getElementById('potassium').value = 4.2;
+      document.getElementById('creatinine').value = 0.8;
+      document.getElementById('uacr').value = 12;
+      document.getElementById('historyDays').value = 180;
+    } else if (type === 'high_risk') {
+      document.getElementById('age').value = 68;
+      document.getElementById('sex').value = 1; // Male
+      document.getElementById('glucose').value = 175;
+      document.getElementById('bun').value = 35;
+      document.getElementById('sodium').value = 138;
+      document.getElementById('potassium').value = 4.8;
+      document.getElementById('creatinine').value = 2.1;
+      document.getElementById('uacr').value = 240;
+      document.getElementById('historyDays').value = 120;
+    } else if (type === 'aki') {
+      document.getElementById('age').value = 45;
+      document.getElementById('sex').value = 1; // Male
+      document.getElementById('glucose').value = 105;
+      document.getElementById('bun').value = 26;
+      document.getElementById('sodium').value = 142;
+      document.getElementById('potassium').value = 4.4;
+      document.getElementById('creatinine').value = 2.3; // sudden spike
+      document.getElementById('uacr').value = 20;
+      document.getElementById('historyDays').value = 5; // < 90 days!
+    }
+  }
+
+  const form = document.getElementById('evalForm');
+  const resultCard = document.getElementById('resultCard');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      age_years: parseFloat(document.getElementById('age').value),
+      sex_code: parseInt(document.getElementById('sex').value),
+      serum_glucose: parseFloat(document.getElementById('glucose').value),
+      blood_urea_nitrogen: parseFloat(document.getElementById('bun').value),
+      sodium: parseFloat(document.getElementById('sodium').value),
+      potassium: parseFloat(document.getElementById('potassium').value),
+      serum_creatinine: document.getElementById('creatinine').value ? parseFloat(document.getElementById('creatinine').value) : null,
+      uacr: document.getElementById('uacr').value ? parseFloat(document.getElementById('uacr').value) : null,
+      days_of_history: parseInt(document.getElementById('historyDays').value || 0),
+    };
+
+    try {
+      const resp = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) {
+        throw new Error('HTTP ' + resp.status);
+      }
+      const data = await resp.json();
+
+      resultCard.style.display = 'block';
+      document.getElementById('scoreVal').textContent = data.screening_risk_percentage + '%';
+      
+      const badge = document.getElementById('tierBadge');
+      badge.textContent = data.risk_tier;
+      badge.className = 'badge ' + (data.screening_risk_percentage >= 50 ? 'badge-high' : (data.screening_risk_percentage >= 35 ? 'badge-mod' : 'badge-low'));
+
+      document.getElementById('recText').textContent = data.clinical_recommendation;
+      document.getElementById('kdigoText').textContent = data.kdigo_filtration_stage + ' · ' + data.kdigo_albuminuria_stage;
+      document.getElementById('egfrText').textContent = data.egfr_ckdepi ? data.egfr_ckdepi : 'N/A';
+      document.getElementById('chronicityText').textContent = data.chronicity_status;
+
+      const goalsList = document.getElementById('goalsList');
+      goalsList.innerHTML = '';
+      data.actionable_target_goals.forEach(goal => {
+        const li = document.createElement('li');
+        li.textContent = goal;
+        goalsList.appendChild(li);
+      });
+
+      resultCard.scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+      alert('Could not connect to backend server. Make sure run_clean_app.py is running in your terminal!');
+    }
+  });
+</script>
+
+</body>
+</html>

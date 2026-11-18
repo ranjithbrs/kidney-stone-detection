@@ -1,0 +1,11 @@
+patient_id,name,age,sex,hemo,sg,pcv,rc,al,sc,bu,bgr,htn,dm,uacr,days_of_history
+PT-001,Healthy Wellness Checkup,32,female,14.8,1.025,45.0,5.0,0,0.75,14.0,90.0,no,no,10.0,180
+PT-002,Elderly Normal,72,male,13.8,1.020,41.0,4.6,0,1.05,22.0,96.0,no,no,18.0,365
+PT-003,Borderline Pre-Diabetic,54,male,13.1,1.018,39.0,4.3,0,1.18,26.0,125.0,no,no,28.0,90
+PT-004,Hypertensive Mild Renal Impairment,58,female,12.2,1.015,36.0,4.1,1,1.40,34.0,135.0,yes,no,95.0,120
+PT-005,Diabetic Nephropathy Stage G3b,64,male,10.8,1.012,32.0,3.6,2,1.90,56.0,175.0,yes,yes,280.0,200
+PT-006,Severe Renal Failure Stage G4,70,female,9.0,1.010,27.0,3.0,3,2.90,78.0,210.0,yes,yes,520.0,300
+PT-007,Young Athlete Dehydration (Suspected AKI),28,male,15.5,1.030,46.0,5.2,0,2.10,48.0,98.0,no,no,22.0,3
+PT-008,UK SI Unit Format Patient,49,male,145 g/L,1.022,43.0,4.8,0,88.4 umol/L,24.0,5.2 mmol/L,no,no,1.2,180
+PT-009,Microalbuminuria Screening,50,female,12.8,1.018,38.0,4.2,1,1.10,25.0,110.0,no,no,110.0,95
+PT-010,Advanced Uremic Syndrome,66,male,8.2,1.008,24.0,2.6,4,4.20,110.0,190.0,yes,yes,850.0,400
