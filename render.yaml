@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: nefroai-cdss
+    runtime: docker
+    dockerfilePath: Dockerfile.fullstack
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: MPLCONFIGDIR
+        value: /tmp/matplotlib
+      - key: SECRET_KEY
+        generateValue: true
