@@ -70,7 +70,7 @@ export default function SidebarNav({
           ) : (
             <div style={{ marginTop: '0.35rem' }}>
               <div className="sidebar-guest-notice">
-                Guest Mode — screening active; sign in to save records permanently.
+                Guest Clinician Session Active
               </div>
               <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.45rem' }}>
                 <button
@@ -87,7 +87,7 @@ export default function SidebarNav({
                   onClick={() => onOpenAuth('signup')}
                   style={{ flex: 1 }}
                 >
-                  Create Account
+                  Register
                 </button>
               </div>
             </div>
@@ -121,20 +121,16 @@ export default function SidebarNav({
       <div className="sidebar-telemetry-box">
         <div className="sidebar-telemetry-title">SYSTEM TELEMETRY</div>
         <div className="telemetry-row">
-          <span>● E1 Screening RF+Stack</span>
+          <span>● E1 Screening ML</span>
           <span className="telemetry-online">ONLINE</span>
         </div>
         <div className="telemetry-row">
-          <span>● E2 KDIGO 2024 Staging</span>
+          <span>● E2 KDIGO Staging</span>
           <span className="telemetry-online">ONLINE</span>
         </div>
         <div className="telemetry-row">
-          <span>● E3 KFRE &amp; Trajectory</span>
+          <span>● E3 KFRE Risk</span>
           <span className="telemetry-online">ONLINE</span>
-        </div>
-        <div className="telemetry-row">
-          <span>○ Survival ML</span>
-          <span className="telemetry-deferred">DEFERRED</span>
         </div>
       </div>
     </aside>

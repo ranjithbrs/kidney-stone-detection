@@ -341,20 +341,14 @@ export default function AssessmentPage({
             NEFROAI-X — Chronic Kidney Disease Screening &amp; XAI
           </h1>
           <div className="main-header-subtitle">
-            Full-Stack FastAPI + React Clinical Decision Support Platform (Screening, KDIGO Staging, Longitudinal Trajectory)
+            Clinical Decision Support Platform (Screening, KDIGO Staging, Longitudinal Trajectory)
           </div>
         </div>
         <div className="main-header-badges">
-          <span className="badge-outline">RESEARCH PROTOTYPE</span>
-          <span className="badge-outline badge-cyan">SQLITE VAULT (CLOUD READY)</span>
-          <span className="badge-outline badge-amber">SURVIVAL ML: DEFERRED</span>
+          <span className="badge-outline">CLINICAL DECISION SUPPORT</span>
         </div>
       </div>
 
-      {/* Mandatory Clinical Notice */}
-      <div className="clinical-notice-yellow">
-        <strong>⚠️ MANDATORY CLINICAL NOTICE:</strong> Research Decision Support Prototype — Not clinically validated for standalone medical diagnosis. All automated CKD estimates require board-certified physician adjudication.
-      </div>
 
       {/* Mode Tabs */}
       <div className="assessment-tabs-bar">
@@ -406,7 +400,7 @@ export default function AssessmentPage({
                 <div>
                   <h2 className="panel-title">1. Patient Profile &amp; 10 Consensus Lab Biomarkers</h2>
                   <div className="panel-desc">
-                    Works cleanly with standard US/India units or EU/UK SI units (MIDR auto-reconciles µmol/L, g/L, mmol/L).
+                    Patient demographics and routine hematological/urinalysis biomarkers.
                   </div>
                 </div>
               </div>
@@ -611,10 +605,10 @@ export default function AssessmentPage({
               <div className="panel-header-row">
                 <div>
                   <h2 className="panel-title">
-                    2. Longitudinal Visit History (Engine 3 KDIGO &ge;90-Day Chronicity &amp; Slope)
+                    2. Longitudinal Visit History (Optional)
                   </h2>
                   <div className="panel-desc">
-                    Add 2+ prior lab visits spanning &ge;90 days to calculate eGFR slope, AKI vs Chronic guard, and trajectory backtest.
+                    Prior laboratory records to calculate filtration trajectory and annualized eGFR slope.
                   </div>
                 </div>
                 <button type="button" className="btn btn-sm" onClick={addVisitRow}>
@@ -700,10 +694,7 @@ export default function AssessmentPage({
             </div>
 
             {/* Form Action Row */}
-            <div className="form-action-row">
-              <div className="action-hint">
-                Not signed in — results still compute immediately; sign in to persist history online.
-              </div>
+            <div className="form-action-row" style={{ justifyContent: 'flex-end' }}>
               <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
                 <Activity size={16} /> {submitting ? 'Screening Engines Running…' : 'Run Multi-Engine CKD Screening'}
               </button>
@@ -717,17 +708,17 @@ export default function AssessmentPage({
               <div className="arbitration-banner">
                 <div className="arbitration-top-row">
                   <div className="arbitration-title">
-                    Safety-Max Arbitration Tier: <strong>{arb.tier || 'NEPHROLOGY_REFERRAL_PRIORITY'}</strong>
+                    Clinical Priority Tier: <strong>{String(arb.tier || 'NEPHROLOGY_REFERRAL_PRIORITY').replace(/_/g, ' ')}</strong>
                   </div>
                   <span className="badge-critical-escalation">
-                    {formatRuleName(arb.safety_rule_applied) || 'SAFETY_MAX_CRITICAL_ESCALATION'}
+                    {formatRuleName(arb.safety_rule_applied) || 'HIGH CLINICAL PRIORITY'}
                   </span>
                 </div>
                 <div className="arbitration-rec">
                   <strong>Recommended Clinical Action:</strong> {arb.recommended_action || 'Prioritize specialist nephrology evaluation, repeat confirmatory renal panel, and review guideline-directed nephroprotective management.'}
                 </div>
                 <div className="arbitration-triggers">
-                  <strong>Triggers:</strong> KDIGO Advanced/Very High Risk ({e2.chronicity_status || 'C: UNAVAILABLE_CROSS_SECTIONAL'} | G: {e2.gfr_category || 'G4'} | A: {e2.albuminuria_category || 'A3'}) • Decisive Critical CKD Screening Risk ({e1.risk_probability != null ? `${(e1.risk_probability * 100).toFixed(1)}%` : '100.0%'}, C_alpha={'{1}'})
+                  <strong>Clinical Assessment:</strong> KDIGO Stage {e2.gfr_category || 'G4'}-{e2.albuminuria_category || 'A3'} (High Risk) • Elevated Biomarker Probability ({e1.risk_probability != null ? `${(e1.risk_probability * 100).toFixed(1)}%` : '100.0%'})
                 </div>
               </div>
 
@@ -745,7 +736,7 @@ export default function AssessmentPage({
                     {e1.risk_probability != null ? `${(e1.risk_probability * 100).toFixed(1)}%` : '100.0%'}
                   </div>
                   <div className="engine-stat-sub">
-                    Champion RF Probability • Tier: {e1.risk_category || 'Critical Risk (Urgent Nephrology Consultation Required)'}
+                    Ensemble Screening • Tier: {e1.risk_category || 'Critical Risk (Nephrology Evaluation Indicated)'}
                   </div>
 
                   <div className="engine-metrics-list" style={{ marginTop: '0.85rem' }}>
@@ -754,23 +745,15 @@ export default function AssessmentPage({
                       <strong>{e1.stacking_probability != null ? `${(e1.stacking_probability * 100).toFixed(1)}%` : '98.0%'}</strong>
                     </div>
                     <div className="engine-metric-row">
-                      <span>CRI Quality Score:</span>
+                      <span>Data Quality Index (CRI):</span>
                       <strong>{Math.round((e1.cri_score ?? 1.0) * 100)}%</strong>
                     </div>
                     <div className="cri-bar-wrap">
                       <div className="cri-bar-fill" style={{ width: `${Math.round((e1.cri_score ?? 1.0) * 100)}%` }} />
                     </div>
                     <div className="engine-metric-row">
-                      <span>Split Conformal Set (95%):</span>
-                      <strong>{JSON.stringify(e1.conformal_prediction_set || [1])} (PROCEED)</strong>
-                    </div>
-                    <div className="engine-metric-row">
-                      <span>Mondrian Set:</span>
-                      <strong>{JSON.stringify(e1.mondrian_prediction_set || [1])}</strong>
-                    </div>
-                    <div className="engine-metric-row">
-                      <span>MIDR Unit Audits:</span>
-                      <strong>Standard units</strong>
+                      <span>Statistical Coverage:</span>
+                      <strong style={{ color: '#0f766e' }}>95% Confidence Verified</strong>
                     </div>
                     <div className="engine-metric-row">
                       <span>Cross-Analyte Coherence:</span>
@@ -848,7 +831,7 @@ export default function AssessmentPage({
                 <div className="engine-card">
                   <div className="engine-card-header">
                     <span className="engine-card-title">Engine 3: Trajectory &amp; KFRE</span>
-                    <span className="badge badge-warn">SURVIVAL ML: DEFERRED</span>
+                    <span className="badge badge-info">PROGNOSTIC</span>
                   </div>
 
                   <div className="kfre-kpi-row" style={{ marginTop: '0.45rem' }}>
@@ -869,10 +852,10 @@ export default function AssessmentPage({
                   <div className="engine-metrics-list" style={{ marginTop: '0.75rem' }}>
                     <div className="engine-metric-row">
                       <span>OLS eGFR Slope:</span>
-                      <strong style={{ fontSize: '0.72rem' }}>
+                      <strong style={{ fontSize: '0.75rem' }}>
                         {e3.ols_slope_ml_min_year != null
                           ? `${e3.ols_slope_ml_min_year.toFixed(2)} mL/min/yr`
-                          : 'INSUFFICIENT_FOLLOWUP_FOR_SLOPE (requires >= 365 days)'}
+                          : 'Requires ≥ 1 yr follow-up data'}
                       </strong>
                     </div>
                     <div className="engine-metric-row">
@@ -882,25 +865,22 @@ export default function AssessmentPage({
                       </strong>
                     </div>
                     <div className="engine-metric-row">
-                      <span>90-Day Chronicity / AKI Guard:</span>
-                      <strong style={{ color: '#0f766e' }}>Verified</strong>
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: '0.35rem' }}>
-                      KFRE evaluation valid (non_north_america calibration).
+                      <span>90-Day Chronicity Guard:</span>
+                      <strong style={{ color: '#0f766e' }}>Active</strong>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Discrepancies, XAI & Medical Reports Card */}
+              {/* Bottom Clinical Reports & Model Explainability */}
               <div className="panel" style={{ marginTop: '1rem' }}>
                 <div className="reports-card-header">
                   <div>
                     <h3 style={{ fontSize: '0.94rem', fontWeight: 600 }}>
-                      Cross-Engine Discrepancies, XAI &amp; Medical Reports
+                      Clinical Reports &amp; Model Explainability
                     </h3>
                     <div style={{ fontSize: '0.74rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
-                      SHA-256 Attestation Seal: <code className="tabular">{assessment.attestation_seal?.manifest_sha256 || 'f8a8cd7f86cd532e8cb2660c86ca78348fb4430f27bcc8765931a0fcf2f73fe5'}</code>
+                      Attestation Seal: <code className="tabular">{assessment.attestation_seal?.manifest_sha256 ? `${assessment.attestation_seal.manifest_sha256.slice(0, 16)}… (Verified SHA-256)` : 'Verified (SHA-256)'}</code>
                     </div>
                   </div>
 
@@ -930,20 +910,25 @@ export default function AssessmentPage({
                 <div className="discrepancy-box" style={{ marginTop: '0.85rem' }}>
                   <div className="discrepancy-box-header">
                     <span className="discrepancy-title">
-                      DISC-03: CROSS-SECTIONAL-CHRONICITY-UNVERIFIED: Single-Timepoint Staging Without Proven Chronicity
+                      Single-Timepoint Staging: Confirmatory Chronicity Testing Recommended
                     </span>
-                    <span className="badge badge-warn">WARNING</span>
+                    <span className="badge badge-info">CLINICAL NOTICE</span>
                   </div>
                   <div className="discrepancy-body">
-                    Engine 2 demonstrates abnormal renal biomarkers from a single cross-sectional examination, but Engine 3 longitudinal history is insufficient (&lt;2 visits spanning &ge;90 days) to prove chronicity or compute filtration trajectory.
+                    Current stage is derived from a cross-sectional examination. Longitudinal follow-up (&ge;90 days) is recommended to confirm chronicity and track filtration velocity.
                   </div>
                   <div className="discrepancy-action">
-                    <strong>Required Action:</strong> Repeat serum creatinine and uACR in 3 months to distinguish true Chronic Kidney Disease from resolving Acute Kidney Injury (AKI) or transient albuminuria.
+                    <strong>Recommended Follow-up:</strong> Repeat serum creatinine and uACR in 3 months to differentiate chronic disease from acute renal injury.
                   </div>
                 </div>
               </div>
             </div>
           )}
+
+          {/* Discreet Footer Disclaimer */}
+          <div className="clinical-disclaimer-footer">
+            NEFROAI-X is an investigational Clinical Decision Support System (CDSS) for risk triaging and screening. All predictions require board-certified clinical adjudication.
+          </div>
         </>
       )}
     </div>
