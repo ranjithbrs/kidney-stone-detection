@@ -1,25 +1,18 @@
 import React from 'react'
 import {
-  Activity,
   BarChart2,
-  BookOpen,
   ClipboardPlus,
   Database,
-  Home,
   LogOut,
   Sliders,
-  TrendingUp,
   User,
 } from 'lucide-react'
 
 const CLINICAL_WORKSPACE_NAV = [
-  { id: 'overview', label: 'System Overview', icon: Home },
   { id: 'screening', label: 'CKD Screening & Labs', icon: ClipboardPlus },
   { id: 'xai', label: 'Live XAI & What-If', icon: Sliders },
   { id: 'benchmarks', label: 'Benchmark & Calibration', icon: BarChart2 },
-  { id: 'vault', label: 'Cloud Vault & Audit', icon: Database },
-  { id: 'methodology', label: 'Progression Methodology', icon: TrendingUp },
-  { id: 'governance', label: 'Clinical Governance', icon: BookOpen },
+  { id: 'vault', label: 'Patient Vault & Audit', icon: Database },
 ]
 
 export default function SidebarNav({

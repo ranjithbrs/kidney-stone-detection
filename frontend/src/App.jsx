@@ -226,18 +226,10 @@ export default function App() {
         </main>
 
         <footer className="app-footer">
-          <div className="app-footer-inner">
+          <div className="app-footer-inner" style={{ justifyContent: 'center' }}>
             <span>
-              NEFROAI-X Clinical Decision Support · Screening aid only; confirm all clinical decisions with a nephrologist.
+              NEFROAI-X Clinical Decision Support · Screening aid only; confirm all clinical decisions with a board-certified nephrologist.
             </span>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              style={{ padding: '0.1rem 0.4rem', fontSize: '0.76rem' }}
-              onClick={() => setActivePage('governance')}
-            >
-              Clinical Governance
-            </button>
           </div>
         </footer>
       </div>
