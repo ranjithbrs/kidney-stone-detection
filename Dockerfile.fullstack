@@ -1,7 +1,6 @@
 # =============================================================================
-# NEFROAI-X Full-Stack Cloud Deployment Image (React + Vite SPA + FastAPI)
-# Targets Railway + Supabase Cloud PostgreSQL with non-root runtime security.
-# Note: Uses python:3.12-slim to match xgboost>=3.12 and SQLAlchemy>=3.11 wheels.
+# NEFROAI-X Production Full-Stack Container (React 18 SPA + FastAPI)
+# Targets Render / Railway / Cloud Run / Docker with non-root security.
 # =============================================================================
 
 # --- Stage 1: Build React + Vite Frontend ---
@@ -14,9 +13,9 @@ COPY frontend/src ./src
 RUN npm run build
 
 # --- Stage 2: FastAPI Clinical Backend + SPA Host ---
-FROM python:3.12-slim AS runtime
+FROM python:3.10-slim AS runtime
 
-LABEL org.opencontainers.image.title="NEFROAI-X Cloud Full-Stack CDSS"
+LABEL org.opencontainers.image.title="NEFROAI-X Full-Stack CDSS"
 LABEL org.opencontainers.image.description="Investigational CKD screening & XAI prototype — not a standalone medical diagnosis device"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -47,10 +46,10 @@ COPY models/clinical_pipeline.joblib /app/models/clinical_pipeline.joblib
 COPY models/preprocessor_Dataset_A.joblib /app/models/preprocessor_Dataset_A.joblib
 COPY models/stacking_ensemble.joblib /app/models/stacking_ensemble.joblib
 COPY datasets/clinical/dataset_A_uci_ckd.csv /app/datasets/clinical/dataset_A_uci_ckd.csv
-COPY datasets/processed/ /app/datasets/processed/
 COPY supabase/ /app/supabase/
+COPY .env.example /app/.env.example
 
-# Copy compiled React production SPA bundle
+# Copy compiled React production SPA bundle from Stage 1
 COPY --from=frontend-builder /frontend/dist /app/frontend/dist
 
 RUN chown -R nefroai:nefroai /app
@@ -68,4 +67,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
     CMD curl -f http://127.0.0.1:${PORT:-8000}/api/health || exit 1
 
 CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
-
