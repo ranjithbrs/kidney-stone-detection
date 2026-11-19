@@ -61,8 +61,12 @@ function CleanMultiCurve({ title, xLabel, yLabel, series, diagonal = false }) {
   )
 }
 
-export default function ModelAuditPage({ user, health, formState, onOpenAuth }) {
-  const [subTab, setSubTab] = useState('benchmarks')
+export default function ModelAuditPage({ user, health, formState, onOpenAuth, defaultSubTab }) {
+  const [subTab, setSubTab] = useState(defaultSubTab || 'benchmarks')
+
+  useEffect(() => {
+    if (defaultSubTab) setSubTab(defaultSubTab)
+  }, [defaultSubTab])
   const [perf, setPerf] = useState(null)
   const [perfLoading, setPerfLoading] = useState(true)
   const [perfError, setPerfError] = useState('')

@@ -1,24 +1,29 @@
 import React from 'react'
 import {
   Activity,
+  BarChart2,
+  BookOpen,
   ClipboardPlus,
-  FileSpreadsheet,
+  Database,
+  Home,
   LogOut,
-  ShieldCheck,
+  Sliders,
+  TrendingUp,
   User,
-  Users,
 } from 'lucide-react'
 
-const CLINICAL_NAV = [
-  { id: 'patients', label: 'Patients', icon: Users },
-  { id: 'screening', label: 'New Screening', icon: ClipboardPlus },
-  { id: 'chart', label: 'Patient Chart', icon: Activity },
-  { id: 'batch', label: 'Batch Screening', icon: FileSpreadsheet },
+const CLINICAL_WORKSPACE_NAV = [
+  { id: 'overview', label: 'System Overview', icon: Home },
+  { id: 'screening', label: 'CKD Screening & Labs', icon: ClipboardPlus },
+  { id: 'xai', label: 'Live XAI & What-If', icon: Sliders },
+  { id: 'benchmarks', label: 'Benchmark & Calibration', icon: BarChart2 },
+  { id: 'vault', label: 'Cloud Vault & Audit', icon: Database },
+  { id: 'methodology', label: 'Progression Methodology', icon: TrendingUp },
+  { id: 'governance', label: 'Clinical Governance', icon: BookOpen },
 ]
 
 export default function SidebarNav({
   activePage,
-  hasActivePatient,
   onNavigate,
   user,
   onOpenAuth,
@@ -33,96 +38,104 @@ export default function SidebarNav({
     : 'DR'
 
   return (
-    <aside className="sidebar" aria-label="Primary clinical navigation">
+    <aside className="sidebar-dark" aria-label="Primary clinical navigation">
       <div className="sidebar-top">
-        <button type="button" className="brand-lockup" onClick={() => onNavigate('patients')}>
-          <span className="brand-mark">N</span>
-          <span>
-            <span className="brand-name">NEFROAI-X</span>
-            <span className="brand-env">Renal Diagnostics</span>
-          </span>
-        </button>
+        {/* Brand Lockup */}
+        <div className="sidebar-brand-box">
+          <div className="sidebar-brand-title">NEFROAI-X</div>
+          <div className="sidebar-brand-sub">Explainable Renal CDSS • Research SaaS</div>
+        </div>
 
+        {/* Clinician Session Box */}
+        <div className="sidebar-session-card">
+          <div className="sidebar-section-title">CLINICIAN SESSION</div>
+          {user ? (
+            <div style={{ marginTop: '0.45rem' }}>
+              <div className="sidebar-user-row">
+                <span className="user-avatar-dark">{initials}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div className="user-name-dark">{user.full_name}</div>
+                  <div className="user-role-dark">{user.role || 'Nephrologist'}</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-sidebar-secondary"
+                onClick={onSignOut}
+                style={{ width: '100%', marginTop: '0.45rem' }}
+              >
+                <LogOut size={12} /> Sign out
+              </button>
+            </div>
+          ) : (
+            <div style={{ marginTop: '0.35rem' }}>
+              <div className="sidebar-guest-notice">
+                Guest Mode — screening active; sign in to save records permanently.
+              </div>
+              <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.45rem' }}>
+                <button
+                  type="button"
+                  className="btn-sidebar-primary"
+                  onClick={() => onOpenAuth('signin')}
+                  style={{ flex: 1 }}
+                >
+                  <User size={12} /> Sign In
+                </button>
+                <button
+                  type="button"
+                  className="btn-sidebar-secondary"
+                  onClick={() => onOpenAuth('signup')}
+                  style={{ flex: 1 }}
+                >
+                  Create Account
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clinical Workspace Navigation */}
         <div>
-          <div className="sidebar-section-label">Clinical Workflow</div>
-          <nav className="sidebar-nav">
-            {CLINICAL_NAV.map((item) => {
+          <div className="sidebar-section-title">CLINICAL WORKSPACE</div>
+          <nav className="sidebar-nav-list" style={{ marginTop: '0.4rem' }}>
+            {CLINICAL_WORKSPACE_NAV.map((item) => {
               const Icon = item.icon
               const isActive = activePage === item.id
               return (
                 <button
                   key={item.id}
                   type="button"
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
                   onClick={() => onNavigate(item.id)}
                 >
-                  <span className="sidebar-item-left">
-                    <Icon size={16} />
-                    <span>{item.label}</span>
-                  </span>
-                  {item.id === 'chart' && hasActivePatient && (
-                    <span
-                      style={{
-                        width: 7,
-                        height: 7,
-                        borderRadius: 999,
-                        background: 'var(--accent)',
-                        flexShrink: 0,
-                      }}
-                      title="Active patient loaded"
-                    />
-                  )}
+                  <Icon size={15} />
+                  <span>{item.label}</span>
                 </button>
               )
             })}
           </nav>
         </div>
-
-        <div>
-          <div className="sidebar-section-label">Quality &amp; Audit</div>
-          <nav className="sidebar-nav">
-            <button
-              type="button"
-              className={`sidebar-item ${activePage === 'audit' ? 'active' : ''}`}
-              onClick={() => onNavigate('audit')}
-            >
-              <span className="sidebar-item-left">
-                <ShieldCheck size={16} />
-                <span>Validation &amp; Audit</span>
-              </span>
-            </button>
-          </nav>
-        </div>
       </div>
 
-      <div className="sidebar-footer">
-        {user ? (
-          <>
-            <div className="user-chip" title={`${user.full_name} (${user.role || 'Clinician'})`}>
-              <span className="user-avatar">{initials}</span>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user.full_name}
-                </div>
-                <div style={{ fontSize: '0.71rem', color: 'var(--muted)' }}>
-                  {user.role || 'Nephrology'}
-                </div>
-              </div>
-            </div>
-            <button type="button" className="btn btn-sm" onClick={onSignOut} style={{ width: '100%' }}>
-              <LogOut size={13} /> Sign out
-            </button>
-          </>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <button type="button" className="btn btn-sm btn-primary" onClick={() => onOpenAuth('signin')} style={{ width: '100%' }}>
-              <User size={13} /> Clinician sign in
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => onOpenAuth('signup')} style={{ width: '100%' }}>
-              Create account
-            </button>
-          </div>
-        )}
+      {/* Telemetry Block at Bottom */}
+      <div className="sidebar-telemetry-box">
+        <div className="sidebar-telemetry-title">SYSTEM TELEMETRY</div>
+        <div className="telemetry-row">
+          <span>● E1 Screening RF+Stack</span>
+          <span className="telemetry-online">ONLINE</span>
+        </div>
+        <div className="telemetry-row">
+          <span>● E2 KDIGO 2024 Staging</span>
+          <span className="telemetry-online">ONLINE</span>
+        </div>
+        <div className="telemetry-row">
+          <span>● E3 KFRE &amp; Trajectory</span>
+          <span className="telemetry-online">ONLINE</span>
+        </div>
+        <div className="telemetry-row">
+          <span>○ Survival ML</span>
+          <span className="telemetry-deferred">DEFERRED</span>
+        </div>
       </div>
     </aside>
   )

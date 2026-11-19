@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { api, getStoredToken, setStoredToken } from './api'
 import SidebarNav from './components/SidebarNav'
-import PatientsPage from './components/PatientsPage'
+import SystemOverviewPage from './components/SystemOverviewPage'
 import AssessmentPage from './components/AssessmentPage'
 import PatientChartPage from './components/PatientChartPage'
-import BatchPage from './components/BatchPage'
+import PatientsPage from './components/PatientsPage'
 import ModelAuditPage from './components/ModelAuditPage'
+import MethodologyPage from './components/MethodologyPage'
+import GovernancePage from './components/GovernancePage'
 import AuthModal from './components/AuthModal'
 
 function createEmptyFormState() {
@@ -13,6 +15,7 @@ function createEmptyFormState() {
     patient_id: '',
     age: '',
     sex: 'male',
+    kfre_region: 'Non-North America',
     observation_date: new Date().toISOString().slice(0, 10),
     serum_creatinine: '',
     serum_creatinine_unit: 'mg/dL',
@@ -23,7 +26,7 @@ function createEmptyFormState() {
       sg: '',
       pcv: '',
       rc: '',
-      al: '',
+      al: '0',
       sc: '',
       bu: '',
       bgr: '',
@@ -35,7 +38,8 @@ function createEmptyFormState() {
 }
 
 export default function App() {
-  const [activePage, setActivePage] = useState('patients')
+  // Default to the main 'screening' page matching the user's workflow
+  const [activePage, setActivePage] = useState('screening')
   const [health, setHealth] = useState(null)
   const [user, setUser] = useState(null)
   const [authModalMode, setAuthModalMode] = useState(null)
@@ -96,6 +100,7 @@ export default function App() {
         patient_id: payload.patient_id || patientId,
         age: payload.age ?? '',
         sex: payload.sex || 'male',
+        kfre_region: payload.kfre_region || 'Non-North America',
         observation_date: String(payload.observation_date || new Date().toISOString().slice(0, 10)).slice(0, 10),
         serum_creatinine: rawBiomarkers.sc ?? '',
         serum_creatinine_unit: 'mg/dL',
@@ -106,7 +111,7 @@ export default function App() {
           sg: rawBiomarkers.sg ?? '',
           pcv: rawBiomarkers.pcv ?? '',
           rc: rawBiomarkers.rc ?? '',
-          al: rawBiomarkers.al ?? '',
+          al: String(rawBiomarkers.al ?? '0'),
           sc: rawBiomarkers.sc ?? '',
           bu: rawBiomarkers.bu ?? '',
           bgr: rawBiomarkers.bgr ?? '',
@@ -118,7 +123,7 @@ export default function App() {
 
       setFormState(restoredForm)
       setAssessment(payload)
-      setActivePage('chart')
+      setActivePage('screening')
     } catch (err) {
       setGlobalError(err.message || 'Could not load saved patient record.')
     }
@@ -133,7 +138,6 @@ export default function App() {
     <div className="shell-layout">
       <SidebarNav
         activePage={activePage}
-        hasActivePatient={Boolean(assessment)}
         onNavigate={setActivePage}
         user={user}
         onOpenAuth={(mode) => setAuthModalMode(mode)}
@@ -151,16 +155,8 @@ export default function App() {
             </div>
           )}
 
-          {activePage === 'patients' && (
-            <PatientsPage
-              user={user}
-              vaultRefreshKey={vaultRefreshKey}
-              onNewScreening={() => setActivePage('screening')}
-              onOpenBatchScreening={() => setActivePage('batch')}
-              onOpenVaultPatient={handleOpenVaultPatient}
-              onOpenAuth={(mode) => setAuthModalMode(mode)}
-              onSignedIn={handleSignedIn}
-            />
+          {activePage === 'overview' && (
+            <SystemOverviewPage onNavigate={setActivePage} />
           )}
 
           {activePage === 'screening' && (
@@ -170,9 +166,49 @@ export default function App() {
               assessment={assessment}
               setAssessment={setAssessment}
               user={user}
-              onOpenChart={() => setActivePage('chart')}
               onVaultUpdated={() => setVaultRefreshKey((k) => k + 1)}
+              onNavigate={setActivePage}
             />
+          )}
+
+          {activePage === 'xai' && (
+            <ModelAuditPage
+              defaultSubTab="xai"
+              user={user}
+              health={health}
+              formState={formState}
+              onOpenAuth={(mode) => setAuthModalMode(mode)}
+            />
+          )}
+
+          {activePage === 'benchmarks' && (
+            <ModelAuditPage
+              defaultSubTab="benchmarks"
+              user={user}
+              health={health}
+              formState={formState}
+              onOpenAuth={(mode) => setAuthModalMode(mode)}
+            />
+          )}
+
+          {activePage === 'vault' && (
+            <PatientsPage
+              user={user}
+              vaultRefreshKey={vaultRefreshKey}
+              onNewScreening={() => setActivePage('screening')}
+              onOpenBatchScreening={() => setActivePage('screening')}
+              onOpenVaultPatient={handleOpenVaultPatient}
+              onOpenAuth={(mode) => setAuthModalMode(mode)}
+              onSignedIn={handleSignedIn}
+            />
+          )}
+
+          {activePage === 'methodology' && (
+            <MethodologyPage />
+          )}
+
+          {activePage === 'governance' && (
+            <GovernancePage />
           )}
 
           {activePage === 'chart' && (
@@ -187,17 +223,6 @@ export default function App() {
               onVaultUpdated={() => setVaultRefreshKey((k) => k + 1)}
             />
           )}
-
-          {activePage === 'batch' && <BatchPage />}
-
-          {activePage === 'audit' && (
-            <ModelAuditPage
-              user={user}
-              health={health}
-              formState={formState}
-              onOpenAuth={(mode) => setAuthModalMode(mode)}
-            />
-          )}
         </main>
 
         <footer className="app-footer">
@@ -209,9 +234,9 @@ export default function App() {
               type="button"
               className="btn btn-ghost btn-sm"
               style={{ padding: '0.1rem 0.4rem', fontSize: '0.76rem' }}
-              onClick={() => setActivePage('audit')}
+              onClick={() => setActivePage('governance')}
             >
-              Validation &amp; Audit
+              Clinical Governance
             </button>
           </div>
         </footer>
