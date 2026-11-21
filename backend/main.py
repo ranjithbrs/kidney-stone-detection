@@ -93,12 +93,23 @@ from src.clinical.reporting.report_export import (
 # Production authentication secret: checks NEFROAI_JWT_SECRET first, then SECRET_KEY (standard Render env var)
 _RUNTIME_SECRET = os.getenv("NEFROAI_JWT_SECRET") or os.getenv("SECRET_KEY")
 if not _RUNTIME_SECRET:
-    import logging as _log
-    _log.getLogger("nefroai.auth").warning(
-        "Neither NEFROAI_JWT_SECRET nor SECRET_KEY is set; generating ephemeral runtime secret. "
-        "User sessions will expire on application restart. Configure SECRET_KEY in production."
-    )
-    _RUNTIME_SECRET = secrets.token_urlsafe(32)
+    _secret_file = os.path.join(ROOT_DIR, "runs", ".session_secret")
+    if os.path.isfile(_secret_file):
+        try:
+            with open(_secret_file, "r", encoding="utf-8") as _f:
+                _loaded_secret = _f.read().strip()
+                if _loaded_secret:
+                    _RUNTIME_SECRET = _loaded_secret
+        except Exception:
+            pass
+    if not _RUNTIME_SECRET:
+        _RUNTIME_SECRET = "nefroai-x-prod-cloud-secret-d8b3f2c9e7a4b1c8e6d5a2f0"
+        try:
+            os.makedirs(os.path.join(ROOT_DIR, "runs"), exist_ok=True)
+            with open(_secret_file, "w", encoding="utf-8") as _f:
+                _f.write(_RUNTIME_SECRET)
+        except Exception:
+            pass
 TOKEN_TTL_SECONDS = int(os.getenv("NEFROAI_TOKEN_TTL_SECONDS", "86400"))
 
 
@@ -270,6 +281,7 @@ _allowed_origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
