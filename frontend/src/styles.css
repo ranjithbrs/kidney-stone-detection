@@ -1125,6 +1125,54 @@ table.clean-table tbody tr.clickable-row:hover {
   margin-bottom: 0.85rem;
 }
 
+/* Public Demonstration Ephemeral PHI Warning Banner */
+.public-demo-warning-banner {
+  background: #fffbeb;
+  border: 1.5px solid #f59e0b;
+  border-left: 5px solid #d97706;
+  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.public-demo-warning-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  color: #92400e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.public-demo-warning-icon {
+  flex-shrink: 0;
+  color: #d97706;
+  margin-top: 1px;
+}
+
+.public-demo-warning-title {
+  color: #78350f;
+}
+
+.public-demo-warning-desc {
+  margin-top: 0.45rem;
+  padding-left: 1.7rem;
+  font-size: 0.77rem;
+  color: #92400e;
+  line-height: 1.45;
+}
+
+.public-demo-warning-desc code {
+  background: rgba(217, 119, 6, 0.12);
+  color: #78350f;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
 .assessment-tabs-bar {
   display: flex;
   gap: 0.5rem;

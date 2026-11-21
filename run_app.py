@@ -46,6 +46,7 @@ def verify_frontend_build():
 
 
 def main():
+    os.environ.setdefault("ENVIRONMENT", "development")
     verify_frontend_build()
 
     host = os.getenv("HOST", "127.0.0.1")

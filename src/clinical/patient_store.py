@@ -52,6 +52,8 @@ class ClinicalHistoryStore:
         database_url: Optional[str] = None,
     ) -> None:
         self.cloud_connection_error: Optional[str] = None
+        self.is_ephemeral: bool = False
+        self.storage_classification: str = "PRODUCTION_PERSISTENT"
         env_url = (
             database_url
             or (None if db_path is not None else (os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")))
@@ -60,6 +62,8 @@ class ClinicalHistoryStore:
             self.database_url = _normalize_db_url(str(env_url))
             self.db_path = None
             self.storage_backend = "postgresql"
+            self.is_ephemeral = False
+            self.storage_classification = "PRODUCTION_PERSISTENT"
             connect_args: Dict[str, Any] = {}
             # PgBouncer transaction poolers (e.g. Supabase port 6543) disallow prepared statements
             if ":6543/" in self.database_url or "pgbouncer=true" in self.database_url.lower():
@@ -93,6 +97,8 @@ class ClinicalHistoryStore:
         self.db_path = effective_path
         self.database_url = f"sqlite:///{os.path.abspath(effective_path)}"
         self.storage_backend = "sqlite"
+        self.is_ephemeral = True
+        self.storage_classification = "DEMONSTRATION_EPHEMERAL"
         self.engine = create_engine(self.database_url, poolclass=NullPool)
 
     def close(self) -> None:

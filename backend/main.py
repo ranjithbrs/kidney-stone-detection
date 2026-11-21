@@ -90,31 +90,72 @@ from src.clinical.reporting.report_export import (
     generate_text_report,
 )
 
-# Production authentication secret: checks NEFROAI_JWT_SECRET first, then SECRET_KEY (standard Render env var)
-_RUNTIME_SECRET = os.getenv("NEFROAI_JWT_SECRET") or os.getenv("SECRET_KEY")
-if not _RUNTIME_SECRET:
-    _secret_file = os.path.join(ROOT_DIR, "runs", ".session_secret")
-    if os.path.isfile(_secret_file):
-        try:
-            with open(_secret_file, "r", encoding="utf-8") as _f:
-                _loaded_secret = _f.read().strip()
-                if _loaded_secret:
-                    _RUNTIME_SECRET = _loaded_secret
-        except Exception:
-            pass
-    if not _RUNTIME_SECRET:
-        _RUNTIME_SECRET = "nefroai-x-prod-cloud-secret-d8b3f2c9e7a4b1c8e6d5a2f0"
-        try:
-            os.makedirs(os.path.join(ROOT_DIR, "runs"), exist_ok=True)
-            with open(_secret_file, "w", encoding="utf-8") as _f:
-                _f.write(_RUNTIME_SECRET)
-        except Exception:
-            pass
+# ---------------------------------------------------------------------------
+# JWT Secret Management with Production Enforceability
+# ---------------------------------------------------------------------------
+
+def resolve_jwt_secret() -> str:
+    """Resolve the JWT signing secret according to execution environment.
+
+    In production (ENVIRONMENT='production' or 'prod'), a secure secret MUST
+    be provided via NEFROAI_JWT_SECRET (or SECRET_KEY). If missing, raises a
+    RuntimeError, failing safely before accepting any traffic.
+
+    In development or testing environments (ENVIRONMENT in ('development', 'dev', 'test', 'testing')
+    or when pytest is active without an explicit production override), a persistent local
+    session secret from runs/.session_secret or a generated development secret is permitted.
+    """
+    secret = os.getenv("NEFROAI_JWT_SECRET") or os.getenv("SECRET_KEY")
+    env_name = os.getenv("ENVIRONMENT", os.getenv("ENV", "")).strip().lower()
+
+    if secret and secret.strip():
+        return secret.strip()
+
+    # If explicitly configured as production, strictly fail if secret is missing
+    if env_name in ("production", "prod"):
+        raise RuntimeError(
+            "CRITICAL SECURITY CONFIGURATION ERROR: NEFROAI_JWT_SECRET or SECRET_KEY "
+            "environment variable is strictly required when running in production mode. "
+            "The application has refused to start with an insecure or default secret. "
+            "To resolve: Set NEFROAI_JWT_SECRET in your production platform environment variables, "
+            "or set ENVIRONMENT=development for local development."
+        )
+
+    # Development or testing fallback
+    is_dev_or_test = env_name in ("development", "dev", "test", "testing") or "pytest" in sys.modules
+    if is_dev_or_test or not env_name:
+        secret_file = os.path.join(ROOT_DIR, "runs", ".session_secret")
+        dev_secret = None
+        if os.path.isfile(secret_file):
+            try:
+                with open(secret_file, "r", encoding="utf-8") as _f:
+                    dev_secret = _f.read().strip()
+            except Exception:
+                pass
+        if not dev_secret:
+            dev_secret = secrets.token_hex(32)
+            try:
+                os.makedirs(os.path.join(ROOT_DIR, "runs"), exist_ok=True)
+                with open(secret_file, "w", encoding="utf-8") as _f:
+                    _f.write(dev_secret)
+            except Exception:
+                pass
+        return dev_secret
+
+    raise RuntimeError(
+        "CRITICAL SECURITY CONFIGURATION ERROR: NEFROAI_JWT_SECRET or SECRET_KEY "
+        "environment variable is strictly required when running in production mode. "
+        "The application has refused to start with an insecure or default secret. "
+        "To resolve: Set NEFROAI_JWT_SECRET in your production platform environment variables, "
+        "or set ENVIRONMENT=development for local development."
+    )
+
+
 TOKEN_TTL_SECONDS = int(os.getenv("NEFROAI_TOKEN_TTL_SECONDS", "86400"))
 
 
 def _get_serializer() -> URLSafeTimedSerializer:
-    return URLSafeTimedSerializer(_RUNTIME_SECRET, salt="nefroai-x-auth-v1")
+    return URLSafeTimedSerializer(resolve_jwt_secret(), salt="nefroai-x-auth-v1")
 
 
 def _create_access_token(user: Dict[str, Any]) -> str:
@@ -253,7 +294,11 @@ async def lifespan(app: FastAPI):
         sys.platform,
     )
     store = get_store()
-    _logger.info("Clinical history vault ready (Backend: %s)", store.storage_backend)
+    _logger.info(
+        "Clinical history vault ready (Backend: %s, Classification: %s)",
+        store.storage_backend,
+        getattr(store, "storage_classification", "UNKNOWN"),
+    )
     eng = get_engine()
     pipe = eng.get_pipeline()
     _logger.info(
@@ -261,6 +306,14 @@ async def lifespan(app: FastAPI):
         pipe is not None,
         PROTECTED_MODEL_SHA256[:16] + "...",
     )
+    # Check JWT secret resolution safely without leaking value
+    try:
+        sec = resolve_jwt_secret()
+        _logger.info("Authentication security verified (Secret configured: True, Length: %d chars)", len(sec))
+    except Exception as sec_err:
+        _logger.error("Authentication security check failed: %s", sec_err)
+        raise
+
     port_env = os.getenv("PORT")
     if port_env:
         _logger.info("Bound to container port: %s", port_env)
@@ -296,10 +349,27 @@ def health_check() -> Dict[str, Any]:
     pipe_loaded = eng.get_pipeline() is not None
     stack_cache_file = os.path.join(ROOT_DIR, "models", "stacking_ensemble.joblib")
     stack_cached = os.path.isfile(stack_cache_file)
+    env_name = os.getenv("ENVIRONMENT", os.getenv("ENV", "production")).strip().lower()
+    is_ephemeral = getattr(store, "is_ephemeral", store.storage_backend == "sqlite")
+    storage_class = getattr(
+        store,
+        "storage_classification",
+        "DEMONSTRATION_EPHEMERAL" if is_ephemeral else "PRODUCTION_PERSISTENT",
+    )
     return {
         "status": "ok",
         "service": "nefroai-x-api",
+        "environment": env_name or "production",
         "storage_backend": store.storage_backend,
+        "storage_classification": storage_class,
+        "is_ephemeral_demo": is_ephemeral,
+        "ephemeral_warning": (
+            "Storage is operating in DEMONSTRATION mode on ephemeral local SQLite. "
+            "Patient records will NOT persist across container redeployments or restarts. "
+            "Configure DATABASE_URL with a managed PostgreSQL instance for durable production storage."
+            if is_ephemeral
+            else None
+        ),
         "cloud_postgres_connected": store.storage_backend == "postgresql",
         "pipeline_loaded": pipe_loaded,
         "protected_model_sha256": PROTECTED_MODEL_SHA256,
