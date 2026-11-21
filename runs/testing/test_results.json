@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-11 00:13:01",
+  "timestamp": "2026-11-21 16:12:17",
   "total_tests": 25,
   "passed": 25,
   "failed": 0,
   "success_rate_pct": 100.0,
-  "total_elapsed_seconds": 1.6438,
+  "total_elapsed_seconds": 2.84,
   "suites": [
     {
       "dimension": "1. Normal Inputs",
@@ -12,7 +12,7 @@
       "passed": 2,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0459,
+      "elapsed_seconds": 0.102,
       "status": "PASS"
     },
     {
@@ -21,7 +21,7 @@
       "passed": 4,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0248,
+      "elapsed_seconds": 0.0592,
       "status": "PASS"
     },
     {
@@ -30,7 +30,7 @@
       "passed": 3,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0133,
+      "elapsed_seconds": 0.018,
       "status": "PASS"
     },
     {
@@ -39,7 +39,7 @@
       "passed": 3,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0435,
+      "elapsed_seconds": 0.1175,
       "status": "PASS"
     },
     {
@@ -48,7 +48,7 @@
       "passed": 3,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.1023,
+      "elapsed_seconds": 0.2248,
       "status": "PASS"
     },
     {
@@ -57,7 +57,7 @@
       "passed": 3,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 1.2026,
+      "elapsed_seconds": 2.0364,
       "status": "PASS"
     },
     {
@@ -66,7 +66,7 @@
       "passed": 2,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0761,
+      "elapsed_seconds": 0.0712,
       "status": "PASS"
     },
     {
@@ -75,7 +75,7 @@
       "passed": 1,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0532,
+      "elapsed_seconds": 0.0637,
       "status": "PASS"
     },
     {
@@ -84,7 +84,7 @@
       "passed": 2,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0017,
+      "elapsed_seconds": 0.0045,
       "status": "PASS"
     },
     {
@@ -93,7 +93,7 @@
       "passed": 2,
       "failed": 0,
       "errors": 0,
-      "elapsed_seconds": 0.0789,
+      "elapsed_seconds": 0.1375,
       "status": "PASS"
     }
   ],

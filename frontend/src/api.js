@@ -31,7 +31,17 @@ async function apiFetch(path, options = {}) {
     let detail = `HTTP ${resp.status}`
     try {
       const err = await resp.json()
-      detail = err.detail || err.message || detail
+      if (Array.isArray(err.detail)) {
+        detail = err.detail
+          .map((d) => (d.msg ? `${d.loc ? d.loc.slice(-1)[0] + ': ' : ''}${d.msg}` : JSON.stringify(d)))
+          .join('; ')
+      } else if (typeof err.detail === 'object' && err.detail !== null) {
+        detail = err.detail.message || JSON.stringify(err.detail)
+      } else if (err.detail) {
+        detail = String(err.detail)
+      } else if (err.message) {
+        detail = String(err.message)
+      }
     } catch {
       const txt = await resp.text()
       if (txt) detail = txt.slice(0, 240)

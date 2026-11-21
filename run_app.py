@@ -48,21 +48,24 @@ def verify_frontend_build():
 def main():
     verify_frontend_build()
 
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
+
     print("\n" + "=" * 74)
     print("  🩺 NEFROAI-X CLINICAL DECISION SUPPORT SYSTEM (CDSS)")
     print("  Full-Stack Production Service (FastAPI + React 18 SPA)")
     print("=" * 74)
-    print("  🌐 Clinical Web Portal:     http://127.0.0.1:8000/")
-    print("  📖 Interactive Swagger API: http://127.0.0.1:8000/docs")
-    print("  🛡️ Clinical Health Check:   http://127.0.0.1:8000/api/health")
+    print(f"  🌐 Clinical Web Portal:     http://{host}:{port}/")
+    print(f"  📖 Interactive Swagger API: http://{host}:{port}/docs")
+    print(f"  🛡️ Clinical Health Check:   http://{host}:{port}/api/health")
     print("=" * 74)
     print("  Press Ctrl+C in this terminal window to stop the server.")
     print("=" * 74 + "\n")
 
     uvicorn.run(
         "backend.main:app",
-        host="127.0.0.1",
-        port=8000,
+        host=host,
+        port=port,
         reload=False,
         log_level="info",
     )

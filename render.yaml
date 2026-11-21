@@ -13,3 +13,5 @@ services:
         value: /tmp/matplotlib
       - key: SECRET_KEY
         generateValue: true
+      - key: NEFROAI_JWT_SECRET
+        generateValue: true

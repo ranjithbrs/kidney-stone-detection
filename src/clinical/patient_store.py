@@ -10,6 +10,7 @@ Supports:
 from __future__ import annotations
 
 import json
+import logging
 import os
 from datetime import date, datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
@@ -19,6 +20,8 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import NullPool
 from werkzeug.security import check_password_hash, generate_password_hash
+
+logger = logging.getLogger("nefroai.clinical.patient_store")
 
 DEFAULT_DB_PATH = os.path.join("runs", "local_cdss.db")
 
@@ -48,6 +51,7 @@ class ClinicalHistoryStore:
         db_path: Optional[str] = None,
         database_url: Optional[str] = None,
     ) -> None:
+        self.cloud_connection_error: Optional[str] = None
         env_url = (
             database_url
             or (None if db_path is not None else (os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")))
@@ -60,23 +64,36 @@ class ClinicalHistoryStore:
             # PgBouncer transaction poolers (e.g. Supabase port 6543) disallow prepared statements
             if ":6543/" in self.database_url or "pgbouncer=true" in self.database_url.lower():
                 connect_args["prepare_threshold"] = None
-            self.engine: Engine = create_engine(
-                self.database_url,
-                pool_pre_ping=True,
-                pool_size=5,
-                max_overflow=10,
-                connect_args=connect_args,
-            )
+            try:
+                self.engine: Engine = create_engine(
+                    self.database_url,
+                    pool_pre_ping=True,
+                    pool_size=5,
+                    max_overflow=10,
+                    connect_args=connect_args,
+                )
+                self._init_schema()
+                logger.info("Connected successfully to cloud PostgreSQL patient store.")
+            except Exception as ex:
+                logger.error(
+                    "Cloud PostgreSQL initialization failed (%s). Falling back safely to local SQLite store.",
+                    ex,
+                )
+                self.cloud_connection_error = str(ex)
+                self._fallback_to_sqlite(db_path)
+                self._init_schema()
         else:
-            effective_path = db_path or DEFAULT_DB_PATH
-            parent = os.path.dirname(os.path.abspath(effective_path))
-            os.makedirs(parent, exist_ok=True)
-            self.db_path = effective_path
-            self.database_url = f"sqlite:///{os.path.abspath(effective_path)}"
-            self.storage_backend = "sqlite"
-            self.engine = create_engine(self.database_url, poolclass=NullPool)
+            self._fallback_to_sqlite(db_path)
+            self._init_schema()
 
-        self._init_schema()
+    def _fallback_to_sqlite(self, db_path: Optional[str] = None) -> None:
+        effective_path = db_path or DEFAULT_DB_PATH
+        parent = os.path.dirname(os.path.abspath(effective_path))
+        os.makedirs(parent, exist_ok=True)
+        self.db_path = effective_path
+        self.database_url = f"sqlite:///{os.path.abspath(effective_path)}"
+        self.storage_backend = "sqlite"
+        self.engine = create_engine(self.database_url, poolclass=NullPool)
 
     def close(self) -> None:
         """Dispose underlying SQLAlchemy engine cleanly."""

@@ -176,10 +176,16 @@ export default function AssessmentPage({
   const [saveNotice, setSaveNotice] = useState('')
 
   function updateField(key, val) {
+    if (assessment) setAssessment(null)
+    setError('')
+    setSaveNotice('')
     setFormState((prev) => ({ ...prev, [key]: val }))
   }
 
   function updateBiomarker(key, val) {
+    if (assessment) setAssessment(null)
+    setError('')
+    setSaveNotice('')
     setFormState((prev) => ({
       ...prev,
       biomarkers: {
@@ -190,6 +196,7 @@ export default function AssessmentPage({
   }
 
   function addVisitRow() {
+    if (assessment) setAssessment(null)
     setFormState((prev) => ({
       ...prev,
       visits: [
@@ -205,6 +212,7 @@ export default function AssessmentPage({
   }
 
   function updateVisitRow(idx, key, val) {
+    if (assessment) setAssessment(null)
     setFormState((prev) => ({
       ...prev,
       visits: (prev.visits || []).map((v, i) => (i === idx ? { ...v, [key]: val } : v)),
@@ -212,13 +220,46 @@ export default function AssessmentPage({
   }
 
   function removeVisitRow(idx) {
+    if (assessment) setAssessment(null)
     setFormState((prev) => ({
       ...prev,
       visits: (prev.visits || []).filter((_, i) => i !== idx),
     }))
   }
 
+  function handleResetForm() {
+    setError('')
+    setSaveNotice('')
+    setAssessment(null)
+    setFormState({
+      patient_id: '',
+      age: '',
+      sex: 'male',
+      kfre_region: 'Non-North America',
+      observation_date: new Date().toISOString().slice(0, 10),
+      serum_creatinine: '',
+      serum_creatinine_unit: 'mg/dL',
+      uacr: '',
+      uacr_unit: 'mg/g',
+      biomarkers: {
+        hemo: '',
+        sg: '',
+        pcv: '',
+        rc: '',
+        al: '0',
+        sc: '',
+        bu: '',
+        bgr: '',
+        htn: 'no',
+        dm: 'no',
+      },
+      visits: [],
+    })
+  }
+
   function handleSelectPreset(preset) {
+    setError('')
+    setSaveNotice('')
     const d = preset.data
     const newForm = {
       patient_id: d.patient_id,
@@ -249,9 +290,25 @@ export default function AssessmentPage({
   }
 
   async function runScreeningWithState(fState) {
-    setSubmitting(true)
     setError('')
     setSaveNotice('')
+
+    const ageNum = Number(fState.age)
+    if (!fState.age || isNaN(ageNum) || ageNum < 18 || ageNum > 120) {
+      setError('Please provide an adult patient age between 18 and 120 years (CKD-EPI 2021 race-free equation requirement).')
+      return
+    }
+
+    const b = fState.biomarkers || {}
+    const hasAnyBiomarker = ['hemo', 'sg', 'pcv', 'rc', 'sc', 'bu', 'bgr'].some(
+      (k) => (b[k] !== '' && b[k] !== null && b[k] !== undefined) || (k === 'sc' && fState.serum_creatinine)
+    )
+    if (!hasAnyBiomarker && !fState.uacr) {
+      setError('Please enter at least one clinical biomarker or select a Quick Clinical Test Preset.')
+      return
+    }
+
+    setSubmitting(true)
 
     try {
       const b = fState.biomarkers || {}
@@ -386,6 +443,14 @@ export default function AssessmentPage({
                   <span style={{ marginRight: 4 }}>{p.icon}</span> {p.label}
                 </button>
               ))}
+              <button
+                type="button"
+                className="preset-btn btn-ghost"
+                onClick={handleResetForm}
+                title="Clear all fields"
+              >
+                <RotateCcw size={13} style={{ marginRight: 4 }} /> Reset
+              </button>
             </div>
           </div>
 
@@ -694,7 +759,15 @@ export default function AssessmentPage({
             </div>
 
             {/* Form Action Row */}
-            <div className="form-action-row" style={{ justifyContent: 'flex-end' }}>
+            <div className="form-action-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleResetForm}
+                title="Reset all inputs"
+              >
+                <RotateCcw size={14} /> Clear Form
+              </button>
               <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
                 <Activity size={16} /> {submitting ? 'Screening Engines Running…' : 'Run Multi-Engine CKD Screening'}
               </button>

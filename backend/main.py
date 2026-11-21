@@ -13,6 +13,7 @@ Provides REST endpoints for:
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 import dataclasses
 import functools
 import io
@@ -89,8 +90,15 @@ from src.clinical.reporting.report_export import (
     generate_text_report,
 )
 
-# Ephemeral runtime fallback if NEFROAI_JWT_SECRET env var isn't supplied locally (never static hardcoded)
-_RUNTIME_SECRET = os.getenv("NEFROAI_JWT_SECRET") or secrets.token_urlsafe(32)
+# Production authentication secret: checks NEFROAI_JWT_SECRET first, then SECRET_KEY (standard Render env var)
+_RUNTIME_SECRET = os.getenv("NEFROAI_JWT_SECRET") or os.getenv("SECRET_KEY")
+if not _RUNTIME_SECRET:
+    import logging as _log
+    _log.getLogger("nefroai.auth").warning(
+        "Neither NEFROAI_JWT_SECRET nor SECRET_KEY is set; generating ephemeral runtime secret. "
+        "User sessions will expire on application restart. Configure SECRET_KEY in production."
+    )
+    _RUNTIME_SECRET = secrets.token_urlsafe(32)
 TOKEN_TTL_SECONDS = int(os.getenv("NEFROAI_TOKEN_TTL_SECONDS", "86400"))
 
 
@@ -221,10 +229,38 @@ class ExportRequest(BaseModel):
 # FastAPI App Setup & CORS
 # ---------------------------------------------------------------------------
 
+# Lifecycle Events & Lightweight Health Check
+# ---------------------------------------------------------------------------
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    import logging as _log
+    _logger = _log.getLogger("nefroai.startup")
+    _logger.info(
+        "NEFROAI-X CDSS initializing on Python %s (Platform: %s)",
+        sys.version.split()[0],
+        sys.platform,
+    )
+    store = get_store()
+    _logger.info("Clinical history vault ready (Backend: %s)", store.storage_backend)
+    eng = get_engine()
+    pipe = eng.get_pipeline()
+    _logger.info(
+        "Production pipeline loaded: %s (Artifact SHA-256: %s)",
+        pipe is not None,
+        PROTECTED_MODEL_SHA256[:16] + "...",
+    )
+    port_env = os.getenv("PORT")
+    if port_env:
+        _logger.info("Bound to container port: %s", port_env)
+    yield
+
+
 app = FastAPI(
     title="NEFROAI-X Cloud Clinical Decision Support API",
     description="Explainable CKD Screening, KDIGO Staging, Longitudinal Progression & Safety-Max API.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 _default_origins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:8000"
@@ -240,23 +276,23 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------------------------
-# Endpoints
-# ---------------------------------------------------------------------------
-
 @app.get("/api/health")
 def health_check() -> Dict[str, Any]:
+    """Lightweight, non-blocking health check. Never triggers expensive ML training."""
     store = get_store()
     eng = get_engine()
-    stack = get_stacking_ensemble()
+    pipe_loaded = eng.get_pipeline() is not None
+    stack_cache_file = os.path.join(ROOT_DIR, "models", "stacking_ensemble.joblib")
+    stack_cached = os.path.isfile(stack_cache_file)
     return {
         "status": "ok",
         "service": "nefroai-x-api",
         "storage_backend": store.storage_backend,
         "cloud_postgres_connected": store.storage_backend == "postgresql",
-        "pipeline_loaded": eng.get_pipeline() is not None,
+        "pipeline_loaded": pipe_loaded,
         "protected_model_sha256": PROTECTED_MODEL_SHA256,
-        "xgboost_active": bool(stack.evaluation_report.get("xgboost_active")),
+        "stacking_ensemble_cached": stack_cached,
+        "xgboost_active": bool("xgboost" in sys.modules or stack_cached),
         "survival_ml_status": "DEFERRED_PENDING_APPROVED_COHORT",
     }
 
@@ -323,78 +359,80 @@ def auth_me(user_claims: Dict[str, Any] = Depends(require_user)) -> Dict[str, An
 @app.get("/api/presets")
 def get_clinical_presets() -> Dict[str, Any]:
     today = date.today()
-    return {
-        "presets": {
-            "healthy": {
-                "label": "🟢 Healthy Cohort",
-                "patient_id": "PT-HEALTHY-DEMO",
-                "age": 38.0,
-                "sex": "female",
-                "biomarkers": {
-                    "hemo": 14.5, "sg": 1.020, "pcv": 44.0, "sc": 0.85, "rc": 5.1,
-                    "al": 0, "bu": 28.0, "bgr": 95.0, "htn": "no", "dm": "no",
-                },
-                "serum_creatinine": 0.85,
-                "serum_creatinine_unit": "mg/dL",
-                "uacr": 12.0,
-                "uacr_unit": "mg/g",
-                "visits": [
-                    {"date": (today - timedelta(days=360)).isoformat(), "scr": 0.82, "uacr": 10.0, "sbp": 118.0},
-                    {"date": (today - timedelta(days=180)).isoformat(), "scr": 0.84, "uacr": 12.0, "sbp": 120.0},
-                    {"date": today.isoformat(), "scr": 0.85, "uacr": 12.0, "sbp": 118.0},
-                ],
+    presets_map = {
+        "healthy": {
+            "label": "🟢 Healthy Cohort",
+            "patient_id": "PT-HEALTHY-DEMO",
+            "age": 38.0,
+            "sex": "female",
+            "biomarkers": {
+                "hemo": 14.5, "sg": 1.020, "pcv": 44.0, "sc": 0.85, "rc": 5.1,
+                "al": 0, "bu": 28.0, "bgr": 95.0, "htn": "no", "dm": "no",
             },
-            "high_risk_ckd": {
-                "label": "🔴 High-Risk CKD",
-                "patient_id": "PT-HIGH-RISK-CKD",
-                "age": 64.0,
-                "sex": "male",
-                "biomarkers": {
-                    "hemo": 9.8, "sg": 1.010, "pcv": 30.0, "sc": 2.4, "rc": 3.3,
-                    "al": 3, "bu": 72.0, "bgr": 185.0, "htn": "yes", "dm": "yes",
-                },
-                "serum_creatinine": 2.4,
-                "serum_creatinine_unit": "mg/dL",
-                "uacr": 380.0,
-                "uacr_unit": "mg/g",
-                "visits": [
-                    {"date": (today - timedelta(days=360)).isoformat(), "scr": 1.9, "uacr": 220.0, "sbp": 142.0},
-                    {"date": (today - timedelta(days=180)).isoformat(), "scr": 2.1, "uacr": 310.0, "sbp": 148.0},
-                    {"date": today.isoformat(), "scr": 2.4, "uacr": 380.0, "sbp": 152.0},
-                ],
+            "serum_creatinine": 0.85,
+            "serum_creatinine_unit": "mg/dL",
+            "uacr": 12.0,
+            "uacr_unit": "mg/g",
+            "visits": [
+                {"date": (today - timedelta(days=360)).isoformat(), "scr": 0.82, "uacr": 10.0, "sbp": 118.0},
+                {"date": (today - timedelta(days=180)).isoformat(), "scr": 0.84, "uacr": 12.0, "sbp": 120.0},
+                {"date": today.isoformat(), "scr": 0.85, "uacr": 12.0, "sbp": 118.0},
+            ],
+        },
+        "high_risk_ckd": {
+            "label": "🔴 High-Risk CKD",
+            "patient_id": "PT-HIGH-RISK-CKD",
+            "age": 64.0,
+            "sex": "male",
+            "biomarkers": {
+                "hemo": 9.8, "sg": 1.010, "pcv": 30.0, "sc": 2.4, "rc": 3.3,
+                "al": 3, "bu": 72.0, "bgr": 185.0, "htn": "yes", "dm": "yes",
             },
-            "discordant_false_assurance": {
-                "label": "⚠️ Discordant (False Assurance)",
-                "patient_id": "PT-DISCORDANT-001",
-                "age": 48.0,
-                "sex": "female",
-                "biomarkers": {
-                    "hemo": 14.5, "sg": 1.020, "pcv": 43.0, "sc": 1.4, "rc": 4.9,
-                    "al": 0, "bu": 24.0, "bgr": 95.0, "htn": "no", "dm": "no",
-                },
-                "serum_creatinine": 1.4,
-                "serum_creatinine_unit": "mg/dL",
-                "uacr": 420.0,
-                "uacr_unit": "mg/g",
-                "visits": [],
+            "serum_creatinine": 2.4,
+            "serum_creatinine_unit": "mg/dL",
+            "uacr": 380.0,
+            "uacr_unit": "mg/g",
+            "visits": [
+                {"date": (today - timedelta(days=360)).isoformat(), "scr": 1.9, "uacr": 220.0, "sbp": 142.0},
+                {"date": (today - timedelta(days=180)).isoformat(), "scr": 2.1, "uacr": 310.0, "sbp": 148.0},
+                {"date": today.isoformat(), "scr": 2.4, "uacr": 380.0, "sbp": 152.0},
+            ],
+        },
+        "discordant_false_assurance": {
+            "label": "⚠️ Discordant (False Assurance)",
+            "patient_id": "PT-DISCORDANT-001",
+            "age": 48.0,
+            "sex": "female",
+            "biomarkers": {
+                "hemo": 14.5, "sg": 1.020, "pcv": 43.0, "sc": 1.4, "rc": 4.9,
+                "al": 0, "bu": 24.0, "bgr": 95.0, "htn": "no", "dm": "no",
             },
-            "si_units_healthy": {
-                "label": "🌍 EU/UK SI Units Healthy",
-                "patient_id": "PT-UK-SI-001",
-                "age": 44.0,
-                "sex": "male",
-                "biomarkers": {
-                    "hemo": 150.0, "sg": 1.025, "pcv": 45.0, "sc": 88.42, "rc": 5.0,
-                    "al": 0, "bu": 28.0, "bgr": 5.2, "htn": "no", "dm": "no",
-                },
-                "serum_creatinine": 88.42,
-                "serum_creatinine_unit": "µmol/L",
-                "uacr": 1.2,
-                "uacr_unit": "mg/mmol",
-                "visits": [],
+            "serum_creatinine": 1.4,
+            "serum_creatinine_unit": "mg/dL",
+            "uacr": 420.0,
+            "uacr_unit": "mg/g",
+            "visits": [],
+        },
+        "si_units_healthy": {
+            "label": "🌍 EU/UK SI Units Healthy",
+            "patient_id": "PT-UK-SI-001",
+            "age": 44.0,
+            "sex": "male",
+            "biomarkers": {
+                "hemo": 150.0, "sg": 1.025, "pcv": 45.0, "sc": 88.42, "rc": 5.0,
+                "al": 0, "bu": 28.0, "bgr": 5.2, "htn": "no", "dm": "no",
             },
-        }
+            "serum_creatinine": 88.42,
+            "serum_creatinine_unit": "µmol/L",
+            "uacr": 1.2,
+            "uacr_unit": "mg/mmol",
+            "visits": [],
+        },
     }
+    # Shorthand aliases for frontend component compatibility
+    presets_map["discordant"] = presets_map["discordant_false_assurance"]
+    presets_map["si_units"] = presets_map["si_units_healthy"]
+    return {"presets": presets_map}
 
 
 def _parse_iso_dt(date_str: Optional[str]) -> datetime:
