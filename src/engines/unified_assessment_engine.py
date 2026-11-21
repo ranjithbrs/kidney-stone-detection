@@ -367,6 +367,12 @@ class UnifiedAssessmentEngine:
                 e1_in = request["engine1_input"]
             elif isinstance(request["engine1_input"], dict):
                 e1_in = Engine1ScreeningInput(**request["engine1_input"])
+        elif "biomarkers" in request and isinstance(request["biomarkers"], dict):
+            e1_in = Engine1ScreeningInput(
+                biomarkers=dict(request["biomarkers"]),
+                observation_date=request.get("observation_date", request.get("date")),
+                provenance=request.get("provenance", ProvenanceSource.UNSPECIFIED.value),
+            )
         else:
             # Check if top-level dictionary has screening biomarkers
             # e.g., 'sc', 'hemo', 'al', 'sg', 'pcv', 'rc', 'bgr', 'bu', etc.
@@ -440,6 +446,12 @@ class UnifiedAssessmentEngine:
                         elif not isinstance(t_val, datetime):
                             t_val = datetime.now(timezone.utc)
                         v_dict["timestamp"] = t_val
+                    if "serum_creatinine" not in v_dict and "scr" in v_dict:
+                        v_dict["serum_creatinine"] = v_dict["scr"]
+                    if "systolic_bp" not in v_dict and "sbp" in v_dict:
+                        v_dict["systolic_bp"] = v_dict["sbp"]
+                    if "diastolic_bp" not in v_dict and "dbp" in v_dict:
+                        v_dict["diastolic_bp"] = v_dict["dbp"]
                     valid_keys = {
                         "timestamp", "serum_creatinine", "egfr", "uacr",
                         "systolic_bp", "diastolic_bp", "hba1c", "serum_glucose", "notes"
