@@ -406,19 +406,6 @@ export default function AssessmentPage({
         </div>
       </div>
 
-      {/* Public Demonstration Ephemeral PHI Warning Banner (Non-dismissible) */}
-      <div className="public-demo-warning-banner" role="alert" aria-live="polite">
-        <div className="public-demo-warning-title-row">
-          <AlertTriangle size={18} className="public-demo-warning-icon" aria-hidden="true" />
-          <span className="public-demo-warning-title">
-            PUBLIC DEMONSTRATION RUNTIME — STORAGE IS EPHEMERAL. DO NOT ENTER REAL PATIENT HEALTH INFORMATION (PHI). RECORDS MAY BE PERMANENTLY ERASED WHEN THE CONTAINER RESTARTS OR IS RECYCLED.
-          </span>
-        </div>
-        <div className="public-demo-warning-desc">
-          <strong>Storage Architecture Notice:</strong> This public deployment operates as an investigational research prototype with ephemeral local SQLite storage. Patient profiles and clinical records are subject to permanent erasure upon container restart or redeploy. This system is <strong>not</strong> certified for HIPAA-regulated clinical documentation, nor cleared for standalone medical diagnosis. For durable production storage, connect a managed PostgreSQL instance via <code>DATABASE_URL</code>.
-        </div>
-      </div>
-
 
       {/* Mode Tabs */}
       <div className="assessment-tabs-bar">
