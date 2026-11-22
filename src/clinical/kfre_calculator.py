@@ -227,7 +227,15 @@ def calculate_kfre(
         )
 
     # Resolve calibration profile key
-    profile_key = str(calibration_profile or KFRECalibrationProfile.NORTH_AMERICA.value).strip().lower()
+    raw_key = str(calibration_profile or KFRECalibrationProfile.NORTH_AMERICA.value).strip().lower().replace("-", "_").replace(" ", "_")
+    if "non" in raw_key:
+        profile_key = KFRECalibrationProfile.NON_NORTH_AMERICA.value
+    elif "north" in raw_key:
+        profile_key = KFRECalibrationProfile.NORTH_AMERICA.value
+    elif "original" in raw_key or "tangri" in raw_key:
+        profile_key = KFRECalibrationProfile.ORIGINAL_TANGRI.value
+    else:
+        profile_key = raw_key
     if profile_key not in KFRE_BASELINE_SURVIVAL:
         valid_keys = list(KFRE_BASELINE_SURVIVAL.keys())
         return KFREResult(

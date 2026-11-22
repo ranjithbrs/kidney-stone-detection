@@ -339,6 +339,7 @@ export default function AssessmentPage({
         age: Number(fState.age),
         sex: fState.sex || 'male',
         observation_date: fState.observation_date || new Date().toISOString().slice(0, 10),
+        kfre_calibration: fState.kfre_region || 'non_north_america',
         biomarkers: cleanBiomarkers,
         serum_creatinine: toNullableNum(fState.serum_creatinine),
         serum_creatinine_unit: fState.serum_creatinine_unit || 'mg/dL',
@@ -911,13 +912,25 @@ export default function AssessmentPage({
                     <div className="kfre-kpi-box">
                       <div className="kfre-kpi-label">2-YR KIDNEY FAILURE</div>
                       <div className="kfre-kpi-val tabular">
-                        {e3.kfre_2year_risk != null ? `${(e3.kfre_2year_risk * 100).toFixed(2)}%` : '6.38%'}
+                        {e3.kfre_is_applicable === false && (e2.egfr >= 60 || e3.kfre_2year_risk == null) ? (
+                          <span style={{ fontSize: '1.05rem', color: '#16a34a' }}>&lt; 0.1%</span>
+                        ) : e3.kfre_2year_risk != null ? (
+                          `${(e3.kfre_2year_risk * 100).toFixed(2)}%`
+                        ) : (
+                          <span style={{ fontSize: '0.9rem', color: '#71717a' }}>N/A</span>
+                        )}
                       </div>
                     </div>
                     <div className="kfre-kpi-box">
                       <div className="kfre-kpi-label">5-YR KIDNEY FAILURE</div>
                       <div className="kfre-kpi-val tabular">
-                        {e3.kfre_5year_risk != null ? `${(e3.kfre_5year_risk * 100).toFixed(2)}%` : '22.51%'}
+                        {e3.kfre_is_applicable === false && (e2.egfr >= 60 || e3.kfre_5year_risk == null) ? (
+                          <span style={{ fontSize: '1.05rem', color: '#16a34a' }}>&lt; 0.1%</span>
+                        ) : e3.kfre_5year_risk != null ? (
+                          `${(e3.kfre_5year_risk * 100).toFixed(2)}%`
+                        ) : (
+                          <span style={{ fontSize: '0.9rem', color: '#71717a' }}>N/A</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -926,20 +939,30 @@ export default function AssessmentPage({
                     <div className="engine-metric-row">
                       <span>OLS eGFR Slope:</span>
                       <strong style={{ fontSize: '0.75rem' }}>
-                        {e3.ols_slope_ml_min_year != null
-                          ? `${e3.ols_slope_ml_min_year.toFixed(2)} mL/min/yr`
+                        {(e3.historical_egfr_slope ?? e3.ols_slope_ml_min_year) != null
+                          ? `${(e3.historical_egfr_slope ?? e3.ols_slope_ml_min_year) > 0 ? '+' : ''}${(e3.historical_egfr_slope ?? e3.ols_slope_ml_min_year).toFixed(2)} mL/min/yr`
                           : 'Requires ≥ 1 yr follow-up data'}
                       </strong>
                     </div>
                     <div className="engine-metric-row">
                       <span>LMM BLUP Slope:</span>
                       <strong>
-                        {e3.lmm_blup_slope != null ? `${e3.lmm_blup_slope.toFixed(2)} mL/min/yr` : '-2.77 mL/min/yr'}
+                        {(e3.lmm_annual_slope ?? e3.lmm_blup_slope) != null
+                          ? `${(e3.lmm_annual_slope ?? e3.lmm_blup_slope) > 0 ? '+' : ''}${(e3.lmm_annual_slope ?? e3.lmm_blup_slope).toFixed(2)} mL/min/yr`
+                          : 'Requires ≥ 3 visits'}
                       </strong>
                     </div>
                     <div className="engine-metric-row">
                       <span>90-Day Chronicity Guard:</span>
-                      <strong style={{ color: '#0f766e' }}>Active</strong>
+                      {e3.chronicity_aki_assessment?.status === 'CONFIRMED_CHRONIC_PERSISTENCE' ? (
+                        <strong style={{ color: '#b91c1c' }}>Confirmed Chronic (≥90d)</strong>
+                      ) : e3.chronicity_aki_assessment?.status === 'ACUTE_CREATININE_SPIKE' ? (
+                        <strong style={{ color: '#c2410c' }}>Acute Spike Flagged</strong>
+                      ) : e3.chronicity_aki_assessment?.status === 'STABLE_OR_UNCONFIRMED_CHRONICITY' ? (
+                        <strong style={{ color: '#0f766e' }}>Stable (No AKI/Spike)</strong>
+                      ) : (
+                        <strong style={{ color: '#0f766e' }}>Active</strong>
+                      )}
                     </div>
                   </div>
                 </div>
