@@ -54,6 +54,7 @@ Thumbs.db
 *.swo
 
 # Sensitive data / logs / secrets
+scratch/
 *.log
 instance/
 .webassets-cache
